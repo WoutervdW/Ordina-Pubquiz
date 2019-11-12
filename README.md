@@ -1,2 +1,5 @@
 # Ordina-Pubquiz
-Read-hand-written pub quiz answers and mark them. Additionally, show team scores online.
+
+1. Read-hand-written pub quiz answers
+2. Mark answers. 
+3. Show team scores online.
