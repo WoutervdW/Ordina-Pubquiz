@@ -40,17 +40,12 @@ class Model:
         """
         init model: add CNN, RNN and CTC and initialize TF
         """
-        self.charList = char_list
+        self.char_list = char_list
         # TODO check decodertypes.
         self.decoderType = DecoderType.BestPath
-        self.snapID = 0
-
-        # Whether to use normalization over a batch or a population
-        # TODO tensorflow is om het model te trainen,
-        #  als je het getrainde model gebruikt zou je geen tensorflow referenties meer nodig hebben.
 
         # input image batch
-        self.inputImgs = tf.placeholder(tf.float32, shape=(None, Model.img_size[0], Model.img_size[1]))
+        self.input_image = tf.placeholder(tf.float32, shape=(None, Model.img_size[0], Model.img_size[1]))
 
         # setup CNN, RNN and CTC
         # TODO gebruiken we al deze dingen? Kijken of dingen weg kunnen op basis van wat we gebruiken.
@@ -72,7 +67,7 @@ class Model:
         """
         create CNN layers and return output of these layers
         """
-        cnnIn4d = tf.expand_dims(input=self.inputImgs, axis=3)
+        cnnIn4d = tf.expand_dims(input=self.input_image, axis=3)
 
         # list of parameters for the layers
         kernelVals = [5, 5, 3, 3, 3]
@@ -115,7 +110,7 @@ class Model:
         concat = tf.expand_dims(tf.concat([fw, bw], 2), 2)
 
         # project output to chars (including blank): BxTx1x2H -> BxTx1xC -> BxTxC
-        kernel = tf.Variable(tf.truncated_normal([1, 1, numHidden * 2, len(self.charList) + 1], stddev=0.1))
+        kernel = tf.Variable(tf.truncated_normal([1, 1, numHidden * 2, len(self.char_list) + 1], stddev=0.1))
         self.rnnOut3d = tf.squeeze(tf.nn.atrous_conv2d(value=concat, filters=kernel, rate=1, padding='SAME'), axis=[2])
 
     def setupCTC(self):
@@ -135,7 +130,7 @@ class Model:
                            ctc_merge_repeated=True))
 
         # calc loss for each element to compute label probability
-        self.savedCtcInput = tf.placeholder(tf.float32, shape=[Model.max_text_length, None, len(self.charList) + 1])
+        self.savedCtcInput = tf.placeholder(tf.float32, shape=[Model.max_text_length, None, len(self.char_list) + 1])
         self.lossPerElement = tf.nn.ctc_loss(labels=self.gtTexts, inputs=self.savedCtcInput,
                                              sequence_length=self.seqLen, ctc_merge_repeated=True)
 
@@ -143,24 +138,23 @@ class Model:
         # TODO decodertypes weggehaald.
         self.decoder = tf.nn.ctc_greedy_decoder(inputs=self.ctcIn3dTBC, sequence_length=self.seqLen)
 
-    def inferBatch(self, batch, calcProbability=False, probabilityOfGT=False):
+    def inferBatch(self, batch, calc_probability=False):
         """
         feed a batch into the NN to recognize the texts
         """
 
         # decode, optionally save RNN output
-        numBatchElements = len(batch.imgs)
-        evalRnnOutput = calcProbability
-        evalList = [self.decoder] + ([self.ctcIn3dTBC] if evalRnnOutput else [])
-        feedDict = {self.inputImgs: batch.imgs, self.seqLen: [Model.max_text_length] * numBatchElements}
+        numBatchElements = len(batch.image)
+        evalList = [self.decoder] + [self.ctcIn3dTBC]
+        feedDict = {self.input_image: batch.image, self.seqLen: [Model.max_text_length] * numBatchElements}
         evalRes = self.sess.run(evalList, feedDict)
         decoded = evalRes[0]
         texts = self.decoderOutputToText(decoded, numBatchElements)
 
         # feed RNN output and recognized text into CTC loss to compute labeling probability
         probs = None
-        if calcProbability:
-            sparse = self.toSparse(batch.gtTexts) if probabilityOfGT else self.toSparse(texts)
+        if calc_probability:
+            sparse = self.toSparse(texts)
             ctcInput = evalRes[1]
             evalList = self.lossPerElement
             feedDict = {self.savedCtcInput: ctcInput, self.gtTexts: sparse,
@@ -189,9 +183,9 @@ class Model:
             encodedLabelStrs[batchElement].append(label)
 
         # map labels to chars for all batch elements
-        return [str().join([self.charList[c] for c in labelStr]) for labelStr in encodedLabelStrs]
+        return [str().join([self.char_list[c] for c in labelStr]) for labelStr in encodedLabelStrs]
 
-    def toSparse(self, texts):
+    def toSparse(self, texts=None):
         """
         put ground truth texts into sparse tensor for ctc_loss
         """
@@ -202,7 +196,7 @@ class Model:
         # go over all texts
         for (batchElement, text) in enumerate(texts):
             # convert to string of label (i.e. class-ids)
-            labelStr = [self.charList.index(c) for c in text]
+            labelStr = [self.char_list.index(c) for c in text]
             # sparse tensor must have size of max. label-string
             if len(labelStr) > shape[1]:
                 shape[1] = len(labelStr)

@@ -10,8 +10,8 @@ def infer(_model, fn_img):
     """
     recognize text in image provided by file path
     """
-    img = preprocess(cv2.imread(fn_img, cv2.IMREAD_GRAYSCALE), Model.img_size)
-    batch = Batch(None, [img])
+    image = preprocess(cv2.imread(fn_img, cv2.IMREAD_GRAYSCALE), Model.img_size)
+    batch = Batch([image])
     (recognized, probability) = _model.inferBatch(batch, True)
     print('Recognized:', '"' + recognized[0] + '"')
     print('Probability:', probability[0])
