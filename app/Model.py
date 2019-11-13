@@ -36,15 +36,13 @@ class Model:
     img_size = (128, 32)
     max_text_length = 32
 
-    def __init__(self, char_list, decoderType=DecoderType.BestPath, mustRestore=False, dump=False):
+    def __init__(self, char_list):
         """
         init model: add CNN, RNN and CTC and initialize TF
         """
-        # TODO we zetten 'dump' op False. Mogelijk gewoon weghalen zoals in main ook is gedaan.
-        self.dump = dump
         self.charList = char_list
-        self.decoderType = decoderType
-        self.mustRestore = mustRestore
+        # TODO check decodertypes.
+        self.decoderType = DecoderType.BestPath
         self.snapID = 0
 
         # Whether to use normalization over a batch or a population
@@ -153,7 +151,7 @@ class Model:
 
         # decode, optionally save RNN output
         numBatchElements = len(batch.imgs)
-        evalRnnOutput = self.dump or calcProbability
+        evalRnnOutput = calcProbability
         evalList = [self.decoder] + ([self.ctcIn3dTBC] if evalRnnOutput else [])
         feedDict = {self.inputImgs: batch.imgs, self.seqLen: [Model.max_text_length] * numBatchElements,
                     self.is_train: False}
@@ -171,10 +169,6 @@ class Model:
                         self.seqLen: [Model.max_text_length] * numBatchElements, self.is_train: False}
             lossVals = self.sess.run(evalList, feedDict)
             probs = np.exp(-lossVals)
-
-        # dump the output of the NN to CSV file(s)
-        if self.dump:
-            self.dumpNNOutput(evalRes[1])
 
         return (texts, probs)
 

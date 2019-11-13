@@ -20,9 +20,7 @@ def infer(_model, fn_img):
 if __name__ == "__main__":
     print("De officiele Ordina pub-quiz antwoord vinder")
     image_to_read = 'data/test.png'
-    # TODO Nu wordt Best path gekozen Waarschijnlijk gebruiken we 1 ding. Kijken of andere decortypes beter werken.
-    decoder_type = DecoderType.BestPath
 
-    model = Model(open('model/charList.txt').read(), decoder_type, mustRestore=True)
+    model = Model(open('model/charList.txt').read())
     infer(model, image_to_read)
 
