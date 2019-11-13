@@ -1,10 +1,13 @@
-Requirements Ordina pubquiz - MoSCoW
+﻿Requirements Ordina pubquiz - MoSCoW
 -------------------
 
 M
 -------------------
 -Geschreven tekst herkenning
 	-Tekst in vast formaat
+(Het lijkt er op dat enkel 1 woord of max. 1 regel tegelijk ingegeven zal kunnen worden:)
+	-pre-processing van image in losse regels en/of woorden.
+	-pre-processing als correctie voor belichting.
 	
 
 -Goede antwoord uit digitale tekst kunnen halen.
