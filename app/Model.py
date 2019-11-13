@@ -48,7 +48,6 @@ class Model:
         # Whether to use normalization over a batch or a population
         # TODO tensorflow is om het model te trainen,
         #  als je het getrainde model gebruikt zou je geen tensorflow referenties meer nodig hebben.
-        self.is_train = tf.placeholder(tf.bool, name='is_train')
 
         # input image batch
         self.inputImgs = tf.placeholder(tf.float32, shape=(None, Model.img_size[0], Model.img_size[1]))
@@ -87,7 +86,7 @@ class Model:
             kernel = tf.Variable(
                 tf.truncated_normal([kernelVals[i], kernelVals[i], featureVals[i], featureVals[i + 1]], stddev=0.1))
             conv = tf.nn.conv2d(pool, kernel, padding='SAME', strides=(1, 1, 1, 1))
-            conv_norm = tf.layers.batch_normalization(conv, training=self.is_train)
+            conv_norm = tf.layers.batch_normalization(conv)
             relu = tf.nn.relu(conv_norm)
             pool = tf.nn.max_pool(relu, (1, poolVals[i][0], poolVals[i][1], 1),
                                   (1, strideVals[i][0], strideVals[i][1], 1), 'VALID')
@@ -153,8 +152,7 @@ class Model:
         numBatchElements = len(batch.imgs)
         evalRnnOutput = calcProbability
         evalList = [self.decoder] + ([self.ctcIn3dTBC] if evalRnnOutput else [])
-        feedDict = {self.inputImgs: batch.imgs, self.seqLen: [Model.max_text_length] * numBatchElements,
-                    self.is_train: False}
+        feedDict = {self.inputImgs: batch.imgs, self.seqLen: [Model.max_text_length] * numBatchElements}
         evalRes = self.sess.run(evalList, feedDict)
         decoded = evalRes[0]
         texts = self.decoderOutputToText(decoded, numBatchElements)
@@ -166,7 +164,7 @@ class Model:
             ctcInput = evalRes[1]
             evalList = self.lossPerElement
             feedDict = {self.savedCtcInput: ctcInput, self.gtTexts: sparse,
-                        self.seqLen: [Model.max_text_length] * numBatchElements, self.is_train: False}
+                        self.seqLen: [Model.max_text_length] * numBatchElements}
             lossVals = self.sess.run(evalList, feedDict)
             probs = np.exp(-lossVals)
 
