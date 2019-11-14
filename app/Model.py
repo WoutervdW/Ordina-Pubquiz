@@ -136,27 +136,27 @@ class Model:
         """
 
         # decode, optionally save RNN output
-        numBatchElements = len(batch.image)
-        evalList = [self.decoder] + [self.ctc_in3d_tbc]
-        feedDict = {self.input_image: batch.image, self.seq_len: [Model.max_text_length] * numBatchElements}
-        evalRes = self.sess.run(evalList, feedDict)
-        decoded = evalRes[0]
-        texts = self.decoderOutputToText(decoded, numBatchElements)
+        num_batch_elements = len(batch.image)
+        eval_list = [self.decoder] + [self.ctc_in3d_tbc]
+        feed_dict = {self.input_image: batch.image, self.seq_len: [Model.max_text_length] * num_batch_elements}
+        eval_res = self.sess.run(eval_list, feed_dict)
+        decoded = eval_res[0]
+        texts = self.decoder_output_to_text(decoded, num_batch_elements)
 
         # feed RNN output and recognized text into CTC loss to compute labeling probability
-        probs = None
+        probability = None
         if calc_probability:
             sparse = self.toSparse(texts)
-            ctcInput = evalRes[1]
-            evalList = self.loss_per_element
-            feedDict = {self.saved_ctc_input: ctcInput, self.get_texts: sparse,
-                        self.seq_len: [Model.max_text_length] * numBatchElements}
-            lossVals = self.sess.run(evalList, feedDict)
-            probs = np.exp(-lossVals)
+            ctc_input = eval_res[1]
+            eval_list = self.loss_per_element
+            feed_dict = {self.saved_ctc_input: ctc_input, self.get_texts: sparse,
+                         self.seq_len: [Model.max_text_length] * num_batch_elements}
+            loss_values = self.sess.run(eval_list, feed_dict)
+            probability = np.exp(-loss_values)
 
-        return (texts, probs)
+        return texts, probability
 
-    def decoderOutputToText(self, ctcOutput, batchSize):
+    def decoder_output_to_text(self, ctcOutput, batchSize):
         """
         extract texts from output of CTC decoder
         """
@@ -198,4 +198,3 @@ class Model:
                 values.append(label)
 
         return (indices, values, shape)
-
