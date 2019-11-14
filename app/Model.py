@@ -3,13 +3,6 @@ import numpy as np
 import sys
 
 
-# TODO Geen idee wat deze types zijn, uitzoeken wat het zijn en de beste kiezen.
-class DecoderType:
-    BestPath = 0
-    # BeamSearch = 1
-    # WordBeamSearch = 2
-
-
 def setup_tf():
     """
     initialize tensorflow
@@ -27,6 +20,13 @@ def setup_tf():
     return sess, saver
 
 
+# TODO Geen idee wat deze types zijn, uitzoeken wat het zijn en de beste kiezen.
+class DecoderType:
+    BestPath = 0
+    # BeamSearch = 1
+    # WordBeamSearch = 2
+
+
 class Model:
     """
     minimalistic TF model for HTR
@@ -41,8 +41,6 @@ class Model:
         init model: add CNN, RNN and CTC and initialize TF
         """
         self.char_list = char_list
-        # TODO check decodertypes.
-        self.decoderType = DecoderType.BestPath
 
         # input image batch
         self.input_image = tf.placeholder(tf.float32, shape=(None, Model.img_size[0], Model.img_size[1]))
@@ -52,13 +50,6 @@ class Model:
         self.setupCNN()
         self.setupRNN()
         self.setupCTC()
-
-        # setup optimizer to train NN
-        self.batchesTrained = 0
-        self.learningRate = tf.placeholder(tf.float32, shape=[])
-        self.update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-        with tf.control_dependencies(self.update_ops):
-            self.optimizer = tf.train.RMSPropOptimizer(self.learningRate).minimize(self.loss)
 
         # initialize TF
         (self.sess, self.saver) = setup_tf()
