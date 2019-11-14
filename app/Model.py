@@ -47,14 +47,14 @@ class Model:
 
         # setup CNN, RNN and CTC
         # TODO gebruiken we al deze dingen? Kijken of dingen weg kunnen op basis van wat we gebruiken.
-        self.setupCNN()
-        self.setupRNN()
-        self.setupCTC()
+        self.setup_cnn()
+        self.setup_rnn()
+        self.setup_ctc()
 
         # initialize TF
         (self.sess, self.saver) = setup_tf()
 
-    def setupCNN(self):
+    def setup_cnn(self):
         """
         create CNN layers and return output of these layers
         """
@@ -79,7 +79,7 @@ class Model:
 
         self.cnnOut4d = pool
 
-    def setupRNN(self):
+    def setup_rnn(self):
         """
         create RNN layers and return output of these layers
         """
@@ -104,7 +104,7 @@ class Model:
         kernel = tf.Variable(tf.truncated_normal([1, 1, numHidden * 2, len(self.char_list) + 1], stddev=0.1))
         self.rnnOut3d = tf.squeeze(tf.nn.atrous_conv2d(value=concat, filters=kernel, rate=1, padding='SAME'), axis=[2])
 
-    def setupCTC(self):
+    def setup_ctc(self):
         """
         create CTC loss and decoder and return them
         """
