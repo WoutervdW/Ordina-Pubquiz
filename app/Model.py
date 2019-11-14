@@ -47,9 +47,9 @@ class Model:
 
         # setup CNN, RNN and CTC
         # TODO gebruiken we al deze dingen? Kijken of dingen weg kunnen op basis van wat we gebruiken.
-        self.setup_cnn()
-        self.setup_rnn()
-        self.setup_ctc()
+        cnn_out4d = self.setup_cnn()
+        rnn_out3d = self.setup_rnn(cnn_out4d)
+        self.setup_ctc(rnn_out3d)
 
         # initialize TF
         (self.sess, self.saver) = setup_tf()
@@ -58,7 +58,7 @@ class Model:
         """
         create CNN layers and return output of these layers
         """
-        cnnIn4d = tf.expand_dims(input=self.input_image, axis=3)
+        cnn_in4d = tf.expand_dims(input=self.input_image, axis=3)
 
         # list of parameters for the layers
         # TODO zijn dit de paramaters die we gaan gebruiken?
@@ -68,7 +68,7 @@ class Model:
         num_layers = len(stride_vals)
 
         # create layers
-        pool = cnnIn4d  # input to first CNN layer
+        pool = cnn_in4d  # input to first CNN layer
         for i in range(num_layers):
             kernel = tf.Variable(
                 tf.truncated_normal([kernel_vals[i], kernel_vals[i], feature_vals[i], feature_vals[i + 1]], stddev=0.1))
@@ -78,67 +78,67 @@ class Model:
             pool = tf.nn.max_pool(relu, (1, poolVals[i][0], poolVals[i][1], 1),
                                   (1, stride_vals[i][0], stride_vals[i][1], 1), 'VALID')
 
-        self.cnnOut4d = pool
+        return pool
 
-    def setup_rnn(self):
+    def setup_rnn(self, cnn_out4d):
         """
         create RNN layers and return output of these layers
         """
-        rnnIn3d = tf.squeeze(self.cnnOut4d, axis=[2])
+        rnn_in3d = tf.squeeze(cnn_out4d, axis=[2])
 
         # basic cells which is used to build RNN
-        numHidden = 256
-        cells = [tf.contrib.rnn.LSTMCell(num_units=numHidden, state_is_tuple=True) for _ in range(2)]  # 2 layers
+        num_hidden = 256
+        cells = [tf.contrib.rnn.LSTMCell(num_units=num_hidden, state_is_tuple=True) for _ in range(2)]  # 2 layers
 
         # stack basic cells
         stacked = tf.contrib.rnn.MultiRNNCell(cells, state_is_tuple=True)
 
         # bidirectional RNN
         # BxTxF -> BxTx2H
-        ((fw, bw), _) = tf.nn.bidirectional_dynamic_rnn(cell_fw=stacked, cell_bw=stacked, inputs=rnnIn3d,
-                                                        dtype=rnnIn3d.dtype)
+        ((fw, bw), _) = tf.nn.bidirectional_dynamic_rnn(cell_fw=stacked, cell_bw=stacked, inputs=rnn_in3d,
+                                                        dtype=rnn_in3d.dtype)
 
         # BxTxH + BxTxH -> BxTx2H -> BxTx1X2H
         concat = tf.expand_dims(tf.concat([fw, bw], 2), 2)
 
         # project output to chars (including blank): BxTx1x2H -> BxTx1xC -> BxTxC
-        kernel = tf.Variable(tf.truncated_normal([1, 1, numHidden * 2, len(self.char_list) + 1], stddev=0.1))
-        self.rnnOut3d = tf.squeeze(tf.nn.atrous_conv2d(value=concat, filters=kernel, rate=1, padding='SAME'), axis=[2])
+        kernel = tf.Variable(tf.truncated_normal([1, 1, num_hidden * 2, len(self.char_list) + 1], stddev=0.1))
+        return tf.squeeze(tf.nn.atrous_conv2d(value=concat, filters=kernel, rate=1, padding='SAME'), axis=[2])
 
-    def setup_ctc(self):
+    def setup_ctc(self, rnn_out3d):
         """
         create CTC loss and decoder and return them
         """
         # BxTxC -> TxBxC
-        self.ctcIn3dTBC = tf.transpose(self.rnnOut3d, [1, 0, 2])
+        self.ctc_in3d_tbc = tf.transpose(rnn_out3d, [1, 0, 2])
         # ground truth text as sparse tensor
-        self.gtTexts = tf.SparseTensor(tf.placeholder(tf.int64, shape=[None, 2]), tf.placeholder(tf.int32, [None]),
-                                       tf.placeholder(tf.int64, [2]))
+        self.get_texts = tf.SparseTensor(tf.placeholder(tf.int64, shape=[None, 2]), tf.placeholder(tf.int32, [None]),
+                                         tf.placeholder(tf.int64, [2]))
 
         # calc loss for batch
-        self.seqLen = tf.placeholder(tf.int32, [None])
+        self.seq_len = tf.placeholder(tf.int32, [None])
         self.loss = tf.reduce_mean(
-            tf.nn.ctc_loss(labels=self.gtTexts, inputs=self.ctcIn3dTBC, sequence_length=self.seqLen,
+            tf.nn.ctc_loss(labels=self.get_texts, inputs=self.ctc_in3d_tbc, sequence_length=self.seq_len,
                            ctc_merge_repeated=True))
 
         # calc loss for each element to compute label probability
-        self.savedCtcInput = tf.placeholder(tf.float32, shape=[Model.max_text_length, None, len(self.char_list) + 1])
-        self.lossPerElement = tf.nn.ctc_loss(labels=self.gtTexts, inputs=self.savedCtcInput,
-                                             sequence_length=self.seqLen, ctc_merge_repeated=True)
+        self.saved_ctc_input = tf.placeholder(tf.float32, shape=[Model.max_text_length, None, len(self.char_list) + 1])
+        self.loss_per_element = tf.nn.ctc_loss(labels=self.get_texts, inputs=self.saved_ctc_input,
+                                               sequence_length=self.seq_len, ctc_merge_repeated=True)
 
         # decoder: either best path decoding or beam search decoding
         # TODO decodertypes weggehaald.
-        self.decoder = tf.nn.ctc_greedy_decoder(inputs=self.ctcIn3dTBC, sequence_length=self.seqLen)
+        self.decoder = tf.nn.ctc_greedy_decoder(inputs=self.ctc_in3d_tbc, sequence_length=self.seq_len)
 
-    def inferBatch(self, batch, calc_probability=False):
+    def infer_batch(self, batch, calc_probability=False):
         """
         feed a batch into the NN to recognize the texts
         """
 
         # decode, optionally save RNN output
         numBatchElements = len(batch.image)
-        evalList = [self.decoder] + [self.ctcIn3dTBC]
-        feedDict = {self.input_image: batch.image, self.seqLen: [Model.max_text_length] * numBatchElements}
+        evalList = [self.decoder] + [self.ctc_in3d_tbc]
+        feedDict = {self.input_image: batch.image, self.seq_len: [Model.max_text_length] * numBatchElements}
         evalRes = self.sess.run(evalList, feedDict)
         decoded = evalRes[0]
         texts = self.decoderOutputToText(decoded, numBatchElements)
@@ -148,9 +148,9 @@ class Model:
         if calc_probability:
             sparse = self.toSparse(texts)
             ctcInput = evalRes[1]
-            evalList = self.lossPerElement
-            feedDict = {self.savedCtcInput: ctcInput, self.gtTexts: sparse,
-                        self.seqLen: [Model.max_text_length] * numBatchElements}
+            evalList = self.loss_per_element
+            feedDict = {self.saved_ctc_input: ctcInput, self.get_texts: sparse,
+                        self.seq_len: [Model.max_text_length] * numBatchElements}
             lossVals = self.sess.run(evalList, feedDict)
             probs = np.exp(-lossVals)
 
