@@ -62,6 +62,7 @@ class Model:
 
         # list of parameters for the layers
         # TODO zijn dit de paramaters die we gaan gebruiken?
+        # TODO Ik heb geprobeerd ze aan te passen, maar je kunt ze niet aanpassen zonder dat het programma crasht
         kernel_vals = [5, 5, 3, 3, 3]
         feature_vals = [1, 32, 64, 128, 128, 256]
         stride_vals = poolVals = [(2, 2), (2, 2), (1, 2), (1, 2), (1, 2)]

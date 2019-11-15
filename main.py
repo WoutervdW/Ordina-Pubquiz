@@ -4,6 +4,7 @@ from app.Model import DecoderType
 from app.SamplePreprocessor import preprocess
 from app.DataLoader import Batch
 import cv2
+import argparse
 
 
 def infer(_model, fn_img):
@@ -19,8 +20,18 @@ def infer(_model, fn_img):
 
 if __name__ == "__main__":
     print("De officiele Ordina pub-quiz antwoord vinder")
-    image_to_read = 'data/Sander.png'
-
     model = Model(open('model/charList.txt').read())
-    infer(model, image_to_read)
+
+    image_to_read = ['test-images/handgeschreven_thick.png']
+    # A simple example of how we could possibly use arguments to determine what image is tested
+    # TODO make it better.
+    for eachArg in sys.argv:
+        image_to_read.append(eachArg)
+
+    for image in image_to_read:
+        infer(model, image)
+
+    # # After the model is loaded we can very quickly load another image.
+    # image_to_read_2 = 'test-images/tekst_thick.png'
+    # infer(model, image_to_read_2)
 

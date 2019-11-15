@@ -37,6 +37,6 @@ def preprocess(img, imgSize, dataAugmentation=False):
     m = m[0][0]
     s = s[0][0]
     img = img - m
-    img = img / s if s> 0 else img
+    img = img / s if s > 0 else img
     return img
 
