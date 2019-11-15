@@ -19,7 +19,7 @@ def infer(_model, fn_img):
 
 if __name__ == "__main__":
     print("De officiele Ordina pub-quiz antwoord vinder")
-    image_to_read = 'data/test.png'
+    image_to_read = 'data/Sander.png'
 
     model = Model(open('model/charList.txt').read())
     infer(model, image_to_read)

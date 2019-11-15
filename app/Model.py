@@ -146,7 +146,7 @@ class Model:
         # feed RNN output and recognized text into CTC loss to compute labeling probability
         probability = None
         if calc_probability:
-            sparse = self.toSparse(texts)
+            sparse = self.to_sparse(texts)
             ctc_input = eval_res[1]
             eval_list = self.loss_per_element
             feed_dict = {self.saved_ctc_input: ctc_input, self.get_texts: sparse,
@@ -162,7 +162,7 @@ class Model:
         """
 
         # contains string of labels for each batch element
-        encodedLabelStrs = [[] for i in range(batchSize)]
+        encoded_label_strs = [[] for i in range(batchSize)]
 
         # TODO wat decodertypes weggehaald. nog wel kijken of andere decodertypes beter resultaat geven.
         # ctc returns tuple, first element is SparseTensor
@@ -171,13 +171,13 @@ class Model:
         # go over all indices and save mapping: batch -> values
         for (idx, idx2d) in enumerate(decoded.indices):
             label = decoded.values[idx]
-            batchElement = idx2d[0]  # index according to [b,t]
-            encodedLabelStrs[batchElement].append(label)
+            batch_element = idx2d[0]  # index according to [b,t]
+            encoded_label_strs[batch_element].append(label)
 
         # map labels to chars for all batch elements
-        return [str().join([self.char_list[c] for c in labelStr]) for labelStr in encodedLabelStrs]
+        return [str().join([self.char_list[c] for c in labelStr]) for labelStr in encoded_label_strs]
 
-    def toSparse(self, texts=None):
+    def to_sparse(self, texts=None):
         """
         put ground truth texts into sparse tensor for ctc_loss
         """
@@ -186,15 +186,15 @@ class Model:
         shape = [len(texts), 0]  # last entry must be max(labelList[i])
 
         # go over all texts
-        for (batchElement, text) in enumerate(texts):
+        for (batch_element, text) in enumerate(texts):
             # convert to string of label (i.e. class-ids)
-            labelStr = [self.char_list.index(c) for c in text]
+            label_string = [self.char_list.index(c) for c in text]
             # sparse tensor must have size of max. label-string
-            if len(labelStr) > shape[1]:
-                shape[1] = len(labelStr)
+            if len(label_string) > shape[1]:
+                shape[1] = len(label_string)
             # put each label into sparse tensor
-            for (i, label) in enumerate(labelStr):
-                indices.append([batchElement, i])
+            for (i, label) in enumerate(label_string):
+                indices.append([batch_element, i])
                 values.append(label)
 
-        return (indices, values, shape)
+        return indices, values, shape
