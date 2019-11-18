@@ -1,9 +1,0 @@
--pyTesseract (https://pypi.org/project/pytesseract/):
-	-state-of-the-art OCR for printed text
-	-makkelijk aan te roepen via python
-
--simpleHTR (https://github.com/githubharald/SimpleHTR):
-	-implementatie in TensorFlow van neuraal netwerk om karakters in losse handgeschreven woorden te herkennen.
-
--LineHTR (https://github.com/lamhoangtung/LineHTR):
-	-Versie van simpleHTR voor gehele regels.

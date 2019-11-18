@@ -126,3 +126,15 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/pycharm,windows
+
+### SimpleHTR ###
+data/words/
+data/words.txt
+src/__pycache__/
+model/checkpoint
+model/snapshot-*
+notes/
+*.so
+*.pyc
+.idea/
+dump/
