@@ -14,16 +14,16 @@ def get_score(answers):
     score = 0
     correct_answers, categories = read_correct_answers()
 
-    for answer, correct_answer_list, category in zip(answers, correct_answers, categories):
+    for answer_list, correct_answer_list, category in zip(answers, correct_answers, categories):
         if category == "standard":
-            score += score_standard(answer, correct_answer_list)
+            score += score_standard(answer_list, correct_answer_list)
         elif category == "music":
             # TODO: error handling for wrong(ly formatted) answers
-            score += score_both_correct([answer[0], answer[1]], [correct_answer_list[0], correct_answer_list[1]])
-            score += score_standard([answer[2]], [correct_answer_list[2]])
+            score += score_both_correct([answer_list[0], answer_list[1]], [correct_answer_list[0], correct_answer_list[1]])
+            score += score_standard([answer_list[2]], [correct_answer_list[2]])
         elif category == "photo":
-            score += score_standard([answer[0]])
-            score += score_standard([answer[1]])
+            score += score_standard([answer_list[0]], [correct_answer_list[0]])
+            score += score_standard([answer_list[1]], [correct_answer_list[1]])
 
     return score
 
