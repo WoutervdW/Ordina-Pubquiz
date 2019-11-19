@@ -11,4 +11,3 @@ pages = convert_from_path("../../test-images/template_example/scan1.pdf", 500)
 for page in pages:
     page.save('scan1_image.png', 'PNG')
 
-

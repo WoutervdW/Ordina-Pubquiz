@@ -16,3 +16,7 @@
 	- https://www.researchgate.net/publication/222568946_Handwritten_document_image_segmentation_into_text_lines_and_words
 
 - Word segmentation:
+    implementation of the paper
+    Scale space technique for word segmentation proposed by R. Manmatha: http://ciir.cs.umass.edu/pubfiles/mm-27.pdf
+    used the WordSegmentation project by user githubharald which implemented this paper in a python project.
+    https://github.com/githubharald/WordSegmentation/blob/master/src/WordSegmentation.py
