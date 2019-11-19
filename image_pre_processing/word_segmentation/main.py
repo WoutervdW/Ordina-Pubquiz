@@ -1,10 +1,18 @@
+"""
+implementation of the paper
+Scale space technique for word segmentation proposed by R. Manmatha: http://ciir.cs.umass.edu/pubfiles/mm-27.pdf
+used the WordSegmentation project by user githubharald which implemented this paper in a python project.
+https://github.com/githubharald/WordSegmentation/blob/master/src/WordSegmentation.py
+"""
 import os
 import cv2
 from word_segmentation import word_segmentation, prepare_img
 
 
 def main():
-    """reads images from data/ and outputs the word-segmentation to out/"""
+    """
+    reads images from data/ and outputs the word-segmentation to out/
+    """
 
     input_folder = "data/"
     output_folder = "out/"
@@ -15,6 +23,8 @@ def main():
         print('Segmenting words of sample %s' % f)
 
         # read image, prepare it by resizing it to fixed height and converting it to grayscale
+        # TODO The input images seem to be pre processed with a basic binary contrast
+        #  (so black or white and no graytones) see if this is correct and if it will have an effect on our images
         img = prepare_img(cv2.imread(input_folder + '%s' % f), 50)
 
         # execute segmentation with given parameters
@@ -22,6 +32,7 @@ def main():
         # -sigma: standard deviation of Gaussian function used for filter kernel
         # -theta: approximated width/height ratio of words, filter function is distorted by this factor
         # - min_area: ignore word candidates smaller than specified area
+        # TODO test out the theta and min_area parameter changes if the results are not good.
         res = word_segmentation(img, kernel_size=25, sigma=11, theta=7, min_area=100)
 
         # write output to 'out/inputFileName' directory
@@ -44,3 +55,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

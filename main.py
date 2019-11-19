@@ -1,3 +1,9 @@
+"""
+A neural network that reads handwriting from given images.
+Based on the project :
+'build a handwritten text recognition system'
+https://towardsdatascience.com/build-a-handwritten-text-recognition-system-using-tensorflow-2326a3487cd5
+"""
 import sys
 from app.Model import Model
 from app.Model import DecoderType

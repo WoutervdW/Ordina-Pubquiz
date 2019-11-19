@@ -1,3 +1,10 @@
+"""
+A simple improvement for the text recognition is to have the input text always be relatively the same thickness.
+This is because the neural network is trained on rather thick lines
+https://towardsdatascience.com/faq-build-a-handwritten-text-recognition-system-using-tensorflow-27648fb18519
+
+A simple example of how you can increase the contrast of a given image.
+"""
 import numpy as np
 import cv2
 

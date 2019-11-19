@@ -5,7 +5,8 @@ import numpy as np
 
 
 def word_segmentation(img, kernel_size=25, sigma=11, theta=7, min_area=0):
-    """Scale space technique for word segmentation proposed by R. Manmatha: http://ciir.cs.umass.edu/pubfiles/mm-27.pdf
+    """
+    Scale space technique for word segmentation proposed by R. Manmatha: http://ciir.cs.umass.edu/pubfiles/mm-27.pdf
 
     Args:
         img: grayscale uint8 image of the text-line to be segmented.
@@ -25,6 +26,7 @@ def word_segmentation(img, kernel_size=25, sigma=11, theta=7, min_area=0):
     img_threshold = 255 - img_threshold
 
     # find connected components. OpenCV: return type differs between OpenCV2 and 3
+    # TODO see which version applies and check if the if else construction can be removed.
     if cv2.__version__.startswith('3.'):
         (_, components, _) = cv2.findContours(img_threshold, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     else:
@@ -47,7 +49,10 @@ def word_segmentation(img, kernel_size=25, sigma=11, theta=7, min_area=0):
 
 
 def prepare_img(img, height):
-    """convert given image to grayscale image (if needed) and resize to desired height"""
+    """
+    convert given image to grayscale image (if needed) and resize to desired height
+    """
+    # TODO check if this is enough, the images seem to be very clear maybe more pre processing is needed.
     assert img.ndim in (2, 3)
     if img.ndim == 3:
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -57,7 +62,9 @@ def prepare_img(img, height):
 
 
 def create_kernel(kernel_size, sigma, theta):
-    """create anisotropic filter kernel according to given parameters"""
+    """
+    create anisotropic filter kernel according to given parameters
+    """
     assert kernel_size % 2  # must be odd size
     half_size = kernel_size // 2
 
