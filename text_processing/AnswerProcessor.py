@@ -14,30 +14,39 @@ def get_score(answers):
     score = 0
     correct_answers, categories = read_correct_answers()
 
-    for answers_list, correct_answers_list in zip(answers, correct_answers):
-        score += score_answer(answers_list, correct_answers_list)
+    for answer, correct_answer_list, category in zip(answers, correct_answers, categories):
+        if category == "standard":
+            score += score_standard(answer, correct_answer_list)
+        elif category == "music":
+            # TODO: error handling for wrong(ly formatted) answers
+            score += score_both_correct([answer[0], answer[1]], [correct_answer_list[0], correct_answer_list[1]])
+            score += score_standard([answer[2]], [correct_answer_list[2]])
+        elif category == "photo":
+            score += score_standard([answer[0]])
+            score += score_standard([answer[1]])
 
     return score
 
 
-def score_answer(answers_list, correct_answers_list):
+def score_standard(answer, correct_answer_list):
     """
-
-    :param answers_list: list of answers to the question (usually one element)
-    :param correct_answers_list: list of possible correct answers
-    :return: score for the question
+    Score a standard question. If the answer is correct, the participant gets 1 point.
+    :param answer:
+    :param correct_answer_list:
+    :return:
     """
-
-    # TODO: Make answer checking robust
-    for correct_answer in correct_answers_list:
-        pass
-        # ratio = fuzz.ratio(answers_list.lower(), correct_answer.lower())
-        # partial_ratio = fuzz.partial_ratio(answer.lower(), correct_answer.lower())
-        # token_sort_ratio = fuzz.token_sort_ratio(answer, correct_answer)
-        # if token_sort_ratio > 90:
-        #     return 1
-
+    for correct_answer in correct_answer_list:
+        if check_strings(answer, correct_answer):
+            return 1
     return 0
+
+
+def score_both_correct(answer, correct_answer_list):
+    pass
+
+
+def check_strings(answer, correct_answer):
+    return False
 
 
 def read_correct_answers():
@@ -45,9 +54,9 @@ def read_correct_answers():
 
     :return:
     """
-    # TODO: read correct answers from text file
+    # TODO: read correct answers from text file / database
     correct_answers = [["Mr. Bean", "Shrek"], ["400 keer"], ["Mini"], ["Ronnie Flex", "Frenna", "Energie"]]
-    categories = ["foto", "algemeen", "filmtv", "muziek"]
+    categories = ["photo", "standard", "standard", "music"]
     return correct_answers, categories
 
 
