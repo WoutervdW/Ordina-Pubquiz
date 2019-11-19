@@ -11,6 +11,8 @@ Markdown==3.1.1
 numpy==1.17.4
 opencv-python==4.1.1.26
 opt-einsum==3.1.0
+pdf2image==1.10.0
+Pillow==6.2.1
 protobuf==3.10.0
 six==1.13.0
 tensorboard==1.15.0
