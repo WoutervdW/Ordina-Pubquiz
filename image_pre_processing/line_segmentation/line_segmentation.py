@@ -24,7 +24,9 @@ import operator
 
 
 def crop_and_warp(img, crop_rect):
-    """Crops and warps a rectangular section from an image into a square of similar size."""
+    """
+    Crops and warps a rectangular section from an image
+    """
 
     # Rectangle described by top left, top right, bottom right and bottom left points
     top_left, top_right, bottom_right, bottom_left = crop_rect[0], crop_rect[1], crop_rect[2], crop_rect[3]
@@ -32,20 +34,20 @@ def crop_and_warp(img, crop_rect):
     # Explicitly set the data type to float32 or `getPerspectiveTransform` will throw an error
     src = np.array([top_left, top_right, bottom_right, bottom_left], dtype='float32')
 
-    maxWidth = max([distance_between(top_right, top_left), distance_between(bottom_right, bottom_left)])
-    maxHeight = max([distance_between(bottom_left, top_left), distance_between(bottom_right, top_right)])
+    max_width = max([distance_between(top_right, top_left), distance_between(bottom_right, bottom_left)])
+    max_height = max([distance_between(bottom_left, top_left), distance_between(bottom_right, top_right)])
 
     dst = np.array([
         [0, 0],
-        [maxWidth - 1, 0],
-        [maxWidth - 1, maxHeight - 1],
-        [0, maxHeight - 1]], dtype="float32")
+        [max_width - 1, 0],
+        [max_width - 1, max_height - 1],
+        [0, max_height - 1]], dtype="float32")
 
     # compute the perspective transform matrix and then apply it
     m = cv2.getPerspectiveTransform(src, dst)
     # Even though we assume that the image is not slanted in any way, or if it is slanted, very little
     # We will still warp the line to be a straight rectangle.
-    warped = cv2.warpPerspective(img, m, (int(maxWidth), int(maxHeight)))
+    warped = cv2.warpPerspective(img, m, (int(max_width), int(max_height)))
 
     return warped
 
@@ -73,9 +75,11 @@ def show_image(img):
 
 
 def pre_process_image(img, skip_dilate=False):
-    # If the lines are not good yet we can use these methods
-    # https: // docs.opencv.org / 3.0 - beta / doc / py_tutorials / py_imgproc / py_morphological_ops / py_morphological_ops.html#dilation
-    """Uses a blurring function, adaptive thresholding and dilation to expose the main features of an image."""
+    """
+    The image can be pre processed to improve the quality of the line segmentation.
+    The lines can be made thicker by adding contract and noise can be removed.
+    https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_morphological_ops/py_morphological_ops.html#dilation
+    """
     # TODO play around with these variables for better results it should remove noise
     proc = cv2.GaussianBlur(img.copy(), (9, 9), 0)
     proc = cv2.adaptiveThreshold(proc, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
@@ -90,9 +94,7 @@ def pre_process_image(img, skip_dilate=False):
 
 def distance_between(p1, p2):
     """Returns the scalar distance between two points"""
-    a = p2[0] - p1[0]
-    b = p2[1] - p1[1]
-    return np.sqrt((a ** 2) + (b ** 2))
+    return np.sqrt(((p2[0] - p1[0]) ** 2) + ((p2[1] - p1[1]) ** 2))
 
 
 def line_segmentation(image_name):
@@ -117,7 +119,6 @@ def line_segmentation(image_name):
     index = 0
     for l in lines:
         corners = find_corners_contour(l)
-        # display_points(processed, corners)
         cropped = crop_and_warp(img, corners)
         cv2.imwrite(image_name + "_line_" + str(index) + ".png", cropped)
         index += 1
