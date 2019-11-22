@@ -70,6 +70,7 @@ def process_sheet(answer_sheet):
         # TODO test out the theta and min_area parameter changes if the results are not good.
         res = word_segmentation(line, kernel_size=25, sigma=11, theta=7, min_area=100)
         print('Segmented into %d words' % len(res))
+        # TODO recognize the individual words here and store them in an array to be passed to the answer checker.
         print("for now just save everything to images")
 
         # iterate over all segmented words

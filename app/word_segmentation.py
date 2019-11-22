@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 
 
-def word_segmentation(img, kernel_size=251, sigma=11, theta=7, min_area=0):
+def word_segmentation(img, kernel_size=25, sigma=11, theta=7, min_area=0):
     """
     Scale space technique for word segmentation proposed by R. Manmatha: http://ciir.cs.umass.edu/pubfiles/mm-27.pdf
 
