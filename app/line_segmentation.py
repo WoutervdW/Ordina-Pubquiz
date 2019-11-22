@@ -105,29 +105,32 @@ def distance_between(p1, p2):
 
 
 def line_segmentation(img):
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    show_image(img)
+    # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # show_image(img)
     processed = pre_process_image(img, False)
 
     contours, _ = cv2.findContours(processed.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
-    lines = []
+    line_section = []
     # We know the area of the lines will always be close to the same depending on how much the image is slanted.
     # Otherwise all the really small boundaries will be taken as well.
     for c in contours:
         area = cv2.contourArea(c)
         if 100000 < area < 1000000:
-            lines.append(c)
+            line_section.append(c)
 
     # TODO now the image is saved with a index, maybe find some better way to define the lines.
     # TODO The lines are saved from bottom to top. It should probably be passed from top to bottom.
-    index = 0
-    for l in lines:
-        corners = find_corners_contour(l)
+    lines = []
+    for line in line_section:
+        corners = find_corners_contour(line)
         cropped = crop_and_warp(img, corners)
+        # Make sure it is an actual line
         if cropped is not None:
-            show_image(cropped)
+            lines.append(cropped)
+            # show_image(cropped)
     #         cv2.imwrite("lines/" + image_name + "_line_" + str(index) + ".png", cropped)
     #         index += 1
     # print('done all ' + str(index) + ' lines')
+    return lines
 

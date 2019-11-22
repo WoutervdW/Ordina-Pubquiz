@@ -6,6 +6,8 @@ https://towardsdatascience.com/build-a-handwritten-text-recognition-system-using
 """
 import app
 
+# We should be able to read all the files in a certain folder
+# os.listdir(input_folder) something like this.
 pubquiz_anser_sheets = ['scan1.pdf']
 app.run(pubquiz_anser_sheets)
 

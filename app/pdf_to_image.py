@@ -1,5 +1,6 @@
 from pdf2image import convert_from_path
 import numpy as np
+import cv2
 
 
 def convert_pdf_to_image(path):
@@ -9,7 +10,7 @@ def convert_pdf_to_image(path):
 
     # We assume there is only 1 scanned image at the time.
     # The image is in PIL format, we will convert it to opencv format
-    open_cv_image = np.array(pages[0])
-    # cv2.cvtColor(numpy.array(pil_image), cv2.COLOR_RGB2BGR)
-    return open_cv_image
+    # open_cv_image = np.array(pages[0])
+    # return open_cv_image
+    return cv2.cvtColor(np.array(pages[0]), cv2.COLOR_RGB2BGR)
 
