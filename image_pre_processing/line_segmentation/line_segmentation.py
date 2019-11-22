@@ -37,19 +37,26 @@ def crop_and_warp(img, crop_rect):
     max_width = max([distance_between(top_right, top_left), distance_between(bottom_right, bottom_left)])
     max_height = max([distance_between(bottom_left, top_left), distance_between(bottom_right, top_right)])
 
-    dst = np.array([
-        [0, 0],
-        [max_width - 1, 0],
-        [max_width - 1, max_height - 1],
-        [0, max_height - 1]], dtype="float32")
+    ratio = max_width/max_height
+    # The ratio is an easy indication if it is the line we want or not 10 is a loose bound for that ratio (around 15)
+    # TODO Maybe also find and save the square before it (it holds the question number)
+    # TODO We can determine the question based on when the line is found or based on the number in front of it
+    if ratio > 10:
+        dst = np.array([
+            [0, 0],
+            [max_width - 1, 0],
+            [max_width - 1, max_height - 1],
+            [0, max_height - 1]], dtype="float32")
 
-    # compute the perspective transform matrix and then apply it
-    m = cv2.getPerspectiveTransform(src, dst)
-    # Even though we assume that the image is not slanted in any way, or if it is slanted, very little
-    # We will still warp the line to be a straight rectangle.
-    warped = cv2.warpPerspective(img, m, (int(max_width), int(max_height)))
+        # compute the perspective transform matrix and then apply it
+        m = cv2.getPerspectiveTransform(src, dst)
+        # Even though we assume that the image is not slanted in any way, or if it is slanted, very little
+        # We will still warp the line to be a straight rectangle.
+        warped = cv2.warpPerspective(img, m, (int(max_width), int(max_height)))
 
-    return warped
+        return warped
+    else:
+        return None
 
 
 def find_corners_contour(polygon):
@@ -107,8 +114,7 @@ def line_segmentation(image_name):
 
     lines = []
     # We know the area of the lines will always be close to the same depending on how much the image is slanted.
-    # We can therefore define a (rather loose) bound to find all the lines.
-    # TODO replace this with the ratio check or both, but not just this.
+    # Otherwise all the really small boundaries will be taken as well.
     for c in contours:
         area = cv2.contourArea(c)
         if 100000 < area < 1000000:
@@ -120,11 +126,12 @@ def line_segmentation(image_name):
     for l in lines:
         corners = find_corners_contour(l)
         cropped = crop_and_warp(img, corners)
-        cv2.imwrite(image_name + "_line_" + str(index) + ".png", cropped)
-        index += 1
+        if cropped is not None:
+            cv2.imwrite("lines/" + image_name + "_line_" + str(index) + ".png", cropped)
+            index += 1
     print('done all ' + str(index) + ' lines')
 
 
 if __name__ == "__main__":
-    line_segmentation("scan3_image")
+    line_segmentation("scan2_image")
 
