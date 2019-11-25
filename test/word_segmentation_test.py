@@ -92,4 +92,3 @@ class WordSegmentationTest(unittest.TestCase):
 
         self.assertTrue(scan3_word_test)
 
-

@@ -2,6 +2,8 @@ import unittest
 import os
 import cv2
 from app.line_segmentation import line_segmentation
+# TODO @Sander: remove when done
+from app.line_segmentation_temp import line_segmentation_temp
 
 
 def read_number_of_lines(file_name):
@@ -90,4 +92,11 @@ class LineSegmentationTest(unittest.TestCase):
         path = "test_files/line_files/scan3/"
         ratio_test = read_line_ratios(path)
         self.assertTrue(ratio_test)
+
+    def test_temp(self):
+        file_name = "scan1"
+        answer_sheet_image = cv2.imread("test_files/image_files/" + file_name + "_image_temp.png")
+        image_path = "test_files/line_files/" + file_name + "/"
+        lines = line_segmentation_temp(answer_sheet_image, False, image_path, file_name)
+        print(lines)
 
