@@ -50,7 +50,7 @@ class LineSegmentationTest(unittest.TestCase):
         it should return and we want to test for the specific number of lines.
         """
         line_length = read_number_of_lines("scan1")
-        self.assertEqual(line_length, 20)
+        self.assertEqual(line_length, 19)
 
     def test_image_to_lines_scan2(self):
         line_length = read_number_of_lines("scan2")

@@ -11,7 +11,7 @@ from app.SamplePreprocessor import preprocess
 from app.DataLoader import Batch
 from app.pdf_to_image import convert_pdf_to_image
 from app.line_segmentation import line_segmentation
-from app.word_segmentation import prepare_img, word_segmentation
+from app.word_segmentation import word_segmentation
 import os
 import cv2
 import argparse

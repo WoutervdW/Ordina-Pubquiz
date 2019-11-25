@@ -49,6 +49,7 @@ def word_segmentation(line_image, kernel_size=25, sigma=11, theta=7, min_area=0)
     return sorted(res, key=lambda entry: entry[0][0])
 
 
+# TODO Probably not needed already done. See if this is correct and than remove it.
 def prepare_img(img, height):
     """
     convert given image to grayscale image (if needed) and resize to desired height
