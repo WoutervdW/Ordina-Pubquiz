@@ -48,9 +48,9 @@ def process_sheet(answer_sheet):
     # converts the pdf to the image based on the give path
     answer_sheet_image = convert_pdf_to_image(answer_sheet)
 
-    gray = cv2.cvtColor(answer_sheet_image, cv2.COLOR_BGR2GRAY)
+    # gray = cv2.cvtColor(answer_sheet_image, cv2.COLOR_BGR2GRAY)
     # Now we have the answer sheet in image form and we can move on to the line segmentation
-    lines = line_segmentation(gray)
+    lines = line_segmentation(answer_sheet_image)
 
     output_folder = "out"
     index = 0

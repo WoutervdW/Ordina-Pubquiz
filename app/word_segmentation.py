@@ -1,15 +1,14 @@
 import math
-
 import cv2
 import numpy as np
 
 
-def word_segmentation(img, kernel_size=25, sigma=11, theta=7, min_area=0):
+def word_segmentation(line_image, kernel_size=25, sigma=11, theta=7, min_area=0):
     """
     Scale space technique for word segmentation proposed by R. Manmatha: http://ciir.cs.umass.edu/pubfiles/mm-27.pdf
 
     Args:
-        img: grayscale uint8 image of the text-line to be segmented.
+        line_image: grayscale uint8 image of the text-line to be segmented.
         kernel_size: size of filter kernel, must be an odd integer.
         sigma: standard deviation of Gaussian function used for filter kernel.
         theta: approximated width/height ratio of words, filter function is distorted by this factor.
@@ -18,6 +17,8 @@ def word_segmentation(img, kernel_size=25, sigma=11, theta=7, min_area=0):
     Returns:
         List of tuples. Each tuple contains the bounding box and the image of the segmented word.
     """
+    # Convert image to grayscale
+    img = cv2.cvtColor(line_image, cv2.COLOR_BGR2GRAY)
 
     # apply filter kernel
     kernel = create_kernel(kernel_size, sigma, theta)

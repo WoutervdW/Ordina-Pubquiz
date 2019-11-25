@@ -81,12 +81,13 @@ def show_image(img):
     cv2.destroyAllWindows()
 
 
-def pre_process_image(img, skip_dilate=False):
+def pre_process_image(answer_image, skip_dilate=False):
     """
     The image can be pre processed to improve the quality of the line segmentation.
     The lines can be made thicker by adding contract and noise can be removed.
     https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_morphological_ops/py_morphological_ops.html#dilation
     """
+    img = cv2.cvtColor(answer_image, cv2.COLOR_BGR2GRAY)
     # TODO play around with these variables for better results it should remove noise
     proc = cv2.GaussianBlur(img.copy(), (9, 9), 0)
     proc = cv2.adaptiveThreshold(proc, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
@@ -104,10 +105,8 @@ def distance_between(p1, p2):
     return np.sqrt(((p2[0] - p1[0]) ** 2) + ((p2[1] - p1[1]) ** 2))
 
 
-def line_segmentation(img):
-    # img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # show_image(img)
-    processed = pre_process_image(img, False)
+def line_segmentation(answer_image, save_image=False, image_path="lines/", image_name="scan"):
+    processed = pre_process_image(answer_image, False)
 
     contours, _ = cv2.findContours(processed.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
@@ -122,15 +121,18 @@ def line_segmentation(img):
     # TODO now the image is saved with a index, maybe find some better way to define the lines.
     # TODO The lines are saved from bottom to top. It should probably be passed from top to bottom.
     lines = []
+    index = 0
     for line in line_section:
         corners = find_corners_contour(line)
-        cropped = crop_and_warp(img, corners)
+        # We will use the original image to crop from.
+        cropped = crop_and_warp(answer_image, corners)
         # Make sure it is an actual line
         if cropped is not None:
             lines.append(cropped)
-            # show_image(cropped)
-    #         cv2.imwrite("lines/" + image_name + "_line_" + str(index) + ".png", cropped)
-    #         index += 1
-    # print('done all ' + str(index) + ' lines')
+            index += 1
+            if save_image:
+                # show_image(cropped)
+                cv2.imwrite(image_path + image_name + "_line_" + str(index) + ".png", cropped)
+    print('done all ' + str(index) + ' lines')
     return lines
 
