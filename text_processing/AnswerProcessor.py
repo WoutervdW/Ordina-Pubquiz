@@ -2,14 +2,15 @@
 from fuzzywuzzy import fuzz, process
 
 
-def get_score(answers_per_question):
+def get_score(answers_per_question, all_correct_answers, categories):
     """
     Calculates overall score for the pubquiz for a team's answers to the questions
-    :param answers_per_question: list of answers, each nth answer a list containing the answer(s) to the nth question.
+    :param answers_per_question: for each question, a list of given answers.
+    :param all_correct_answers: for each question, for each answer, a list of possible correct answers.
+    :param categories: for each question, the question category
     :return: score based on No of correct answers
     """
     score = 0
-    all_correct_answers, categories = read_correct_answers_and_categories()
 
     for answers, correct_answer_lists, category in zip(answers_per_question, all_correct_answers, categories):
         # TODO: error handling for wrong(ly formatted) answers
@@ -25,13 +26,14 @@ def get_score(answers_per_question):
         elif category == "music":
             # Grant a point if both artists are correct
             # The first two answers are artists, the first two lists are correct artists
-            score += score_both_correct(answers[0:2], correct_answer_lists[0:2])
+            score += score_both_correct(answers[0:2], correct_answer_lists[0] + correct_answer_lists[1])
 
             # Grant a point if the song name is correct
             # The third answer is the song title
             score += score_standard(answers[2], correct_answer_lists[2])
 
         elif category == "photo":
+            # Grant a point for each recognized character / person in the photo
             score += score_standard(answers[0], correct_answer_lists[0])
             score += score_standard(answers[1], correct_answer_lists[1])
 
@@ -60,6 +62,11 @@ def score_both_correct(answer_list, correct_answer_list):
     return 0
 
 
+def preprocess_string(answer):
+    answer = answer.lower()
+    return answer
+
+
 def compare_string(answer, correct_answer_list):
     """
 
@@ -72,10 +79,12 @@ def compare_string(answer, correct_answer_list):
     # Ratio = fuzz.ratio(Str1.lower(), Str2.lower())
     # Partial_Ratio = fuzz.partial_ratio(Str1.lower(), Str2.lower())
     # Token_Sort_Ratio = fuzz.token_sort_ratio(Str1, Str2)
-
     # ratios = process.extract(answer, correct_answer_list)
 
-    # You can also select the string with the highest matching percentage
+    answer = preprocess_string(answer)
+    correct_answer_list = [preprocess_string(correct_answer) for correct_answer in correct_answer_list]
+    
+    # Select the string with the highest matching percentage
     highest = process.extractOne(answer, correct_answer_list)
     # correct_answer_list.remove(highest[0])
     return highest[1] > 80
@@ -92,7 +101,7 @@ def read_correct_answers_and_categories():
         [["Mr. Bean"], ["Shrek"]],
         [["400 keer", "400 x", "vierhonderd", "four hundred"]],
         [["Mini"]],
-        [["Ronnie Flex"], ["Frenna"], ["Energie"]]
+        [["Ronnie Flex", "ronnie flexx"], ["Frenna", "Freena"], ["Energie"]]
     ]
     categories = [
         "photo",
@@ -109,7 +118,7 @@ if __name__ == "__main__":
         ["Mr Bean", "Shrek"],  # FOTO question
         ["400x"],  # ALGEMEEN question
         ["Mini"],  # FILM & TELEVISIE question
-        ["Ronnie Flex", "Frenna", "Energie"] # MUZIEK question
+        ["Ronnie Flex", "Frenna", "Energie"]  # MUZIEK question
     ]
-
-    print(get_score(given_answers))
+    all_correct_answers, categories = read_correct_answers_and_categories()
+    print(get_score(given_answers, all_correct_answers, categories))
