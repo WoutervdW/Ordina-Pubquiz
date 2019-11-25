@@ -54,7 +54,7 @@ def process_sheet(answer_sheet):
 
     output_folder = "out"
     index = 0
-    # After the line segmentation is done we can find the seperate words
+    # After the line segmentation is done we can find the separate words
     for line in lines:
         # read image, prepare it by resizing it to fixed height and converting it to grayscale
         # TODO The input images seem to be pre processed with a basic binary contrast
