@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+
+<script>
+// define angular interpolationtags as {a a}
+
+angular.module('Application', [])
+    .config(function($interpolateProvider) {
+        $interpolateProvider.startSymbol('{a');
+        $interpolateProvider.endSymbol('a}');
+    });
+</script>
+
+<body ng-app="Application">
+{% extends "base.html" %}
+{% block content%}
+{%for team in teams%}
+    <div><p>Welkom {{team}}</p></div>
+{%endfor%}
+{%endblock%}
+</body>
+
+
+</html>
+
