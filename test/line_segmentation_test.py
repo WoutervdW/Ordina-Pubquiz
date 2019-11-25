@@ -28,6 +28,8 @@ def read_line_ratios(path):
         # We will calculate the ratio of the line given and see if it is close enough to this bound.
         ratios.append([width / height, l])
     ratio_test = True
+    # We assume that the width/height ratio is about 2800/180, so about 15.555 We will test on a rather loose bound.
+    # TODO Change
     for ratio in ratios:
         if not 15 <= ratio[0] <= 16:
             # We test it like this rather than with a list comprehension because we want to print which line fails.
@@ -38,8 +40,8 @@ def read_line_ratios(path):
 
 class LineSegmentationTest(unittest.TestCase):
 
-    # TODO Tests are written with hardcoded scans, which give the same tests with 1 change and different results,
-    #  maybe find a way to make this variable.
+    # TODO Tests are written with hardcoded scans, which give the same tests but
+    #  with 1 change in the and different results for different scans, maybe find a way to make this variable.
     def test_image_to_lines_scan1(self):
         """
         Converts the answer sheet image into separate lines. It reads an image provided by the previous test, in the
