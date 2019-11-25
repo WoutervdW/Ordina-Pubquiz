@@ -49,21 +49,6 @@ def word_segmentation(line_image, kernel_size=25, sigma=11, theta=7, min_area=0)
     return sorted(res, key=lambda entry: entry[0][0])
 
 
-# TODO Probably not needed already done. See if this is correct and than remove it.
-def prepare_img(img, height):
-    """
-    convert given image to grayscale image (if needed) and resize to desired height
-    """
-    # TODO check if this is enough, the images seem to be very clear maybe more pre processing is needed.
-    assert img.ndim in (2, 3)
-    if img.ndim == 3:
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # TODO find our if resizing with a factor is needed.
-    # h = img.shape[0]
-    # factor = height / h
-    return cv2.resize(img, dsize=None, fx=1, fy=1)
-
-
 def create_kernel(kernel_size, sigma, theta):
     """
     create anisotropic filter kernel according to given parameters
