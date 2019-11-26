@@ -1,11 +1,10 @@
 import unittest
-
-from text_processing.AnswerProcessor import get_score
+from text_processing.calculate_score import get_score
 
 
 class AnswerScoringTest(unittest.TestCase):
     correct_answers = [
-        # photo questions
+        # Photo questions
         [["Mr. Bean"], ["Shrek"]],
         [["Justin Bieber"], ["Oprah Winfrey"]],
         [["Leonardo Dicaprio"], ["Sean Penn"]],
@@ -16,7 +15,7 @@ class AnswerScoringTest(unittest.TestCase):
         [["Rihanna"], ["Katy Perry"]],
         [["Arnold Schwarzenegger"], ["Sylvester Stallone"]],
         [["Robert de Niro"], ["Kevin Spacey"]],
-        # Algemeen questions (standard)
+        # General questions (standard)
         [["400 keer", "400 x", "vierhonderd", "four hundred"]],
         [["1980"]],
         [["46", "46m", "46 meter"]],
@@ -27,7 +26,7 @@ class AnswerScoringTest(unittest.TestCase):
         [["Turkije"]],
         [["V"]],
         [["Utrecht"]],
-        # Film & Televisie questions (standard)
+        # Film & Television questions (standard)
         [["Mini"]],
         [["1981"]],
         [["Batman"]],
@@ -37,7 +36,7 @@ class AnswerScoringTest(unittest.TestCase):
         [["Robin"]],
         [["Philadelphia"]],
         [["53"]],
-        [["Baantjes"]],
+        [["Baantjer"]],
         # Music questions
         [["George Michael"], ["Aretha Franklin"], ["I knew you were waiting", "I knew you were waiting for me"]],
         [["Ronnie Flex"], ["Frenna"], ["Energie"]],
@@ -92,7 +91,7 @@ class AnswerScoringTest(unittest.TestCase):
             ["Robin"],
             ["Philadelphia"],
             ["53"],
-            ["Baantjes"],
+            ["Baantjer"],
             # Music questions
             ["George Michael", "Aretha Franklin", "I knew you were waiting"],
             ["Ronnie Flex", "Frenna", "Energie"],
@@ -111,20 +110,64 @@ class AnswerScoringTest(unittest.TestCase):
 
     def test_misspelled_answers(self):
         given_answers = [
-            ["Mr Bean", "Shrek"],  # FOTO question
-            ["400x"],  # ALGEMEEN question
-            ["Mimi"],  # FILM & TELEVISIE question
-            ["Ronny Flex", "Frenna", "Energy"]  # MUZIEK question
+            # photo questions
+            ["Mr Bean", "Shrek"],
+            ["JustinBieber", "Oprah Winfrey"],
+            ["Leonardo Dicaprio", "Sean Penn"],
+            ["Max verstappen"],
+            ["Charlie Sheen", "Ashton Kutcher"],
+            ["Will Smith", "ghost of alladin"],
+            ["Steven Spielberg", "Woody Allen"],
+            ["Rihanna", "Katy Perry"],
+            ["Arnold Schwarzenegger", "Sylvester Stallone"],
+            ["Robert de Niro", "Kevin Spacey"],
+            # Algemeen questions (standard)
+            ["400x"],
+            ["1980"],
+            ["46 m"],
+            ["Fatima"],
+            ["Boeddha"],
+            ["Maestro"],
+            ["Geel"],
+            ["Turkije"],
+            ["V"],
+            ["Utrecht"],
+            # Film & Televisie questions (standard)
+            ["Mini"],
+            ["1981"],
+            ["Batman"],
+            ["De kokante krab"],
+            ["1.000.000"],
+            ["Michael Chrichton"],
+            ["Robin"],
+            ["Philadelphia"],
+            ["53"],
+            ["Baantjes"],
+            # Music questions
+            ["George Michael", "Aretha Franklin", "I knew you were waiting (for me)"],
+            ["Ronny Flex", "Frenna", "Energie"],
+            ["Queen", "David Bovie", "Under Pressure"],
+            ["Marco Borsato", "Sita", "Lopen op het water"],
+            ["Doly Parton", "Kenny Rogers", "Islands in the stream"],
+            ["Akon", "Eminem", "Smack That"],
+            ["Menthol Theo", "Charlie Lownoise", "Wonderful Days"],
+            ["Robin Williams", "Nicole Kidman", "Something Stupid"],
+            ["Davy Guetta", "Sia", "Titanium"],
+            ["Bonnie st. Claire", "Ron Brandsteder", "Dokter Bernhard"]
         ]
         score = get_score(given_answers, self.correct_answers, self.categories)
         self.assertEqual(score, 59)
 
-    def test_each_answer(self):
-        for correct_answer, category in self.correct_answers
+    def test_string_comparison(self):
+        pass
+        # for answer, correct_answer, category in zip(given_answers, self.correct_answers, self.categories):
+        # test for each answer whether string comparison works correctly
 
 
 if __name__ == "__main__":
-    test_answer_scoring()
+    pass
+    #test_answer_scoring()
+    #test_misspelled_answers()
 
 
 '''
@@ -161,7 +204,7 @@ correct_answers = [
         [["Robin"]],
         [["Philadelphia"]],
         [["53"]],
-        [["Baantjes"]],
+        [["Baantjer"]],
         # Music questions
         [["George Michael"], ["Aretha Franklin"], ["I knew you were waiting", "I knew you were waiting for me"]],
         [["Ronnie Flex"], ["Frenna"], ["Energie"]],
@@ -216,7 +259,7 @@ given answers = [
         ["Robin"],
         ["Philadelphia"],
         ["53"],
-        ["Baantjes"],
+        ["Baantjer"],
         # Music questions
         ["George Michael", "Aretha Franklin", ["I knew you were waiting", "I knew you were waiting for me"]],
         ["Ronnie Flex", "Frenna", "Energie"],
