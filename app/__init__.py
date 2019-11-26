@@ -44,12 +44,12 @@ def read_word_from_image(image_to_read):
     # infer(model, image_to_read_2)
 
 
-def process_sheet(answer_sheet_image):
+def process_sheet(answer_sheet_image, save_image=False, sheet_name="scan"):
     # gray = cv2.cvtColor(answer_sheet_image, cv2.COLOR_BGR2GRAY)
     # Now we have the answer sheet in image form and we can move on to the line segmentation
-    lines = line_segmentation(answer_sheet_image)
+    output_folder = "out/"
+    lines = line_segmentation(answer_sheet_image, save_image, output_folder, sheet_name)
 
-    output_folder = "out"
     index = 0
     # After the line segmentation is done we can find the separate words
     for line in lines:
@@ -66,31 +66,40 @@ def process_sheet(answer_sheet_image):
         # - min_area: ignore word candidates smaller than specified area
         # TODO test out the theta and min_area parameter changes if the results are not good.
         res = word_segmentation(line, kernel_size=25, sigma=11, theta=7, min_area=100)
-        print('Segmented into %d words' % len(res))
-        # TODO recognize the individual words here and store them in an array to be passed to the answer checker.
-        print("for now just save everything to images")
 
         # iterate over all segmented words
         print('Segmented into %d words' % len(res))
-        for (j, w) in enumerate(res):
-            (word_box, word_img) = w
-            (x, y, w, h) = word_box
-            # save word
-            cv2.imwrite(output_folder + '/' + str(index) + '.png', word_img)
-            # draw bounding box in summary image
-            cv2.rectangle(line, (x, y), (x + w, y + h), 0, 1)
-            index += 1
+        if save_image:
+            path = output_folder + sheet_name + "_line_" + str(line[4]) + "/words"
+            if not os.path.exists(path):
+                os.makedirs(path)
+            index = 0
+            # TODO If you save the files, give them a better position. Now all words are piled on top of each other
+            for (j, w) in enumerate(res):
+                (word_box, word_img) = w
+                (x, y, w, h) = word_box
+                # save word
+                cv2.imwrite(path + '/word_' + str(index) + '.png', word_img)
+                # draw bounding box in summary image
+                cv2.rectangle(line[0], (x, y), (x + w, y + h), 0, 1)
+                index += 1
 
-        # output summary image with bounding boxes around words
-        cv2.imwrite(output_folder + '/' + str(index) + 'summary.png', line)
+            # output summary image with bounding boxes around words
+            cv2.imwrite(path + "/line_" + str(line[4]) + '_summary.png', line[0])
 
 
-def run(pubquiz_answer_sheets):
+def run(pubquiz_answer_sheets, save_image=False):
     print("De officiele Ordina pub-quiz antwoord vinder")
 
     for answer_sheets in pubquiz_answer_sheets:
         # The pdf file. We can it and it returns 1 to multiple answer pages
         pages = convert_pdf_to_image(answer_sheets)
-        for page in pages:
-            process_sheet(page)
+        for p in range(0, len(pages)):
+            # We take the name from the file. But we want it without any extension.
+            file_extension = os.path.splitext(answer_sheets)
+            sheet_name = answer_sheets
+            if file_extension[1] == ".pdf":
+                sheet_name = sheet_name[0:-4]
+            sheet_name = sheet_name + "_" + str(p)
+            process_sheet(pages[p], save_image, sheet_name)
 

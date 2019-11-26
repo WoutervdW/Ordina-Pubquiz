@@ -71,7 +71,7 @@ class LineSegmentationTest(unittest.TestCase):
         line_length = read_number_of_lines(path, file_name)
         self.assertEqual(line_length, 27)
 
-    def test_line_correctness_scan1(self):
+    def test_line_correctness_scan_0(self):
         """
         This tests if the found lines are all of the correct format. If this is not the case than something went wrong.
         This will read the line images from the previous tests so they are required to be run if the images are not
@@ -81,22 +81,12 @@ class LineSegmentationTest(unittest.TestCase):
         ratio_test = read_line_ratios(path)
         self.assertTrue(ratio_test)
 
-    def test_line_correctness_scan2(self):
-        """
-        This tests if the found lines are all of the correct format. If this is not the case than something went wrong.
-        This will read the line images from the previous tests so they are required to be run if the images are not
-        in the folder. If they are not in the folder the test will succeed but nothing is tested.
-        """
+    def test_line_correctness_scan_1(self):
         path = "test_files/line_files/scan_1/"
         ratio_test = read_line_ratios(path)
         self.assertTrue(ratio_test)
 
-    def test_line_correctness_scan3(self):
-        """
-        This tests if the found lines are all of the correct format. If this is not the case than something went wrong.
-        This will read the line images from the previous tests so they are required to be run if the images are not
-        in the folder. If they are not in the folder the test will succeed but nothing is tested.
-        """
+    def test_line_correctness_scan_2(self):
         path = "test_files/line_files/scan_2/"
         ratio_test = read_line_ratios(path)
         self.assertTrue(ratio_test)
