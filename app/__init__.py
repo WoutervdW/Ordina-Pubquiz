@@ -44,10 +44,7 @@ def read_word_from_image(image_to_read):
     # infer(model, image_to_read_2)
 
 
-def process_sheet(answer_sheet):
-    # converts the pdf to the image based on the give path
-    answer_sheet_image = convert_pdf_to_image(answer_sheet)
-
+def process_sheet(answer_sheet_image):
     # gray = cv2.cvtColor(answer_sheet_image, cv2.COLOR_BGR2GRAY)
     # Now we have the answer sheet in image form and we can move on to the line segmentation
     lines = line_segmentation(answer_sheet_image)
@@ -91,6 +88,9 @@ def process_sheet(answer_sheet):
 def run(pubquiz_answer_sheets):
     print("De officiele Ordina pub-quiz antwoord vinder")
 
-    for answer_sheet in pubquiz_answer_sheets:
-        process_sheet(answer_sheet)
+    for answer_sheets in pubquiz_answer_sheets:
+        # The pdf file. We can it and it returns 1 to multiple answer pages
+        pages = convert_pdf_to_image(answer_sheets)
+        for page in pages:
+            process_sheet(page)
 
