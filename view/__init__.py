@@ -10,8 +10,8 @@ view.config.from_object(Config)
 
 bootstrap = Bootstrap(view)
 
-#db = SQLAlchemy(view)
-#migrate = Migrate(view, db)
+db = SQLAlchemy(view)
+migrate = Migrate(view, db)
 
-#from view import routes, models
-from view import routes
+from view import routes, models
+
