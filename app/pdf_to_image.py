@@ -17,8 +17,7 @@ def convert_pdf_to_image(path):
     # (I think because we called main.py that will be the working directory)
     pages = convert_from_path(path, 500)
 
-    # We assume there is only 1 scanned image at the time.
     # The image is in PIL format, we will convert it to opencv format
-    open_cv_image = np.array(pages[0])
+    open_cv_image = [np.array(p) for p in pages]
     return open_cv_image
 
