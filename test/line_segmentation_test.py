@@ -94,9 +94,9 @@ class LineSegmentationTest(unittest.TestCase):
         self.assertTrue(ratio_test)
 
     def test_temp(self):
-        file_name = "scan1"
-        answer_sheet_image = cv2.imread("test_files/image_files/" + file_name + "_image_temp.png")
+        file_name = "scan1_image_temp"
+        answer_sheet_image = cv2.imread("test_files/image_files/" + file_name + ".png")
         image_path = "test_files/line_files/" + file_name + "/"
-        lines = line_segmentation_temp(answer_sheet_image, False, image_path, file_name)
+        lines = line_segmentation_temp(answer_sheet_image, True, image_path, file_name)
         print(lines)
 
