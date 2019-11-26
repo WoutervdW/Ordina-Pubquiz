@@ -160,6 +160,7 @@ def line_segmentation_temp(answer_image, save_image=False, image_path="lines/", 
             right_block_contours.append(c)
 
     cv2.drawContours(right_side_img, right_block_contours, -1, (255, 0, 0), thickness=10)
+    # show_image(right_side_img)
 
     # We assume that the answer template had the correct format so we expect that the left and right side both found
     # and equal amount of results. If this is not the case we return nothing and the program fails for this sheet.
@@ -187,6 +188,11 @@ def line_segmentation_temp(answer_image, save_image=False, image_path="lines/", 
             path = image_path + image_name + "_line_" + str(x)
             if not os.path.exists(path):
                 os.makedirs(path)
+            # save (or show) the image if the folder is empty (for tests)
+            # show_image(finished_line[0])
+            # show_image(finished_line[1])
+            # show_image(finished_line[2])
+            # show_image(finished_line[3])
             cv2.imwrite(path + "/center" + str(x) + ".png", finished_line[0])
             cv2.imwrite(path + "/left" + str(x) + ".png", finished_line[1])
             cv2.imwrite(path + "/right" + str(x) + ".png", finished_line[2])

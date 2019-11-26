@@ -51,16 +51,16 @@ class LineSegmentationTest(unittest.TestCase):
         We do the test separate for scan1, 2 and 3. This is because each scan has a different number of lines that
         it should return and we want to test for the specific number of lines.
         """
-        line_length = read_number_of_lines("scan1")
+        line_length = read_number_of_lines("scan_0")
         self.assertEqual(line_length, 19)
 
     def test_image_to_lines_scan2(self):
-        line_length = read_number_of_lines("scan2")
+        line_length = read_number_of_lines("scan_1")
         # We don't count the big input field in this one, so we are looking for 23 lines.
         self.assertEqual(line_length, 23)
 
     def test_image_to_lines_scan3(self):
-        line_length = read_number_of_lines("scan3")
+        line_length = read_number_of_lines("scan_2")
         self.assertEqual(line_length, 27)
 
     def test_line_correctness_scan1(self):
@@ -94,7 +94,7 @@ class LineSegmentationTest(unittest.TestCase):
         self.assertTrue(ratio_test)
 
     def test_temp(self):
-        file_name = "scan1_image_temp"
+        file_name = "scan_0_image"
         answer_sheet_image = cv2.imread("test_files/image_files/" + file_name + ".png")
         image_path = "test_files/line_files/" + file_name + "/"
         lines = line_segmentation_temp(answer_sheet_image, True, image_path, file_name)

@@ -89,7 +89,7 @@ def run(pubquiz_answer_sheets):
     print("De officiele Ordina pub-quiz antwoord vinder")
 
     for answer_sheets in pubquiz_answer_sheets:
-        # The pdf file. We can it and it returns 1 to mutliple answer pages
+        # The pdf file. We can it and it returns 1 to multiple answer pages
         pages = convert_pdf_to_image(answer_sheets)
         for page in pages:
             process_sheet(page)
