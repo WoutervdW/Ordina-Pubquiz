@@ -1,10 +1,10 @@
 import unittest
-from text_processing.answer_processor import get_score
+from text_processing.calculate_score import get_score
 
 
 class AnswerScoringTest(unittest.TestCase):
     correct_answers = [
-        # photo questions
+        # Photo questions
         [["Mr. Bean"], ["Shrek"]],
         [["Justin Bieber"], ["Oprah Winfrey"]],
         [["Leonardo Dicaprio"], ["Sean Penn"]],
@@ -15,7 +15,7 @@ class AnswerScoringTest(unittest.TestCase):
         [["Rihanna"], ["Katy Perry"]],
         [["Arnold Schwarzenegger"], ["Sylvester Stallone"]],
         [["Robert de Niro"], ["Kevin Spacey"]],
-        # Algemeen questions (standard)
+        # General questions (standard)
         [["400 keer", "400 x", "vierhonderd", "four hundred"]],
         [["1980"]],
         [["46", "46m", "46 meter"]],
@@ -26,7 +26,7 @@ class AnswerScoringTest(unittest.TestCase):
         [["Turkije"]],
         [["V"]],
         [["Utrecht"]],
-        # Film & Televisie questions (standard)
+        # Film & Television questions (standard)
         [["Mini"]],
         [["1981"]],
         [["Batman"]],
@@ -153,19 +153,21 @@ class AnswerScoringTest(unittest.TestCase):
             ["Menthol Theo", "Charlie Lownoise", "Wonderful Days"],
             ["Robin Williams", "Nicole Kidman", "Something Stupid"],
             ["Davy Guetta", "Sia", "Titanium"],
-            ["Bonnie st. Claire", "Ron Bransteder", "Dokter Bernhard"]
+            ["Bonnie st. Claire", "Ron Brandsteder", "Dokter Bernhard"]
         ]
         score = get_score(given_answers, self.correct_answers, self.categories)
         self.assertEqual(score, 59)
 
-    def test_each_answer(self):
+    def test_string_comparison(self):
         pass
-        # for correct_answer, category in self.correct_answers
+        # for answer, correct_answer, category in zip(given_answers, self.correct_answers, self.categories):
+        # test for each answer whether string comparison works correctly
 
 
 if __name__ == "__main__":
-    test_answer_scoring()
-    test_misspelled_answers()
+    pass
+    #test_answer_scoring()
+    #test_misspelled_answers()
 
 
 '''
