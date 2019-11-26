@@ -2,12 +2,10 @@ import unittest
 import os
 import cv2
 from app.line_segmentation import line_segmentation
-# TODO @Sander: remove when done
-from app.line_segmentation_temp import line_segmentation_temp
 
 
-def read_number_of_lines(file_name):
-    answer_sheet_image = cv2.imread("test_files/image_files/" + file_name + "_image.png")
+def read_number_of_lines(path, file_name):
+    answer_sheet_image = cv2.imread(path + file_name + "_image.png")
     image_path = "test_files/line_files/" + file_name + "/"
     # If the folder does not exist yet we want to create it
     if not os.path.exists(image_path):
@@ -24,7 +22,11 @@ def read_line_ratios(path):
     lines = [line for line in os.listdir(path)]
     ratios = []
     for l in lines:
-        line = cv2.imread(path + l)
+        # We want the number of the line. We use this quick trick
+        # because the lines are saved with their prefix on the end
+        index = l.split("_")[-1]
+        # The lines are saved in separate folders and the line itself is the image with the center name
+        line = cv2.imread(path + l + "/center_" + str(index) + ".png")
         height, width, _ = line.shape
         # The shape of the answer should always be about the same, namely about 180 pixels high and 2800 wide.
         # We will calculate the ratio of the line given and see if it is close enough to this bound.
@@ -51,16 +53,22 @@ class LineSegmentationTest(unittest.TestCase):
         We do the test separate for scan1, 2 and 3. This is because each scan has a different number of lines that
         it should return and we want to test for the specific number of lines.
         """
-        line_length = read_number_of_lines("scan_0")
+        path = "test_files/image_files/"
+        file_name = "scan_0"
+        line_length = read_number_of_lines(path, file_name)
         self.assertEqual(line_length, 19)
 
     def test_image_to_lines_scan2(self):
-        line_length = read_number_of_lines("scan_1")
+        path = "test_files/image_files/"
+        file_name = "scan_1"
+        line_length = read_number_of_lines(path, file_name)
         # We don't count the big input field in this one, so we are looking for 23 lines.
-        self.assertEqual(line_length, 23)
+        self.assertEqual(line_length, 25)
 
     def test_image_to_lines_scan3(self):
-        line_length = read_number_of_lines("scan_2")
+        path = "test_files/image_files/"
+        file_name = "scan_2"
+        line_length = read_number_of_lines(path, file_name)
         self.assertEqual(line_length, 27)
 
     def test_line_correctness_scan1(self):
@@ -69,7 +77,7 @@ class LineSegmentationTest(unittest.TestCase):
         This will read the line images from the previous tests so they are required to be run if the images are not
         in the folder. If they are not in the folder the test will succeed but nothing is tested.
         """
-        path = "test_files/line_files/scan1/"
+        path = "test_files/line_files/scan_0/"
         ratio_test = read_line_ratios(path)
         self.assertTrue(ratio_test)
 
@@ -79,7 +87,7 @@ class LineSegmentationTest(unittest.TestCase):
         This will read the line images from the previous tests so they are required to be run if the images are not
         in the folder. If they are not in the folder the test will succeed but nothing is tested.
         """
-        path = "test_files/line_files/scan2/"
+        path = "test_files/line_files/scan_1/"
         ratio_test = read_line_ratios(path)
         self.assertTrue(ratio_test)
 
@@ -89,14 +97,8 @@ class LineSegmentationTest(unittest.TestCase):
         This will read the line images from the previous tests so they are required to be run if the images are not
         in the folder. If they are not in the folder the test will succeed but nothing is tested.
         """
-        path = "test_files/line_files/scan3/"
+        path = "test_files/line_files/scan_2/"
         ratio_test = read_line_ratios(path)
         self.assertTrue(ratio_test)
 
-    def test_temp(self):
-        file_name = "scan_0_image"
-        answer_sheet_image = cv2.imread("test_files/image_files/" + file_name + ".png")
-        image_path = "test_files/line_files/" + file_name + "/"
-        lines = line_segmentation_temp(answer_sheet_image, True, image_path, file_name)
-        print(lines)
 
