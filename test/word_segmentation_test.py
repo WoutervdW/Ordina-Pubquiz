@@ -31,7 +31,7 @@ def print_word(original_image, image_path, res, resized_height, original_height)
         cv2.imwrite(image_path + '/%d.png' % j, cropped)
         cv2.rectangle(original_image, (int(x_new), int(y_new)), (int(x_new+width_new), int(y_new+height_new)), 0, 1)
         # show_image(cropped)
-        
+
     cv2.imwrite(image_path + '/summary.png', original_image)
 
 

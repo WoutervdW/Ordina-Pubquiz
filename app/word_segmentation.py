@@ -47,6 +47,14 @@ def word_segmentation(line_image, kernel_size=25, sigma=11, theta=7, min_area=10
     return sorted(res, key=lambda entry: entry[0][0])
 
 
+def find_rect(x, y, w, h):
+    top_left = [x, y+h]
+    top_right = [x+w, y+h]
+    bottom_right = [x+w, y]
+    bottom_left = [x, y]
+    return [bottom_left, bottom_right, top_right, top_left]
+
+
 def show_image(img):
     """
     This will show the image and the program will continue when a key is pressed. Can be used for debugging
