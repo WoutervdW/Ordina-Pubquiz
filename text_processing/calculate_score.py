@@ -2,6 +2,8 @@
 from text_processing.string_processing import compare_string
 from text_processing.question_categories import Categories
 
+import pickle
+
 
 def get_score(answers_per_question, all_correct_answers, categories):
     """
@@ -18,20 +20,16 @@ def get_score(answers_per_question, all_correct_answers, categories):
         # correct_answer_lists: list containing, for each answer, a list  with the possible correct answers
         # category: the question category
 
-        if category == "standard":
+        if category == Categories.STANDARD:
             score += get_score_standard(answers, correct_answer_lists)
 
-        elif category == "music":
+        elif category == Categories.MUSIC:
             score += get_score_music(answers, correct_answer_lists)
 
-        elif category == "photo":
+        elif category == Categories.PHOTO:
             score += get_score_photo(answers, correct_answer_lists)
 
     return score
-
-
-def get_score2(questions):
-    pass
 
 
 def get_score_standard(answers, correct_answer_lists):
@@ -116,117 +114,19 @@ def read_correct_answers_and_categories():
     # TODO: read correct answers from text file / database
     # correct_answers contains, for each question, a list of answers, and for each answer a list of possible correct
     # strings
-    correct_answers = [
-        # photo questions
-        [["Mr. Bean"], ["Shrek"]],
-        [["Justin Bieber"], ["Oprah Winfrey"]],
-        [["Leonardo Dicaprio"], ["Sean Penn"]],
-        [["Max verstappen"]],
-        [["Charlie Sheen"], ["Ashton Kutcher"]],
-        [["Will Smith"], ["geest", "ghost", "ghost alladin", "geest alladin"]],
-        [["Steven Spielberg"], ["Woody Allen"]],
-        [["Rihanna"], ["Katy Perry"]],
-        [["Arnold Schwarzenegger"], ["Sylvester Stallone"]],
-        [["Robert de Niro"], ["Kevin Spacey"]],
-        # Algemeen questions (standard)
-        [["400 keer", "400 x", "vierhonderd", "four hundred"]],
-        [["1980"]],
-        [["46", "46m", "46 meter"]],
-        [["Fatima"]],
-        [["Boeddha", "Buddha"]],
-        [["Maestro"]],
-        [["Geel"]],
-        [["Turkije"]],
-        [["V"]],
-        [["Utrecht"]],
-        # Film & Televisie questions (standard)
-        [["Mini"]],
-        [["1981"]],
-        [["Batman"]],
-        [["De krokante krab", "De korstige krab", "the krusty crab"]],
-        [["1000000"]],
-        [["Michael Chrichton"]],
-        [["Robin"]],
-        [["Philadelphia"]],
-        [["53"]],
-        [["Baantjes"]],
-        # Music questions
-        [["George Michael"], ["Aretha Franklin"], ["I knew you were waiting", "I knew you were waiting for me"]],
-        [["Ronnie Flex"], ["Frenna"], ["Energie"]],
-        [["Queen"], ["David Bowie"], ["Under Pressure"]],
-        [["Marco Borsato"], ["Sita"], ["Lopen op het water"]],
-        [["Dolly Parton"], ["Kenny Rogers"], ["Islands in the stream"]],
-        [["Akon"], ["Eminem"], ["Smack That"]],
-        [["Mental THeo"], ["Charlie Lownoise"], ["Wonderful Days"]],
-        [["Robbie Williams"], ["Nicole Kidman"], ["Something Stupid"]],
-        [["David Guetta"], ["sia"], ["Titanium"]],
-        [["Bonnie st. Claire"], ["Ron Brandsteder"], ["Dokter Bernhard"]]
-    ]
-    categories = ["photo", "photo", "photo", "photo", "photo", "photo", "photo", "photo", "photo", "photo",
-                  "standard", "standard", "standard", "standard", "standard", "standard", "standard", "standard",
-                  "standard", "standard",
-                  "standard", "standard", "standard", "standard", "standard", "standard", "standard", "standard",
-                  "standard", "standard",
-                  "music", "music", "music", "music", "music", "music", "music", "music", "music", "music",
-                  ]
+    with open("data\\correct_answers.pickle", "rb") as f:
+        correct_answers = pickle.load(f)
+    with open("data\\categories.pickle", "rb") as f:
+        categories = pickle.load(f)
+
     return correct_answers, categories
 
 
 if __name__ == "__main__":
     # given_answers contains, for every question, a list of strings (answers)
-    given_answers = [
-        # photo questions
-        ["Mr. Bean", "Shrek"],
-        ["Justin Bieber", "Oprah Winfrey"],
-        ["Leonardo Dicaprio", "Sean Penn"],
-        ["Max verstappen"],
-        ["Charlie Sheen", "Ashton Kutcher"],
-        ["Will Smith", "ghost alladin"],
-        ["Steven Spielberg", "Woody Allen"],
-        ["Rihanna", "Katy Perry"],
-        ["Arnold Schwarzenegger", "Sylvester Stallone"],
-        ["Robert de Niro", "Kevin Spacey"],
-        # Algemeen questions (standard)
-        ["400 keer"],
-        ["1980"],
-        ["46m"],
-        ["Fatima"],
-        ["Boeddha"],
-        ["Maestro"],
-        ["Geel"],
-        ["Turkije"],
-        ["V"],
-        ["Utrecht"],
-        # Film & Televisie questions (standard)
-        ["Mini"],
-        ["1981"],
-        ["Batman"],
-        ["De krokante krab"],
-        ["1000000"],
-        ["Michael Chrichton"],
-        ["Robin"],
-        ["Philadelphia"],
-        ["53"],
-        ["Baantjer"],
-        # Music questions
-        ["George Michael", "Aretha Franklin", "I knew you were waiting"],
-        ["Ronnie Flex", "Frenna", "Energie"],
-        ["Queen", "David Bowie", "Under Pressure"],
-        ["Marco Borsato", "Sita", "Lopen op het water"],
-        ["Dolly Parton", "Kenny Rogers", "Islands in the stream"],
-        ["Akon", "Eminem", "Smack That"],
-        ["Mental THeo", "Charlie Lownoise", "Wonderful Days"],
-        ["Robbie Williams", "Nicole Kidman", "Something Stupid"],
-        ["David Guetta", "sia", "Titanium"],
-        ["Bonnie st. Claire", "Ron Brandsteder", "Dokter Bernhard"]
-    ]
+    with open("data\\given_answers.pickle", "rb") as f:
+        given_answers = pickle.load(f)
+
     all_correct_answers, categories = read_correct_answers_and_categories()
     print(get_score(given_answers, all_correct_answers, categories))
 
-    ID = 0
-    alternative_answer_format = {"questionid": ID,
-                                 "category": categories[ID],
-                                 "correctanswers": all_correct_answers[ID],
-                                 "answer": given_answers[ID]}
-
-    # print(get_score2(questions))
