@@ -69,7 +69,7 @@ def process_sheet(answer_sheet_image, save_image=False, sheet_name="scan"):
         resized_height = 50
         line = prepare_image(line, resized_height)
         # TODO test out the theta and min_area parameter changes if the results are not good.
-        res = word_segmentation(line, kernel_size=25, sigma=11, theta=5, min_area=100)
+        res = word_segmentation(line, kernel_size=25, sigma=11, theta=5, min_area=150)
 
         # iterate over all segmented words
         print('Segmented into %d words' % len(res))
@@ -84,7 +84,9 @@ def process_sheet(answer_sheet_image, save_image=False, sheet_name="scan"):
                 (word_box, word_img) = w
                 (x, y, w, h) = word_box
                 # save word
-                x_new = x * multiply_factor
+                # We also have to take into account that we removed the bars on the side by slicing the image with '5'
+                # We will add this to the new bounding box.
+                x_new = (x * multiply_factor) + 5
                 y_new = y * multiply_factor
                 width_new = w * multiply_factor
                 height_new = h * multiply_factor

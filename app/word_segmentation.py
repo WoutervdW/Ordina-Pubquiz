@@ -71,7 +71,9 @@ def prepare_image(img, height):
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     h = img.shape[0]
     factor = height / h
-    return cv2.resize(img, dsize=None, fx=factor, fy=factor)
+    resized = cv2.resize(img, dsize=None, fx=factor, fy=factor)
+    without_bars = resized[:, 5:-5]
+    return without_bars
 
 
 def create_kernel(kernel_size, sigma, theta):
