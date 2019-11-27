@@ -3,45 +3,63 @@
 
 <head>
     <meta charset="UTF-8">
+  <!--  <script src="{{ url_for('static', filename='script.js') }}"></script> -->
+    <script src="//code.angularjs.org/1.7.9/angular.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-   <!-- <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
-
-
 </head>
-
 <script>
 // define angular interpolationtags as {a a}
-
-angular.module('Application', [])
+angular.module('table', [])
     .config(function($interpolateProvider) {
-        $interpolateProvider.startSymbol('{a');
-        $interpolateProvider.endSymbol('a}');
+        $interpolateProvider.startSymbol('//');
+        $interpolateProvider.endSymbol('//');
+    })
+    .controller('tablecontroller', function($scope, $http){
+        $http({
+                method: "GET",
+                url: "/api/v1.0/teams"
+                }).then(function mySuccess(response){
+                    $scope.teams = response.data;
+                });
+        //$scope.firstName = "pietje";
+        //$scope.propertyName = 'score';
+        //$scope.sortBy = function(teams, propertyName) {
+         //   $scope.propertyName = propertyName;
+        //}
     });
 </script>
-
 <body>
 {% extends "base.html" %}
-{% block content%}
-<div class = "table-responsive">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope = "col">Team</th>
-                <th scope = "col">Score</th>
-            </tr>
-        </thead>
-        <tbody>
-        {%for team in teams%}
-            <tr>
-                <td>{{team.teamname}}</td>
-                <td>{{team.score}}</td>
-            </tr>
-        {%endfor%}
-        </tbody>
-    </table>
+{% block content %}
+<div class = "container"  ng-app = "table" ng-controller = "tablecontroller">
+    <div class = "table-responsive">
+        <table class="table table-hover table-sm">
+            <thead>
+                <tr>
+                    <th scope = "col">Team
+                        <button ng-click = "sortBy('teamName', teams)"></button>
+                        <span class = "sortorder" ng-show="propertyName === 'teamName'"></span>
+                    </th>
+                    <th scope = "col" class = "th-sm">Score
+                        <button ng-click = "sortBy('score', teams)"></button>
+                        <span class = "sortorder" ng-show="propertyName === 'score'"></span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="team in teams | orderBy:propertyName">
+                    <td>//team.teamname//</td>
+                    <td>//team.score//</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 {%endblock%}
+
+
 </body>
 
 

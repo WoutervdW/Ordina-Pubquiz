@@ -1,23 +1,26 @@
 from view import view
 from flask import render_template
+from flask import jsonify
+from flask_sqlalchemy import SQLAlchemy
+
 from view.models import Team
+from view.models import TeamSchema
+
 
 import psycopg2
+from collections import OrderedDict
 
 
 @view.route('/')
 @view.route('/index')
 def index():
+    return render_template('index.html')
+
+
+@view.route('/api/v1.0/teams', methods=['GET'])
+def get_teams():
+    teams_schema = TeamSchema(many=True)
     teams = Team.query.all()
-    return render_template('index.html', teams=teams)
-    #connection = psycopg2.connect(user="mot23897",
-    ##                              password="admin",
-    #                              host="127.0.0.1",
-    #                              port="5432",
-    #                              database="mot23897")
-    #cursor=connection.cursor()
-    #query_selectteams = "select * from team"
-    #cursor.execute(query_selectteams)
-    #teams = cursor.fetchall()
-    #connection.close()
+    result = teams_schema.dump(teams)
+    return jsonify(result);
 
