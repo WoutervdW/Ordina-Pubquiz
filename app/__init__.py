@@ -73,7 +73,6 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
             print(words_results)
 
 
-
 def run(pubquiz_answer_sheets, save_image=False):
     print("De officiele Ordina pub-quiz antwoord vinder")
     model = Model(open('model/charList.txt').read())
