@@ -11,40 +11,32 @@ from app.SamplePreprocessor import preprocess
 from app.DataLoader import Batch
 from app.pdf_to_image import convert_pdf_to_image
 from app.line_segmentation import line_segmentation, crop_and_warp
-from app.word_segmentation import word_segmentation, prepare_image, find_rect, show_image, save_word_image
+from app.word_segmentation import word_segmentation, prepare_image, find_rect, show_image, save_word_image, get_words_image
 import os
 import cv2
 import argparse
 
 
-def infer(_model, fn_img):
+def infer(_model, word_image):
     """
     recognize text in image provided by file path
     """
-    image = preprocess(cv2.imread(fn_img, cv2.IMREAD_GRAYSCALE), Model.img_size)
+    # image = fn_img
+    fn_img = cv2.cvtColor(word_image, cv2.COLOR_BGR2GRAY)
+    image = preprocess(fn_img, Model.img_size)
     batch = Batch([image])
     (recognized, probability) = _model.infer_batch(batch, True)
     print('Recognized:', '"' + recognized[0] + '"')
     print('Probability:', probability[0])
+    return recognized, probability
 
 
-def read_word_from_image(image_to_read):
-    model = Model(open('model/charList.txt').read())
-    image_to_read = ['test-images/handgeschreven_thick.png']
-    # A simple example of how we could possibly use arguments to determine what image is tested
-    # TODO make it better.
-    # for eachArg in sys.argv:
-    #     image_to_read.append(eachArg)
-
-    for image in image_to_read:
-        infer(model, image)
-
-    # # After the model is loaded we can very quickly load another image.
-    # image_to_read_2 = 'test-images/tekst_thick.png'
-    # infer(model, image_to_read_2)
+def read_word_from_image(image_to_read, model):
+    results = infer(model, image_to_read)
+    return results
 
 
-def process_sheet(answer_sheet_image, save_image=False, sheet_name="scan"):
+def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"):
     # gray = cv2.cvtColor(answer_sheet_image, cv2.COLOR_BGR2GRAY)
     # Now we have the answer sheet in image form and we can move on to the line segmentation
     output_folder = "out/"
@@ -52,6 +44,7 @@ def process_sheet(answer_sheet_image, save_image=False, sheet_name="scan"):
 
     index = 0
     # After the line segmentation is done we can find the separate words
+
     for line_image in lines:
         line = line_image[0]
         # -kernelSize: size of filter kernel (odd integer)
@@ -70,9 +63,19 @@ def process_sheet(answer_sheet_image, save_image=False, sheet_name="scan"):
         if save_image:
             save_word_image(output_folder, sheet_name, line_image, multiply_factor, res)
 
+        # We can now examine each word.
+        words = get_words_image(line_image, multiply_factor, res)
+        words_results = []
+        for word in words:
+            read_results = read_word_from_image(word, model)
+            words_results.append(read_results)
+            print(words_results)
+
+
 
 def run(pubquiz_answer_sheets, save_image=False):
     print("De officiele Ordina pub-quiz antwoord vinder")
+    model = Model(open('model/charList.txt').read())
 
     for answer_sheets in pubquiz_answer_sheets:
         # The pdf file. We can it and it returns 1 to multiple answer pages
@@ -84,5 +87,5 @@ def run(pubquiz_answer_sheets, save_image=False):
             if file_extension[1] == ".pdf":
                 sheet_name = sheet_name[0:-4]
             sheet_name = sheet_name + "_" + str(p)
-            process_sheet(pages[p], save_image, sheet_name)
+            process_sheet(pages[p], model, save_image, sheet_name)
 

@@ -5,6 +5,22 @@ import numpy as np
 from app.line_segmentation import crop_and_warp
 
 
+def get_words_image(line_image, multiply_factor, res):
+    words = []
+    for (j, w) in enumerate(res):
+        (word_box, word_img) = w
+        (x, y, w, h) = word_box
+        x_new = (x * multiply_factor) + 5
+        y_new = y * multiply_factor
+        width_new = w * multiply_factor
+        height_new = h * multiply_factor
+        rect = find_rect(x_new, y_new, width_new, height_new)
+        # We want to apply the crop and saving on the original line image
+        cropped = crop_and_warp(line_image[0], rect)
+        words.append(cropped)
+    return words
+
+
 def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res):
     path = output_folder + sheet_name + "_line_" + str(line_image[4]) + "/words"
     if not os.path.exists(path):
