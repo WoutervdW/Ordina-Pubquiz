@@ -1,6 +1,38 @@
+import os
 import math
 import cv2
 import numpy as np
+from app.line_segmentation import crop_and_warp
+
+
+def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res):
+    path = output_folder + sheet_name + "_line_" + str(line_image[4]) + "/words"
+    if not os.path.exists(path):
+        os.makedirs(path)
+    index = 0
+    for (j, w) in enumerate(res):
+        (word_box, word_img) = w
+        (x, y, w, h) = word_box
+        # save word
+        # We also have to take into account that we removed the bars on the side by slicing the image with '5'
+        # We will add this to the new bounding box.
+        x_new = (x * multiply_factor) + 5
+        y_new = y * multiply_factor
+        width_new = w * multiply_factor
+        height_new = h * multiply_factor
+        rect = find_rect(x_new, y_new, width_new, height_new)
+        # We want to apply the crop and saving on the original line image
+        cropped = crop_and_warp(line_image[0], rect)
+        cv2.imwrite(path + '/word_' + str(index) + '.png', cropped)
+        cv2.rectangle(line_image[0], (int(x_new), int(y_new)),
+                      (int(x_new + width_new), int(y_new + height_new)), 0, 1)
+
+        # draw bounding box in summary image
+        cv2.rectangle(line_image[0], (x, y), (x + w, y + h), 0, 1)
+        index += 1
+
+    # output summary image with bounding boxes around words
+    cv2.imwrite(path + "/line_" + str(line_image[4]) + '_summary.png', line_image[0])
 
 
 def word_segmentation(line_image, kernel_size=25, sigma=11, theta=7, min_area=1000):
