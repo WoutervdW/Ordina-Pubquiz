@@ -65,7 +65,7 @@ def process_sheet(answer_sheet_image, save_image=False, sheet_name="scan"):
         # -theta: approximated width/height ratio of words, filter function is distorted by this factor
         # - min_area: ignore word candidates smaller than specified area
         # TODO test out the theta and min_area parameter changes if the results are not good.
-        res = word_segmentation(line, kernel_size=25, sigma=11, theta=7, min_area=100)
+        res = word_segmentation(line[0], kernel_size=25, sigma=11, theta=5, min_area=4000)
 
         # iterate over all segmented words
         print('Segmented into %d words' % len(res))

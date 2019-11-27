@@ -71,7 +71,6 @@ def crop_and_warp(img, crop_rect):
     max_width = max([distance_between(top_right, top_left), distance_between(bottom_right, bottom_left)])
     max_height = max([distance_between(bottom_left, top_left), distance_between(bottom_right, top_right)])
 
-    ratio = max_width/max_height
     # The ratio is an easy indication if it is the line we want or not 10 is a loose bound for that ratio (around 15)
     # TODO maybe incorporate the ratio
     # TODO Maybe also find and save the square before it (it holds the question number)

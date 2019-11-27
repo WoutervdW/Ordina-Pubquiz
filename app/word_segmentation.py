@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 
-def word_segmentation(line_image, kernel_size=25, sigma=11, theta=7, min_area=0):
+def word_segmentation(line_image, kernel_size=25, sigma=11, theta=7, min_area=1000):
     """
     Scale space technique for word segmentation proposed by R. Manmatha: http://ciir.cs.umass.edu/pubfiles/mm-27.pdf
 
@@ -17,12 +17,10 @@ def word_segmentation(line_image, kernel_size=25, sigma=11, theta=7, min_area=0)
     Returns:
         List of tuples. Each tuple contains the bounding box and the image of the segmented word.
     """
-    # Convert image to grayscale
-    img = cv2.cvtColor(line_image[0], cv2.COLOR_BGR2GRAY)
 
     # apply filter kernel
     kernel = create_kernel(kernel_size, sigma, theta)
-    img_filtered = cv2.filter2D(img, -1, kernel, borderType=cv2.BORDER_REPLICATE).astype(np.uint8)
+    img_filtered = cv2.filter2D(line_image, -1, kernel, borderType=cv2.BORDER_REPLICATE).astype(np.uint8)
     (_, img_threshold) = cv2.threshold(img_filtered, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     img_threshold = 255 - img_threshold
 
@@ -42,11 +40,31 @@ def word_segmentation(line_image, kernel_size=25, sigma=11, theta=7, min_area=0)
         # append bounding box and image of word to result list
         curr_box = cv2.boundingRect(c)  # returns (x, y, w, h)
         (x, y, w, h) = curr_box
-        curr_img = img[y:y + h, x:x + w]
+        curr_img = line_image[y:y + h, x:x + w]
         res.append((curr_box, curr_img))
+        show_image(curr_img)
 
     # return list of words, sorted by x-coordinate
     return sorted(res, key=lambda entry: entry[0][0])
+
+
+def show_image(img):
+    """
+    This will show the image and the program will continue when a key is pressed. Can be used for debugging
+    """
+    cv2.imshow('image', img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
+def prepare_image(img, height):
+    """convert given image to grayscale image (if needed) and resize to desired height"""
+    assert img.ndim in (2, 3)
+    if img.ndim == 3:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    h = img.shape[0]
+    factor = height / h
+    return cv2.resize(img, dsize=None, fx=factor, fy=factor)
 
 
 def create_kernel(kernel_size, sigma, theta):
