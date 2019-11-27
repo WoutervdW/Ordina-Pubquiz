@@ -7,6 +7,7 @@ from app.line_segmentation import crop_and_warp
 
 def get_words_image(line_image, multiply_factor, res):
     words = []
+    index = 0
     for (j, w) in enumerate(res):
         (word_box, word_img) = w
         (x, y, w, h) = word_box
@@ -17,12 +18,13 @@ def get_words_image(line_image, multiply_factor, res):
         rect = find_rect(x_new, y_new, width_new, height_new)
         # We want to apply the crop and saving on the original line image
         cropped = crop_and_warp(line_image[0], rect)
-        words.append(cropped)
+        words.append([cropped, line_image[4], index])
+        index += 1
     return words
 
 
 def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res):
-    path = output_folder + sheet_name + "_line_" + str(line_image[4]) + "/words"
+    path = output_folder + sheet_name + "/line_" + str(line_image[4]) + "/words"
     if not os.path.exists(path):
         os.makedirs(path)
     index = 0

@@ -188,7 +188,7 @@ def line_segmentation(answer_image, save_image=False, image_path="lines/", image
         finished_line = [cropped_center, cropped_left, cropped_right, cropped_full, x]
         lines.append(finished_line)
         if save_image:
-            path = image_path + image_name + "_line_" + str(x)
+            path = image_path + image_name + "/line_" + str(x)
             if not os.path.exists(path):
                 os.makedirs(path)
             # save (or show) the image if the folder is empty (for tests)

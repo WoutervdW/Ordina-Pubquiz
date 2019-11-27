@@ -41,6 +41,8 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
     # Now we have the answer sheet in image form and we can move on to the line segmentation
     output_folder = "out/"
     lines = line_segmentation(answer_sheet_image, save_image, output_folder, sheet_name)
+    # We save the results to a file, which will be in the sheet subfolder with the sheet name.
+    f = open(output_folder + sheet_name + "/" + sheet_name + ".txt", "w")
 
     index = 0
     # After the line segmentation is done we can find the separate words
@@ -66,12 +68,19 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         # We can now examine each word.
         words = get_words_image(line_image, multiply_factor, res)
         words_results = []
+        result_line = "line " + str(words[0][1]) + " predictions"
         for word in words:
             # TODO add contrast to each word
-            read_results = read_word_from_image(word, model)
+            read_results = read_word_from_image(word[0], model)
             words_results.append(read_results)
+            result_line = result_line + " word: " + str(word[2]) + " " + str(read_results[0]) + " with probability " + str(read_results[1])
             print(words_results)
+        result_line = result_line + "\n"
+        f.write(result_line)
 
+    # For now write the results to a file.
+    # TODO connect this to the answer checker.
+    f.close()
 
 def run(pubquiz_answer_sheets, save_image=False):
     print("De officiele Ordina pub-quiz antwoord vinder")
