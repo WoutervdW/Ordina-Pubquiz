@@ -67,6 +67,7 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         words = get_words_image(line_image, multiply_factor, res)
         words_results = []
         for word in words:
+            # TODO add contrast to each word
             read_results = read_word_from_image(word, model)
             words_results.append(read_results)
             print(words_results)
