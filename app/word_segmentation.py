@@ -42,7 +42,6 @@ def word_segmentation(line_image, kernel_size=25, sigma=11, theta=7, min_area=10
         (x, y, w, h) = curr_box
         curr_img = line_image[y:y + h, x:x + w]
         res.append((curr_box, curr_img))
-        show_image(curr_img)
 
     # return list of words, sorted by x-coordinate
     return sorted(res, key=lambda entry: entry[0][0])

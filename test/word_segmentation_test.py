@@ -28,9 +28,11 @@ def print_word(original_image, image_path, res, resized_height, original_height)
         rect = find_rect(x_new, y_new, width_new, height_new)
 
         cropped = crop_and_warp(original_image, rect)
-
-        show_image(cropped)
-
+        cv2.imwrite(image_path + '/%d.png' % j, cropped)
+        cv2.rectangle(original_image, (int(x_new), int(y_new)), (int(x_new+width_new), int(y_new+height_new)), 0, 1)
+        # show_image(cropped)
+        
+    cv2.imwrite(image_path + '/summary.png', original_image)
 
 
 def check_line(path, l, line_word_count, scan_file):
