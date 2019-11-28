@@ -1,7 +1,7 @@
 import unittest
 import os
 from app.Model import Model
-from app.SamplePreprocessor import preprocess
+from app.sample_preprocessor import preprocess
 from app.DataLoader import Batch
 import cv2
 
