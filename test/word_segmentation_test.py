@@ -1,51 +1,58 @@
 import unittest
 import os
 import cv2
-from app.word_segmentation import word_segmentation, prepare_image, show_image, find_rect
+from app.word_segmentation import word_segmentation, prepare_image, show_image, find_rect, save_word_image
 from app.line_segmentation import crop_and_warp
 
 
-def check_line(path, l, line_word_count, scan_file):
+def check_line(path, l, line_word_count, scan_file, configurations=None):
+
+    if configurations is None:
+        # The standard configurations for the word segmentation
+        # configurations = [25, 11, 7, 100]
+        configurations = [25, 11, 7, 100]
+
     index = l.split("_")[-1]
-    line = cv2.imread(path + l + "/center_" + index + ".png")
-    original_height = line.shape[0]
+    line_temp = cv2.imread(path + l + "/center_" + index + ".png")
+    # This is kinda ugly, but the word segmentation expects 4 images, the center, 2 side boxes and the full line
+    # We also stored an indication of which line it is after that, we will use the first image and the indication
+    # of which line it is to save the images in the correct folders.
+    line = [line_temp, 0, 0, 0, index]
+    original_height = line[0].shape[0]
     resized_height = 50
-    line_original = line.copy()
-    line = prepare_image(line, resized_height)
-    res = word_segmentation(line, kernel_size=25, sigma=11, theta=7, min_area=100)
 
-    # Save the words if this is not done so the result can be viewed to determine how it went wrong/good
-    # If the folder does not exist yet we want to create it
-    image_path = "test_files/word_files/" + scan_file + "/" + l
-    if not os.path.exists(image_path):
-        os.makedirs(image_path)
+    line_analyse = line[0].copy()
+    line_analyse = prepare_image(line_analyse, resized_height)
+    res = word_segmentation(
+        line_analyse,
+        kernel_size=configurations[0],
+        sigma=configurations[1],
+        theta=configurations[2],
+        min_area=configurations[3])
 
+    output_folder = "test_files/word_files/"
     multiply_factor = original_height / resized_height
 
-    if len(os.listdir(image_path)) == 0:
-        for (j, w) in enumerate(res):
-            (word_box, word_img) = w
-            (x, y, w, h) = word_box
-
-            x_new = x * multiply_factor
-            y_new = y * multiply_factor
-            width_new = w * multiply_factor
-            height_new = h * multiply_factor
-            rect = find_rect(x_new, y_new, width_new, height_new)
-
-            cropped = crop_and_warp(line_original, rect)
-            cv2.imwrite(image_path + '/%d.png' % j, cropped)
-            cv2.rectangle(line_original, (int(x_new), int(y_new)), (int(x_new + width_new), int(y_new + height_new)),
-                          0, 1)
-
-        # output summary image with bounding boxes
-        cv2.imwrite(image_path + '/' + l + '_summary.png', line_original)
-
+    save_word_image(output_folder, scan_file, line, multiply_factor, res)
     if len(res) != line_word_count:
         # The test failed, print what went wrong and return False for the test
         print("line", l, "failed! It has", str(line_word_count), "words but the program found", len(res), "words")
         return False
     return True
+
+
+def test_single_line(scan_number, line_number, expected_word_count, configurations=None):
+    """
+    This tests a single given line. This can be used to tweak parameters when a line fails to find the
+    correct number of words that you expected.
+    """
+    if configurations is None:
+        configurations = [25, 11, 7, 100]
+
+    path = "test_files/line_files/scan_" + str(scan_number) + "/"
+    lines = [line for line in os.listdir(path)]
+
+    return check_line(path, lines[line_number], expected_word_count, "scan_" + str(scan_number), configurations)
 
 
 class WordSegmentationTest(unittest.TestCase):
@@ -171,4 +178,18 @@ class WordSegmentationTest(unittest.TestCase):
                 scan_2_word_test = False
 
         self.assertTrue(scan_2_word_test)
+
+    def test_word_segmentation_single_line(self):
+        """
+        This tests a single given line. This can be used to tweak parameters when a line fails to find the
+        correct number of words that you expected.
+        """
+        scan_number = 0
+        # The lines are taken from the folder in the order: 0, 1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 2, 3, 4, 5, 6,
+        # 7, 8, 9 (scan_0 example). Please take this into account when choosing a line number. Sorry.
+        line_number = 2
+        expected_word_count = 2
+
+        configurations = [25, 11, 7, 100]
+        self.assertTrue(test_single_line(scan_number, line_number, expected_word_count, configurations))
 
