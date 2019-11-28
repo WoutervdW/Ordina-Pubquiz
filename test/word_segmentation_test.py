@@ -6,7 +6,6 @@ from app.line_segmentation import crop_and_warp
 
 
 def check_line(path, l, line_word_count, scan_file, configurations=None, save_image=True):
-
     if configurations is None:
         # The standard configurations for the word segmentation
         # configurations = [25, 11, 7, 100]
@@ -53,7 +52,8 @@ def test_single_line(scan_number, line_number, expected_word_count, configuratio
     path = "test_files/line_files/scan_" + str(scan_number) + "/"
     lines = [line for line in os.listdir(path)]
 
-    return check_line(path, lines[line_number], expected_word_count, "scan_" + str(scan_number), configurations, save_image)
+    return check_line(path, lines[line_number], expected_word_count, "scan_" + str(scan_number), configurations,
+                      save_image)
 
 
 class WordSegmentationTest(unittest.TestCase):
@@ -90,7 +90,7 @@ class WordSegmentationTest(unittest.TestCase):
             self.assertEqual(len(lines), len(word_result))
         scan_0_word_test = True
         for x in range(0, len(lines)):
-            if not check_line(path, lines[x], word_result[x+1], "scan_0"):
+            if not check_line(path, lines[x], word_result[x + 1], "scan_0"):
                 scan_0_word_test = False
 
         self.assertTrue(scan_0_word_test)
@@ -98,33 +98,9 @@ class WordSegmentationTest(unittest.TestCase):
     def test_word_segmentation_scan_1_lines(self):
         path = "test_files/line_files/scan_1/"
         lines = [line for line in os.listdir(path)]
-        # TODO @Sander: The ordering is off. It scans the folder and orders it (1, 10, 11, ...2, 20, 21 etc.)
+        # TODO @Sander: The ordering is off. It scans the folder and orders it (0, 1, 10, 11, ...2, 20, 21 etc.)
         # On scan_1 there are some numbers and brackets and some number/word combination and one is empty
-        word_result = {1: 2,
-                       2: 1,
-                       3: 1,
-                       4: 1,
-                       5: 1,
-                       6: 1,
-                       7: 1,
-                       8: 1,
-                       9: 1,
-                       10: 1,
-                       11: 1,
-                       12: 2,
-                       13: 1,
-                       14: 2,
-                       15: 2,
-                       16: 2,
-                       17: 3,
-                       18: 2,
-                       19: 7,
-                       20: 2,
-                       21: 2,
-                       22: 1,
-                       23: 1,
-                       24: 1,
-                       25: 1}
+        word_result = [2,  2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 2, 2, 2, 3, 2, 2, 2, 1, 1, 1, 1, 1]
         if len(lines) != len(word_result):
             print("Warning! There probably was an error in the line segmentation, fix that first before running this"
                   " test. This test is based on the lines in scan1, if they are not correctly found the test could "
@@ -132,7 +108,7 @@ class WordSegmentationTest(unittest.TestCase):
             self.assertEqual(len(lines), len(word_result))
         scan_1_word_test = True
         for x in range(0, len(lines)):
-            if not check_line(path, lines[x], word_result[x + 1], "scan_1"):
+            if not check_line(path, lines[x], word_result[x], "scan_1"):
                 scan_1_word_test = False
 
         self.assertTrue(scan_1_word_test)
@@ -141,33 +117,7 @@ class WordSegmentationTest(unittest.TestCase):
         path = "test_files/line_files/scan_2/"
         lines = [line for line in os.listdir(path)]
         # On scan2 there are some numbers and brackets and some number/word combination and one is empty
-        word_result = {1: 2,
-                       2: 3,
-                       3: 2,
-                       4: 2,
-                       5: 2,
-                       6: 2,
-                       7: 2,
-                       8: 2,
-                       9: 2,
-                       10: 2,
-                       11: 2,
-                       12: 2,
-                       13: 2,
-                       14: 2,
-                       15: 4,
-                       16: 1,
-                       17: 2,
-                       18: 4,
-                       19: 1,
-                       20: 2,
-                       21: 4,
-                       22: 1,
-                       23: 2,
-                       24: 7,
-                       25: 2,
-                       26: 2,
-                       27: 7}
+        word_result = [2, 3, 2, 2, 2, 2, 4, 1, 2, 4, 1, 2, 2, 4, 1, 2, 7, 2, 2, 7, 2, 3, 2, 2, 2, 2, 2]
         if len(lines) != len(word_result):
             print("Warning! There probably was an error in the line segmentation, fix that first before running this"
                   " test. This test is based on the lines in scan1, if they are not correctly found the test could "
@@ -175,7 +125,7 @@ class WordSegmentationTest(unittest.TestCase):
             self.assertEqual(len(lines), len(word_result))
         scan_2_word_test = True
         for x in range(0, len(lines)):
-            if not check_line(path, lines[x], word_result[x + 1], "scan_2"):
+            if not check_line(path, lines[x], word_result[x], "scan_2"):
                 scan_2_word_test = False
 
         self.assertTrue(scan_2_word_test)
@@ -224,5 +174,3 @@ class WordSegmentationTest(unittest.TestCase):
                             self.assertTrue(True)
         # If it comes here the test failed.
         self.assertTrue(False)
-
-
