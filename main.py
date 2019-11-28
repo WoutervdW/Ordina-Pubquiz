@@ -11,3 +11,4 @@ import app
 pubquiz_anser_sheets = ['scan.pdf']
 app.run(pubquiz_anser_sheets, True)
 
+print("HOI SANDER")

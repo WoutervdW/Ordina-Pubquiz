@@ -1,0 +1,9 @@
+version: '3'
+services:
+  flask:
+    image: webapp-flask
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - "./:/usr/src/app"

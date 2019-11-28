@@ -3,14 +3,15 @@ import numpy as np
 import sys
 
 
-def setup_tf():
+def setup_tf(model_dir):
     """
     initialize tensorflow
     """
     sess = tf.Session()  # TF session
 
     saver = tf.train.Saver(max_to_keep=1)  # saver saves model to file
-    model_dir = 'model/'
+    if model_dir is None:
+        model_dir = 'model/'
     latest_snapshot = tf.train.latest_checkpoint(model_dir)  # is there a saved model?
 
     # load saved model if available
@@ -36,7 +37,7 @@ class Model:
     img_size = (128, 32)
     max_text_length = 32
 
-    def __init__(self, char_list):
+    def __init__(self, char_list, model_dir=None):
         """
         init model: add CNN, RNN and CTC and initialize TF
         """
@@ -52,7 +53,7 @@ class Model:
         self.setup_ctc(rnn_out3d)
 
         # initialize TF
-        (self.sess, self.saver) = setup_tf()
+        (self.sess, self.saver) = setup_tf(model_dir)
 
     def setup_cnn(self):
         """
