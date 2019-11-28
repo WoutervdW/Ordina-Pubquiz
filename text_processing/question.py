@@ -6,6 +6,7 @@ class Question:
     category = Categories.STANDARD
     correct_answer_lists = []
     answers = []
+    # property indicating it is a numerical question
 
     def __init__(self, index, category, correct_answer_lists, answers):
         self.index = index

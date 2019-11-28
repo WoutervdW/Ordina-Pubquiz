@@ -16,6 +16,8 @@ def compare_string(answer, correct_answer_list):
     # TODO: check string similarity using fuzzywuzzy (https://www.datacamp.com/community/tutorials/fuzzy-string-python)
     # TODO: Remove the entry from the list if it has been checked, to prevent duplicate answers from scoring points.
     # TODO: compare numbers as ints
+    # TODO: get the Question from calculate_score to string comparison for the category to parse the string correctly
+    #  (numbers in songs should be parsed as strings, in other answers they should probably be parsed as integers)
     # Ratio = fuzz.ratio(Str1.lower(), Str2.lower())
     # Partial_Ratio = fuzz.partial_ratio(Str1.lower(), Str2.lower())
     # Token_Sort_Ratio = fuzz.token_sort_ratio(Str1, Str2)

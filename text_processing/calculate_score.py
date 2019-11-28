@@ -1,85 +1,74 @@
 # TODO: way to set questions to be marked manually
 from text_processing.string_processing import compare_string
 from text_processing.question_categories import Categories
+from text_processing.question import Question
 
 import pickle
 
 
-def get_score(answers_per_question, all_correct_answers, categories):
+def get_score(questions):
     """
-    Calculates overall score for the pubquiz for a team's answers to the questions
-    :param answers_per_question: for each question, a list of given answers.
-    :param all_correct_answers: for each question, for each answer, a list of possible correct answers.
-    :param categories: for each question, the question category
+
+    :param questions: list of questions. each question is an object of type Question
     :return: score based on No of correct answers
     """
     score = 0
-    for answers, correct_answer_lists, category in zip(answers_per_question, all_correct_answers, categories):
-        # TODO: error handling for wrong(ly formatted) answers
-        # answers: list of all the answers to the current question
-        # correct_answer_lists: list containing, for each answer, a list  with the possible correct answers
-        # category: the question category
+    for question in questions:
+        if question.category == Categories.STANDARD:
+            answer = question.answers[0]
+            correct_answer_list = question.correct_answer_lists[0]
+            score += score_single(answer, correct_answer_list)
 
-        if category == Categories.STANDARD:
-            score += get_score_standard(answers, correct_answer_lists)
+        elif question.category == Categories.MUSIC:
+            artists = question.answers[0:2]
+            correct_artists = question.correct_answer_lists[0] + question.correct_answer_lists[1]
+            score += score_both_correct(artists, correct_artists)
 
-        elif category == Categories.MUSIC:
-            score += get_score_music(answers, correct_answer_lists)
+            # Grant a point if the song title is correct
+            # The third answer is the song title
+            song_title = question.answers[2]
+            correct_song_titles = question.correct_answer_lists[2]
+            score += score_single(song_title, correct_song_titles)
 
-        elif category == Categories.PHOTO:
-            score += get_score_photo(answers, correct_answer_lists)
-
+        elif question.category == Categories.PHOTO:
+            for answer, correct_answer in zip(question.answers, question.correct_answer_lists):
+                score += score_single(answer, correct_answer)
     return score
 
 
-def get_score_standard(answers, correct_answer_lists):
+def get_score_standard(question):
     # Grant a point if the answer is in the list of correct answers
     # There is only one answer, and one list of correct answers
     score = 0
-    answer = ""
-    correct_answer_list = []
-    try:
-        answer = answers[0]
-        correct_answer_list = correct_answer_lists[0]
-    except IndexError:
-        print("Answer is wrongly formatted: standard")
-        raise
+    answer = question.answers[0]
+    correct_answer_list = question.correct_answer_lists[0]
     score += score_single(answer, correct_answer_list)
     return score
 
 
-def get_score_music(answers, correct_answer_lists):
+def get_score_music(question):
     # Grant a point if both artists are correct
     # The first two answers are artists, the first two lists are correct artists
     score = 0
-    artists = []
-    correct_artists = []
-    try:
-        artists = answers[0:2]
-        correct_artists = correct_answer_lists[0] + correct_answer_lists[1]
-    except IndexError:
-        print("Answer is wrongly formatted: artists")
-        raise
+    artists = question.answers[0:2]
+    correct_artists = question.correct_answer_lists[0] + question.correct_answer_lists[1]
     score += score_both_correct(artists, correct_artists)
 
     # Grant a point if the song title is correct
     # The third answer is the song title
     song_title = ""
     correct_song_titles = []
-    try:
-        song_title = answers[2]
-        correct_song_titles = correct_answer_lists[2]
-    except IndexError:
-        print("Answer is wrongly formatted: song title")
-        raise
+
+    song_title = question.answers[2]
+    correct_song_titles = question.correct_answer_lists[2]
     score += score_single(song_title, correct_song_titles)
     return score
 
 
-def get_score_photo(answers, correct_answer_lists):
+def get_score_photo(question):
     # Grant a point for each recognized character / person in the photo
     score = 0
-    for answer, correct_answer in zip(answers, correct_answer_lists):
+    for answer, correct_answer in zip(question.answers, question.correct_answer_lists):
         score += score_single(answer, correct_answer)
 
     return score
@@ -128,5 +117,10 @@ if __name__ == "__main__":
         given_answers = pickle.load(f)
 
     all_correct_answers, categories = read_correct_answers_and_categories()
-    print(get_score(given_answers, all_correct_answers, categories))
 
+    questions = []
+    for index in range(len(all_correct_answers)):  # Take number of correct answer lists for the amount of questions
+        question = Question(index, categories[index], all_correct_answers[index], given_answers[index])
+        questions.append(question)
+
+    print(get_score(questions))
