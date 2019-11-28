@@ -16,11 +16,12 @@ RUN pip install -r requirements.txt
 ENV FLASK_APP "view/home.py"
 ENV FLASK_ENV "development"
 ENV FLASK_DEBUG True
+ENV POSTGRES_DB=ordina-pubquiz
 ENV POSTGRES_USER=postgres
 ENV POSTGRES_PASSWORD=password
 ENV POSTGRES_HOST=postgres
 ENV POSTGRES_PORT=5432
-ENV POSTGRES_DB=ordina-pubquiz
+
 
 EXPOSE 5000
 
