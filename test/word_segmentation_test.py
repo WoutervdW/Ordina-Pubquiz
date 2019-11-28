@@ -1,33 +1,45 @@
 import unittest
 import os
 import cv2
-from app.word_segmentation import word_segmentation
+from app.word_segmentation import word_segmentation, prepare_image, show_image, find_rect
+from app.line_segmentation import crop_and_warp
 
 
 def check_line(path, l, line_word_count, scan_file):
     index = l.split("_")[-1]
     line = cv2.imread(path + l + "/center_" + index + ".png")
+    original_height = line.shape[0]
+    resized_height = 50
+    line_original = line.copy()
+    line = prepare_image(line, resized_height)
     res = word_segmentation(line, kernel_size=25, sigma=11, theta=7, min_area=100)
 
     # Save the words if this is not done so the result can be viewed to determine how it went wrong/good
-    print('Segmented into %d words' % len(res))
     # If the folder does not exist yet we want to create it
     image_path = "test_files/word_files/" + scan_file + "/" + l
     if not os.path.exists(image_path):
         os.makedirs(image_path)
 
+    multiply_factor = original_height / resized_height
+
     if len(os.listdir(image_path)) == 0:
-        # If the directory is empty then we want to save the words that the test finds.
         for (j, w) in enumerate(res):
             (word_box, word_img) = w
             (x, y, w, h) = word_box
-            # save word
-            cv2.imwrite(image_path + '/%d.png' % j, word_img)
-            # draw bounding box in summary image
-            cv2.rectangle(line, (x, y), (x + w, y + h), 0, 1)
+
+            x_new = x * multiply_factor
+            y_new = y * multiply_factor
+            width_new = w * multiply_factor
+            height_new = h * multiply_factor
+            rect = find_rect(x_new, y_new, width_new, height_new)
+
+            cropped = crop_and_warp(line_original, rect)
+            cv2.imwrite(image_path + '/%d.png' % j, cropped)
+            cv2.rectangle(line_original, (int(x_new), int(y_new)), (int(x_new + width_new), int(y_new + height_new)),
+                          0, 1)
 
         # output summary image with bounding boxes
-        cv2.imwrite(image_path + '/' + l + '_summary.png', line)
+        cv2.imwrite(image_path + '/' + l + '_summary.png', line_original)
 
     if len(res) != line_word_count:
         # The test failed, print what went wrong and return False for the test
@@ -159,3 +171,4 @@ class WordSegmentationTest(unittest.TestCase):
                 scan_2_word_test = False
 
         self.assertTrue(scan_2_word_test)
+

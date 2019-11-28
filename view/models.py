@@ -1,10 +1,20 @@
 from view import db
+from view import ma
+import json
 
 class Team(db.Model):
     __tablename__ = 'team'
     id = db.Column(db.Integer, primary_key=True)
     teamname = db.Column(db.String(255))
     score = db.Column(db.Integer)
+    def __init__(self, username, email):
+        self.teamname = teamname
+        self.score = score
+
+class TeamSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('teamname', 'score')
 
 class Question(db.Model):
     __tablename__ = 'question'
@@ -46,6 +56,7 @@ class AnswerSheetQuestion(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     answersheet_id = db.Column(db.Integer, db.ForeignKey('answersheet.id'))
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'))
+
 
 
 

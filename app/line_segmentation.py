@@ -71,7 +71,6 @@ def crop_and_warp(img, crop_rect):
     max_width = max([distance_between(top_right, top_left), distance_between(bottom_right, bottom_left)])
     max_height = max([distance_between(bottom_left, top_left), distance_between(bottom_right, top_right)])
 
-    ratio = max_width/max_height
     # The ratio is an easy indication if it is the line we want or not 10 is a loose bound for that ratio (around 15)
     # TODO maybe incorporate the ratio
     # TODO Maybe also find and save the square before it (it holds the question number)
@@ -189,7 +188,7 @@ def line_segmentation(answer_image, save_image=False, image_path="lines/", image
         finished_line = [cropped_center, cropped_left, cropped_right, cropped_full, x]
         lines.append(finished_line)
         if save_image:
-            path = image_path + image_name + "_line_" + str(x)
+            path = image_path + image_name + "/line_" + str(x)
             if not os.path.exists(path):
                 os.makedirs(path)
             # save (or show) the image if the folder is empty (for tests)
