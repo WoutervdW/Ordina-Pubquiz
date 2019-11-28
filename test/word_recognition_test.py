@@ -1,7 +1,7 @@
 import unittest
 import os
 from app.Model import Model
-from app.SamplePreprocessor import preprocess
+from app.sample_preprocessor import preprocess
 from app.DataLoader import Batch
 import cv2
 
@@ -57,6 +57,8 @@ class WordRecognitionTest(unittest.TestCase):
                 words = [words for words in os.listdir(scan_path + scans[scan] + "/" + lines[line])]
                 for word in range(0, len(words)):
                     print(test_word(scan, line, word, model))
+        # If it arrives here without errors it has succesfully attempted to recoginize all words without errors
+        self.assertTrue(True)
 
 
 

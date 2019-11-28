@@ -7,7 +7,7 @@ https://towardsdatascience.com/build-a-handwritten-text-recognition-system-using
 import sys
 from app.Model import Model
 from app.Model import DecoderType
-from app.SamplePreprocessor import preprocess
+from app.sample_preprocessor import preprocess
 from app.DataLoader import Batch
 from app.pdf_to_image import convert_pdf_to_image
 from app.line_segmentation import line_segmentation, crop_and_warp
