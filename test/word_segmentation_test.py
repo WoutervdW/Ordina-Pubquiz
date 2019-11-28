@@ -56,33 +56,14 @@ def test_single_line(scan_number, line_number, expected_word_count, configuratio
                       save_image)
 
 
+# TODO Now the amount of lines and words are hardcoded for the 3 scans we used for testing. Make this configurable
 class WordSegmentationTest(unittest.TestCase):
 
-    # TODO Similar to lines this can be made variable. The input and the result are different depending on the scan
-    #  The user should be able to change the test with his own input and result
     def test_word_segmentation_scan_0_lines(self):
         path = "test_files/line_files/scan_0/"
         lines = [line for line in os.listdir(path)]
         # On scan_0 there are all names, so 19 answers and 2 words for each lines
-        word_result = {1: 2,
-                       2: 2,
-                       3: 2,
-                       4: 2,
-                       5: 2,
-                       6: 2,
-                       7: 2,
-                       8: 2,
-                       9: 2,
-                       10: 2,
-                       11: 2,
-                       12: 2,
-                       13: 2,
-                       14: 2,
-                       15: 2,
-                       16: 2,
-                       17: 2,
-                       18: 2,
-                       19: 2}
+        word_result = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
         if len(lines) != len(word_result):
             print("Warning! There probably was an error in the line segmentation, fix that first before running this"
                   " test. This test is based on the lines in scan1, if they are not correctly found the test could "
@@ -90,7 +71,7 @@ class WordSegmentationTest(unittest.TestCase):
             self.assertEqual(len(lines), len(word_result))
         scan_0_word_test = True
         for x in range(0, len(lines)):
-            if not check_line(path, lines[x], word_result[x + 1], "scan_0"):
+            if not check_line(path, lines[x], word_result[x], "scan_0"):
                 scan_0_word_test = False
 
         self.assertTrue(scan_0_word_test)
