@@ -1,9 +1,10 @@
-from flask import Flask
-from view.config import Config
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from flask_migrate import Migrate, MigrateCommand
+from flask_script import Manager
 from flask_bootstrap import Bootstrap
 from flask_marshmallow import Marshmallow
+from flask import Flask
+from view.config import Config
 
 
 view = Flask(__name__)
@@ -13,7 +14,13 @@ bootstrap = Bootstrap(view)
 
 db = SQLAlchemy(view)
 ma = Marshmallow(view)
+
 migrate = Migrate(view, db)
 
-from view import routes, models
+manager = Manager(view)
+manager.add_command('db', MigrateCommand)
 
+if __name__ == '__main__':
+    manager.run()
+
+from view import routes, models

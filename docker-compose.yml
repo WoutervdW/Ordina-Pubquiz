@@ -1,9 +1,22 @@
 version: '3'
 services:
-  flask:
-    image: webapp-flask
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - "./:/usr/src/app"
+    backend:
+        image: pubquiz-backend
+        build:
+          context: .
+          dockerfile: Dockerfile
+        volumes:
+          - "./:/usr/src/app"
+        ports:
+          - 5000:5000
+       
+          
+    postgres:
+        image: postgres:9.6.2-alpine
+        restart: always
+        ports:
+          - 5432:5432
+        volumes:
+          -  db_volume:/var/lib/postgreql
+volumes:
+    db_volume:
