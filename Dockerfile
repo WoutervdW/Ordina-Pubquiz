@@ -23,4 +23,9 @@ ENV POSTGRES_PORT=5432
 ENV POSTGRES_DB=ordina-pubquiz
 
 EXPOSE 5000
+
+CMD flask db init
+CMD flask db migrate
+CMD flask db upgrade
+
 CMD flask run --host=0.0.0.0
