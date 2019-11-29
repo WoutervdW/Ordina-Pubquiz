@@ -11,9 +11,9 @@
         ["Arnold Schwarzenegger", "Sylvester Stallone"],
         ["Robert de Niro", "Kevin Spacey"],
         # Algemeen questions (standard)
-        ["400 keer"],
+        ["400", "vierhonder", "vierhonder keer"],
         ["1980"],
-        ["46m"],
+        ["46", "zesenveertig"],
         ["Fatima"],
         ["Boeddha"],
         ["Maestro"],
@@ -59,7 +59,7 @@
         # Algemeen questions (standard)
         [["400 keer", "400 x", "vierhonderd", "four hundred"]],
         [["1980"]],
-        [["46", "46m", "46 meter"]],
+        [["46", "46m", "46 meter", "zesenveertig meter"]],
         [["Fatima"]],
         [["Boeddha", "Buddha"]],
         [["Maestro"]],
