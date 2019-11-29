@@ -2,7 +2,7 @@ from view import view
 from flask import render_template
 from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
-from main import test_test
+import main
 
 from view.models import Team
 from view.models import TeamSchema
@@ -29,7 +29,8 @@ def get_teams():
 
 @view.route('/run')
 def run():
-    line = test_test()
+    line = main.test_test()
     # We wil use this url shortcut to start the program
+    main.run()
     return line
 
