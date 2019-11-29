@@ -2,19 +2,23 @@ from view import db
 from view import ma
 import json
 
+
 class Team(db.Model):
     __tablename__ = 'team'
     id = db.Column(db.Integer, primary_key=True)
     teamname = db.Column(db.String(255))
     score = db.Column(db.Integer)
+
     def __init__(self, username, email):
         self.teamname = teamname
         self.score = score
+
 
 class TeamSchema(ma.Schema):
     class Meta:
         # Fields to expose
         fields = ('teamname', 'score')
+
 
 class Question(db.Model):
     __tablename__ = 'question'
@@ -25,6 +29,7 @@ class Question(db.Model):
     correct_answer = db.Column(db.String(255))
     active = db.Column(db.Boolean)
 
+
 class Answer(db.Model):
     __tablename__ = 'answer'
     id = db.Column(db.Integer, primary_key=True)
@@ -34,6 +39,7 @@ class Answer(db.Model):
     correct = db.Column(db.Boolean)
     answer_image = db.Column(db.LargeBinary)
     confidence = db.Column(db.Float)
+
 
 class User(db.Model):
     __tablename__= 'user'
@@ -46,21 +52,16 @@ class Answersheet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     answersheet_image = db.Column(db.LargeBinary)
 
+
 class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(255))
+
 
 class AnswerSheetQuestion(db.Model):
     __tablename__ = 'answersheetquestion'
     id = db.Column(db.Integer, primary_key = True)
     answersheet_id = db.Column(db.Integer, db.ForeignKey('answersheet.id'))
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'))
-
-
-
-
-
-
-
 

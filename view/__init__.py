@@ -18,3 +18,4 @@ ma = Marshmallow(view)
 migrate = Migrate(view, db)
 
 from view import routes, models
+

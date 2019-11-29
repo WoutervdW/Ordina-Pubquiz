@@ -13,6 +13,7 @@ from collections import OrderedDict
 
 @view.route('/')
 @view.route('/index')
+@view.route('/sander')
 def index():
     return render_template('index.html')
 
@@ -22,5 +23,11 @@ def get_teams():
     teams_schema = TeamSchema(many=True)
     teams = Team.query.all()
     result = teams_schema.dump(teams)
-    return jsonify(result);
+    return jsonify(result)
+
+
+@view.route('/run')
+def run():
+    # We wil use this url shortcut to start the program
+    return "run"
 

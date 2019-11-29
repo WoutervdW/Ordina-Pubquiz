@@ -82,6 +82,7 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
     # TODO connect this to the answer checker.
     f.close()
 
+
 def run(pubquiz_answer_sheets, save_image=False):
     print("De officiele Ordina pub-quiz antwoord vinder")
     model = Model(open('model/charList.txt').read())
