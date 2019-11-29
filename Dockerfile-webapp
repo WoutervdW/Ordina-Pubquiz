@@ -11,4 +11,5 @@ ENV POSTGRES_PORT 5432
 
 EXPOSE 5000
 
+CMD flask upgrade
 CMD flask run --host=0.0.0.0

@@ -19,10 +19,10 @@ services:
     backend:
         build:
            context: .
-           dockerfile: Dockerfile
+           dockerfile: Dockerfile-backend
         volumes:
           - "./:/usr/src/app"
-          - /usr/src/app/      
+          - /usr/src/app/view      
           
     webapp:
         build:
@@ -30,11 +30,12 @@ services:
           dockerfile: Dockerfile-webapp
         volumes:
           - "./view:/usr/src/app/view"
+          - "./migrations:/usr/src/app/migrations"
         ports:
           - 5000:5000
         links:
           - postgres
-      
+       
        
 volumes:
     db_volume:
