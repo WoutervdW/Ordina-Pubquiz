@@ -13,20 +13,4 @@ RUN apt-get install poppler-utils -y
 COPY requirements.txt /usr/src/app
 RUN pip install -r requirements.txt
 
-ENV FLASK_APP "view/home.py"
-ENV FLASK_ENV "development"
-ENV FLASK_DEBUG True
-ENV POSTGRES_DB=ordina-pubquiz
-ENV POSTGRES_USER=postgres
-ENV POSTGRES_PASSWORD=password
-ENV POSTGRES_HOST=postgres
-ENV POSTGRES_PORT=5432
 
-
-EXPOSE 5000
-
-CMD flask db init
-CMD flask db migrate
-CMD flask db upgrade
-
-CMD flask run --host=0.0.0.0

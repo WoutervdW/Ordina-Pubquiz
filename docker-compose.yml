@@ -1,31 +1,40 @@
 version: '3'
 services:
     postgres:
+        container_name: postgres
         image: postgres:9.6.2-alpine
         restart: always
-        ports:
-          - 5432:5432
-        volumes:
-          -  db_volume:/var/lib/postgreql
         environment:
           - POSTGRES_DB=ordina-pubquiz
           - POSTGRES_USER=postgres
           - POSTGRES_PASSWORD=password
           - POSTGRES_HOST=postgres
           - POSTGRES_PORT=5432
+        ports:
+          - 5432:5432
+     
+        volumes:
+           - db_volume:/var/lib/postgreql
           
     backend:
-        image: pubquiz-backend
         build:
-          context: .
-          dockerfile: Dockerfile
+           context: .
+           dockerfile: Dockerfile
         volumes:
           - "./:/usr/src/app"
+          - /usr/src/app/      
+          
+    webapp:
+        build:
+          context: .
+          dockerfile: Dockerfile-webapp
+        volumes:
+          - "./view:/usr/src/app/view"
         ports:
           - 5000:5000
+        links:
+          - postgres
+      
        
-          
-    
-          
 volumes:
     db_volume:

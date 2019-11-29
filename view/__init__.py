@@ -17,10 +17,4 @@ ma = Marshmallow(view)
 
 migrate = Migrate(view, db)
 
-manager = Manager(view)
-manager.add_command('db', MigrateCommand)
-
-if __name__ == '__main__':
-    manager.run()
-
 from view import routes, models
