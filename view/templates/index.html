@@ -23,11 +23,12 @@ angular.module('table', [])
                 }).then(function mySuccess(response){
                     $scope.teams = response.data;
                 });
-        //$scope.firstName = "pietje";
-        //$scope.propertyName = 'score';
-        //$scope.sortBy = function(teams, propertyName) {
-         //   $scope.propertyName = propertyName;
-        //}
+        $scope.propertyName = 'score';
+        $scope.reverse = 'false';
+        $scope.sortBy = function(propertyName) {
+            $scope.reverse = $scope.propertyName === propertyName ? !$scope.reverse : false;
+            $scope.propertyName = propertyName;
+        }
     });
 </script>
 <body>
@@ -38,18 +39,16 @@ angular.module('table', [])
         <table class="table table-hover table-sm">
             <thead>
                 <tr>
-                    <th scope = "col">Team
-                        <button ng-click = "sortBy('teamName', teams)"></button>
+                    <th scope = "col" ng-click = "sortBy('teamName')">Team
                         <span class = "sortorder" ng-show="propertyName === 'teamName'"></span>
                     </th>
-                    <th scope = "col" class = "th-sm">Score
-                        <button ng-click = "sortBy('score', teams)"></button>
+                    <th scope = "col" class = "th-sm" ng-click = "sortBy('score')">Score
                         <span class = "sortorder" ng-show="propertyName === 'score'"></span>
                     </th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="team in teams | orderBy:propertyName">
+                <tr ng-repeat="team in teams | orderBy:propertyName:reverse">
                     <td>//team.teamname//</td>
                     <td>//team.score//</td>
                 </tr>
