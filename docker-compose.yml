@@ -15,7 +15,8 @@ services:
      
         volumes:
            - db_volume:/var/lib/postgreql
-          
+        
+      
     backend:
         build:
            context: .
