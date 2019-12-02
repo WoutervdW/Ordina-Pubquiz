@@ -8,12 +8,13 @@
 https://www.docker.com/products/docker-desktop
 
 # Running
-docker-compose build
-docker-compose up
+* docker-compose build
+* docker-compose up
 
 # Storing data
 
-#Backup
+## Backup
 docker exec -t <container_name> pg_dumpall -c -U postgres > backup.sql
-#Restore
+
+## Restore
 type backup.sql < docker exec -i <container_name> /var/lib/postgresql -u postgres --password=password ordina-pubquiz
