@@ -33,7 +33,7 @@ class Question(db.Model):
 class QuestionSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('user_id', 'user_id', 'category_id', 'question', 'correct_answer', 'active')
+        fields = ('id', 'user_id', 'category_id', 'question', 'correct_answer', 'active')
 
 
 class Answer(db.Model):

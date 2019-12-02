@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <script src="//code.angularjs.org/1.7.9/angular.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
     <title>Questions</title>
@@ -11,26 +12,31 @@
 <body>
 {% extends "base.html" %}
 {% block content %}
-<div class = "container"  ng-app = "module" ng-controller = questioncontroller">
- <div class = "table-responsive">
+<div class = "container"  ng-app = "module" ng-controller = "questioncontroller">
+    <div class = "table-responsive">
         <table class="table table-hover table-sm">
             <thead>
                 <tr>
-                    <th scope = "col" ng-click = "sortBy('question')" >Question
+                    <th scope = "col" ng-click = "sortBy('question')" >Vraag
+
                     </th>
 
-                    <th scope = "col" ng-click = "sortBy('answer')">Answer
+                    <th scope = "col" ng-click = "sortBy('answer')">Correct antwoord
+
                     </th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="question in questions | orderBy:propertyName:reverse">
                     <td>//question.question//</td>
-                    <td>//question.answer//</td>
+                    <td>//question.correct_answer//</td>
                 </tr>
             </tbody>
         </table>
     </div>
+</div>
 {%endblock%}
+
+
 </body>
 </html>
