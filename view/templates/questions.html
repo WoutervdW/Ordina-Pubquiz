@@ -2,11 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src="//code.angularjs.org/1.7.9/angular.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+
     <title>Questions</title>
 </head>
 <body>
@@ -30,6 +26,10 @@
                 <tr ng-repeat="question in questions | orderBy:propertyName:reverse">
                     <td>//question.question//</td>
                     <td>//question.correct_answer//</td>
+                </tr>
+                <tr>
+                    <td><input type = "text" id = question"></td>
+                    <td><input type ="text" id = "correct_answer"></td>
                 </tr>
             </tbody>
         </table>

@@ -9,3 +9,14 @@ th {
     border-collapse:collapse;
     cursor: pointer;
 }
+
+input[type=text] {
+  width: 100%;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: none;
+  background-color: #FFA133;
+  color: white;
+}
+
+input[type=text]:hover {}
