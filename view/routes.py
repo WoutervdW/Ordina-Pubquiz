@@ -6,9 +6,9 @@ import main
 
 from view.models import Team
 from view.models import TeamSchema
+from view.models import Question
+from view.models import QuestionSchema
 
-
-import psycopg2
 from collections import OrderedDict
 
 
@@ -19,6 +19,11 @@ def index():
     return render_template('index.html')
 
 
+@view.route('/questions')
+def questions():
+    return render_template('questions.html')
+
+
 @view.route('/api/v1.0/teams', methods=['GET'])
 def get_teams():
     teams_schema = TeamSchema(many=True)
@@ -27,10 +32,20 @@ def get_teams():
     return jsonify(result)
 
 
+@view.route('/api/v1.0/questions', methods=['GET'])
+def get_questions():
+    questions_schema = QuestionSchema(many=True)
+    allquestions = Question.query.all()
+    result = questions_schema.dump(allquestions)
+    return jsonify(result);
+
+
 @view.route('/run')
 def run():
     line = main.test_test()
     # We wil use this url shortcut to start the program
     main.run()
     return line
+
+
 

@@ -3,47 +3,30 @@
 
 <head>
     <meta charset="UTF-8">
-  <!--  <script src="{{ url_for('static', filename='script.js') }}"></script> -->
     <script src="//code.angularjs.org/1.7.9/angular.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> -
     <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+    <title>Home</title>
 </head>
 <script>
-// define angular interpolationtags as {a a}
-angular.module('table', [])
-    .config(function($interpolateProvider) {
-        $interpolateProvider.startSymbol('//');
-        $interpolateProvider.endSymbol('//');
-    })
-    .controller('tablecontroller', function($scope, $http){
-        $http({
-                method: "GET",
-                url: "/api/v1.0/teams"
-                }).then(function mySuccess(response){
-                    $scope.teams = response.data;
-                });
-        $scope.propertyName = 'score';
-        $scope.reverse = 'false';
-        $scope.sortBy = function(propertyName) {
-            $scope.reverse = $scope.propertyName === propertyName ? !$scope.reverse : false;
-            $scope.propertyName = propertyName;
-        }
-    });
+
 </script>
 <body>
 {% extends "base.html" %}
 {% block content %}
-<div class = "container"  ng-app = "table" ng-controller = "tablecontroller">
+<div class = "container"  ng-app = "module" ng-controller = "indexcontroller">
     <div class = "table-responsive">
         <table class="table table-hover table-sm">
             <thead>
                 <tr>
-                    <th scope = "col" ng-click = "sortBy('teamName')">Team
-                        <span class = "sortorder" ng-show="propertyName === 'teamName'"></span>
+                    <th scope = "col" ng-click = "sortBy('teamName')" >Team
+
                     </th>
-                    <th scope = "col" class = "th-sm" ng-click = "sortBy('score')">Score
-                        <span class = "sortorder" ng-show="propertyName === 'score'"></span>
+
+                    <th scope = "col" ng-click = "sortBy('score')">Score
+
                     </th>
                 </tr>
             </thead>

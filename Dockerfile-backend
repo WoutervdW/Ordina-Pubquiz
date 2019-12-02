@@ -1,2 +1,2 @@
-FROM ordina-pubquiz_backend
+FROM ordina-pubquiz_main
 CMD python run main.py

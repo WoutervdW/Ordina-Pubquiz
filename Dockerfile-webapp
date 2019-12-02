@@ -1,6 +1,6 @@
 FROM ordina-pubquiz_backend
 
-ENV FLASK_APP "view/home.py"
+ENV FLASK_APP "home.py"
 ENV FLASK_ENV "development"
 ENV FLASK_DEBUG True
 ENV POSTGRES_DB ordina-pubquiz

@@ -30,6 +30,12 @@ class Question(db.Model):
     active = db.Column(db.Boolean)
 
 
+class QuestionSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('user_id', 'user_id', 'category_id', 'question', 'correct_answer', 'active')
+
+
 class Answer(db.Model):
     __tablename__ = 'answer'
     id = db.Column(db.Integer, primary_key=True)
