@@ -5,7 +5,7 @@ Based on the project :
 https://towardsdatascience.com/build-a-handwritten-text-recognition-system-using-tensorflow-2326a3487cd5
 """
 import sys
-# from app.Model import Model
+from app.Model import Model
 from app.Model import DecoderType
 from app.sample_preprocessor import preprocess
 from app.DataLoader import Batch
@@ -17,18 +17,18 @@ import cv2
 import argparse
 
 
-# def infer(_model, word_image):
-#     """
-#     recognize text in image provided by file path
-#     """
-#     # image = fn_img
-#     fn_img = cv2.cvtColor(word_image, cv2.COLOR_BGR2GRAY)
-#     image = preprocess(fn_img, Model.img_size)
-#     batch = Batch([image])
-#     (recognized, probability) = _model.infer_batch(batch, True)
-#     print('Recognized:', '"' + recognized[0] + '"')
-#     print('Probability:', probability[0])
-#     return recognized, probability
+def infer(_model, word_image):
+    """
+    recognize text in image provided by file path
+    """
+    # image = fn_img
+    fn_img = cv2.cvtColor(word_image, cv2.COLOR_BGR2GRAY)
+    image = preprocess(fn_img, Model.img_size)
+    batch = Batch([image])
+    (recognized, probability) = _model.infer_batch(batch, True)
+    print('Recognized:', '"' + recognized[0] + '"')
+    print('Probability:', probability[0])
+    return recognized, probability
 
 
 def read_word_from_image(image_to_read, model):
@@ -44,9 +44,7 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
     # We save the results to a file, which will be in the sheet subfolder with the sheet name.
     f = open(output_folder + sheet_name + "/" + sheet_name + ".txt", "w")
 
-    index = 0
     # After the line segmentation is done we can find the separate words
-
     for line_image in lines:
         line = line_image[0]
         # -kernelSize: size of filter kernel (odd integer)
@@ -66,17 +64,17 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
             save_word_image(output_folder, sheet_name, line_image, multiply_factor, res)
 
         # We can now examine each word.
-        # words = get_words_image(line_image, multiply_factor, res)
-        # words_results = []
-        # result_line = "line " + str(words[0][1]) + " predictions"
-        # for word in words:
-        #     # TODO add contrast to each word
-        #     read_results = read_word_from_image(word[0], model)
-        #     words_results.append(read_results)
-        #     result_line = result_line + " word: " + str(word[2]) + " " + str(read_results[0]) + " with probability " + str(read_results[1])
-        #     print(words_results)
-        # result_line = result_line + "\n"
-        # f.write(result_line)
+        words = get_words_image(line_image, multiply_factor, res)
+        words_results = []
+        result_line = "line " + str(words[0][1]) + " predictions"
+        for word in words:
+            # TODO add contrast to each word
+            read_results = read_word_from_image(word[0], model)
+            words_results.append(read_results)
+            result_line = result_line + " word: " + str(word[2]) + " " + str(read_results[0]) + " with probability " + str(read_results[1])
+            print(words_results)
+        result_line = result_line + "\n"
+        f.write(result_line)
 
     # For now write the results to a file.
     # TODO connect this to the answer checker.
@@ -85,8 +83,7 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
 
 def run_program(pubquiz_answer_sheets, save_image=False):
     print("De officiele Ordina pub-quiz antwoord vinder")
-    # model = Model(open('model/charList.txt').read())
-    model = None
+    model = Model(open('model/charList.txt').read())
 
     for answer_sheets in pubquiz_answer_sheets:
         # The pdf file. We can it and it returns 1 to multiple answer pages

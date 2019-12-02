@@ -9,6 +9,7 @@ ENV PYTHONUNBUFFERED 1
 RUN pip install --upgrade pip
 RUN apt-get update
 RUN apt-get install poppler-utils -y
+RUN apt-get install -y libsm6 libxext6 libxrender-dev
 
 COPY requirements.txt /usr/src/app
 RUN pip install -r requirements.txt
