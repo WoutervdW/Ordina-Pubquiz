@@ -1,2 +1,7 @@
 FLASK_APP=home.py
 FLASK_ENV=development
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=Emmawatson!2
+POSTGRES_HOST=localhost
+POSTGRES_DB=ordina_pubquiz
+POSTGRES_PORT=5432

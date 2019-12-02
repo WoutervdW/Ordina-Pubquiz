@@ -40,11 +40,11 @@ def get_questions():
     return jsonify(result);
 
 
-@view.route('/run')
-def run():
+@view.route('/run_program')
+def run_program():
     line = main.test_test()
     # We wil use this url shortcut to start the program
-    main.run()
+    main.run_program()
     return line
 
 

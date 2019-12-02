@@ -138,3 +138,6 @@ notes/
 *.pyc
 .idea/
 dump/
+
+# This should not be included in the project.
+.flaskenv

@@ -11,11 +11,11 @@ def test_test():
     return "Hoi Sander!"
 
 
-def run():
+def run_program():
     # We should be able to read all the files in a certain folder
     # os.listdir(input_folder) something like this.
     pubquiz_anser_sheets = ['scan.pdf']
-    app.run(pubquiz_anser_sheets, True)
+    app.run_program(pubquiz_anser_sheets, True)
 
     print("HOI SANDER")
 
