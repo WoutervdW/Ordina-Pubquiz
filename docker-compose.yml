@@ -5,7 +5,8 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        image: ordina-pubquiz_main        
+        image: ordina-pubquiz_main
+
     postgres:
         container_name: postgres
         image: postgres:9.6.2-alpine
@@ -21,8 +22,8 @@ services:
      
         volumes:
            - db_volume:/var/lib/postgreql
-        
-      
+
+
     backend:
         container_name: ordina-pubquiz_backend
         build:
@@ -32,7 +33,7 @@ services:
         volumes:
           - "./:/usr/src/app"
           - /usr/src/app/view
-          
+
     webapp:
         build:
           context: .
@@ -43,7 +44,6 @@ services:
           - 5000:5000
         links:
           - postgres
-       
-       
+
 volumes:
     db_volume:
