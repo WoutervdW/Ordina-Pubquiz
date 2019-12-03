@@ -9,6 +9,7 @@ from view.config import Config
 
 view = Flask(__name__)
 view.config.from_object(Config)
+view.secret_key = 'some secret key that we will come up with'
 
 bootstrap = Bootstrap(view)
 

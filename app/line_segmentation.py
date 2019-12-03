@@ -2,7 +2,6 @@ import numpy as np
 import cv2
 import operator
 import os
-from app.utils import write_blob
 
 
 def show_image(img):
