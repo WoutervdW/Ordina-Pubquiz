@@ -28,13 +28,15 @@
                     <td>//question.correct_answer//</td>
                 </tr>
                 <tr>
-                    <td><input type = "text" id = question"></td>
-                    <td><input type ="text" id = "correct_answer"></td>
+                    <td><input type = "text" id = newquestion" ng-model = "newquestion"></td>
+                    <td><input type ="text" id = "newcorrect_answer" ng-model = "newcorrect_answer"></td>
+                    <td><button ng-click = "addQuestion()">Voeg toe</button></td>
                 </tr>
             </tbody>
         </table>
     </div>
 </div>
+
 {%endblock%}
 
 

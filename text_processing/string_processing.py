@@ -1,4 +1,5 @@
 from fuzzywuzzy import fuzz, process
+import re
 
 
 # TODO: check string similarity using fuzzywuzzy (https://www.datacamp.com/community/tutorials/fuzzy-string-python)
@@ -7,14 +8,17 @@ from fuzzywuzzy import fuzz, process
 # TODO: get the Question from calculate_score to string comparison for the category to parse the string correctly
 #  (numbers in songs should be parsed as strings, in other answers they should probably be parsed as integers)
 
-def check_numerical_value(answer, correct_value):
+def check_numerical_value(answer, correct_answer):
+    # Completely new code
+
+    # DEPRECATED
     for answer_word in answer.split():  # For every word in the given answer
         try:
             value = int(answer_word)  # Try to convert it to an int
         except ValueError:
             pass  # This word is not an integer, try the next one
 
-        return value == correct_value
+        return value == correct_answer
     return False
 
 
@@ -37,41 +41,25 @@ def check_correct(answer, correct_answers, numerical):
     :return: true if the answer is (close enough to) correct, false otherwise.
     """
 
-    if numerical:
-        # Check if (part of) the answer can be converted to an integer. Convert the correct answer to integer as
-        # well. If so, compare the integer value to the integer value of the correct answer. Else, compare the string
-        # to the string versions of the correct answers
+    # Option 3: check if there is a common substring, if it is numerical, return True
+    for correct_answer in correct_answers:
+        # Use regex to get all the numbers and compare those from the given answer to those each of the correct answers
+        # for 100% similarity
 
-        # option1: only numerical value is important, correct_answers only contains single int values for numerical
-        # answers
-        for correct_answer in correct_answers:  # for each correct answer
-            for answer_word in answer.split():  # for each word in the given answer
-                # If and int value is found in both the answer and the correct answer, and they are the same,
-                # return True
-                if check_numerical_value(answer_word, correct_answer):
-                    return True
-    else:
-        for correct_answer in correct_answers:
-            if check_string(answer, correct_answer):
-                return True
-        return False
+        # Compare substrings. If a substring is a number and it matches an answer exactly, and the rest of the string
+        # is similar enough, return True
+        if check_numerical_value(answer, correct_answer):
+            return True
+            # See if the given answer contains a number that exactly matches one in the correct answers, as well as the
+            # rest of the string being similar.
 
-    # Option 2: don't care what is filled in as correct answer, if it contains a number, it can be compared to the
-    # answer, and all the rest will be compared as strings
+        # If no such number exists, check the answer for string-based similarity to any of the correct answers
+        # If there is no numerical value that is wrong, compare the entire string. If it is similar (enough), return
+        # True.
+        if check_string(answer, correct_answer):
+            return True
 
-    for correct_answer in correct_answers:  # For every correct answer
-        for correct_answer_word in correct_answer.split():  # For every word in the correct answer
-            # if every substring of the given answer matches a number in the correct answer and
-            try:
-                correct_value = int(correct_answer_word)  # Try to convert it to an int
-                if check_numerical_value(answer, correct_value):  # Check if the answer contains this int value
-                    return True
-                elif check_string(answer, correct_answer):
-                    return True
-            except ValueError:
-                # This word is not an int, try to compare it as a string
-                if check_string(answer, correct_answer):
-                    return True
+    # If none of the correct answers were similar to correct answers, return False
     return False
 
 

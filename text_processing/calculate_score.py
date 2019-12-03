@@ -29,8 +29,8 @@ def get_score(question):
         song_title = question.answers[2]
         correct_song_titles = question.correct_answer_lists[2]
         # Grant a point if both artists are correct
-        if check_correct(artist1, correct_artists, question.numerical) and check_correct(artist2, correct_artists,
-                                                                                         question.numerical):
+        if check_correct(artist1, correct_artists, question.numerical) and \
+                check_correct(artist2, correct_artists, question.numerical):
             score += 1
         # Grant a point if the song title is correct
         if check_correct(song_title, correct_song_titles, question.numerical):
@@ -55,7 +55,6 @@ def read_correct_answers_and_categories():
         correct_answers = pickle.load(f)
     with open("data\\categories.pickle", "rb") as f:
         categories = pickle.load(f)
-
     return correct_answers, categories
 
 
