@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import operator
 import os
+from app.utils import write_blob
 
 
 def show_image(img):
@@ -200,6 +201,10 @@ def line_segmentation(answer_image, save_image=False, image_path="lines/", image
             cv2.imwrite(path + "/left_" + str(x) + ".png", finished_line[1])
             cv2.imwrite(path + "/right_" + str(x) + ".png", finished_line[2])
             cv2.imwrite(path + "/full_" + str(x) + ".png", finished_line[3])
+
+            if x == 0:
+                # We do this for test purposes
+                write_blob(x, path + "/center_" + str(x) + ".png", 'png')
     print('done all ' + str(len(left_block_contours)) + ' lines')
     return lines
 
