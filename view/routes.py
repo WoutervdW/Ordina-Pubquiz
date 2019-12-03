@@ -1,8 +1,11 @@
 from view import view
-from flask import render_template
+from view import db
+from flask import render_template, request
 from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
+
 import main
+import json
 
 from view.models import Team
 from view.models import TeamSchema
@@ -38,6 +41,16 @@ def get_questions():
     allquestions = Question.query.all()
     result = questions_schema.dump(allquestions)
     return jsonify(result);
+
+
+@view.route('/api/v1.0/newquestion', methods=['POST'])
+def add_question():
+    post = request.get_json();
+    newquestion = post.get('question');
+    newcorrect_answer = post.get('correct_answer');
+    q = Question(question = newquestion, correct_answer = newcorrect_answer);
+    db.session.add(q);
+    db.session.commit();
 
 
 @view.route('/run_program')
