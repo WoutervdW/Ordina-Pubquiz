@@ -13,19 +13,20 @@
         <table class="table table-hover table-sm">
             <thead>
                 <tr>
-                    <th scope = "col" ng-click = "sortBy('question')" >Vraag
-
-                    </th>
-
-                    <th scope = "col" ng-click = "sortBy('answer')">Correct antwoord
-
-                    </th>
+                    <th scope = "col" ng-click = "sortBy('question')" >Vraag</th>
+                    <th scope = "col" ng-click = "sortBy('answer')">Correct antwoord</th>
+                    <th scope = "col" ng-click = "sortBy('category')">Categorie</th>
+                    <th scope = "col" ng-click = "sortBy('user')">Aangemaakt door</th>
+                    <th scope = "col" ng-click = "sortBy('active')">Actief</th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="question in questions | orderBy:propertyName:reverse">
                     <td>//question.question//</td>
                     <td>//question.correct_answer//</td>
+                    <td>//question.category_id//</td>
+                    <td>//question.user_id//</td>
+                    <td>//question.active//</td>
                 </tr>
                 <tr>
                     <td><input type = "text" id = newquestion" ng-model = "newquestion"></td>

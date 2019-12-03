@@ -18,4 +18,4 @@ docker exec -t <container_name> pg_dumpall -c -U postgres > backup.sql
 
 
 ## Restore
-type backup.sql < docker exec -i <container_name> /var/lib/postgresql -u postgres --password=password ordina-pubquiz
+docker exec -i <postgres_container_name> psql -U postgres -d ordina-pubquiz < backup.sql

@@ -24,7 +24,7 @@ class Question(db.Model):
     __tablename__ = 'question'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    category_id = db.Column(db.String(255))
+    category_id = db.Column(db.String(255), db.ForeignKey('category.id'))
     question = db.Column(db.String(255))
     correct_answer = db.Column(db.String(255))
     active = db.Column(db.Boolean)
@@ -63,6 +63,12 @@ class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(255))
+
+class CategorySchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('id', 'name')
+
 
 
 class AnswerSheetQuestion(db.Model):

@@ -11,6 +11,8 @@ from view.models import Team
 from view.models import TeamSchema
 from view.models import Question
 from view.models import QuestionSchema
+from view.models import Category
+from view.models import CategorySchema
 
 from collections import OrderedDict
 
@@ -40,6 +42,14 @@ def get_questions():
     questions_schema = QuestionSchema(many=True)
     allquestions = Question.query.all()
     result = questions_schema.dump(allquestions)
+    return jsonify(result);
+
+
+@view.route('/api/v1.-/categories', methods=['GET'])
+def get_categories():
+    categories_schema = CategorySchema(many=True)
+    allcategories = Category.query.all()
+    result = categories_schema.dump(allcategories)
     return jsonify(result);
 
 
