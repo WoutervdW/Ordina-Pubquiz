@@ -1,6 +1,4 @@
 from view import view, db
-from view import view
-from view import db
 from flask import Flask, jsonify, render_template, abort, request, redirect, url_for, flash, make_response
 from flask_sqlalchemy import SQLAlchemy
 import main
@@ -11,18 +9,10 @@ import datetime
 import app
 import cv2
 import numpy as np
-from view.models import Team
-from view.models import TeamSchema
-from view.models import Question
-from view.models import QuestionSchema
-from view.models import Category
-from view.models import CategorySchema
-from view.models import Answersheet
-from view.models import User
-from view.models import UserSchema
+from view.models import Team, TeamSchema, Question, QuestionSchema, Category, CategorySchema, Answersheet, User, \
+    UserSchema
 from werkzeug.utils import secure_filename
 from collections import OrderedDict
-
 
 
 @view.route('/')
@@ -76,7 +66,8 @@ def add_question():
     newquestioncategory_id = post.get('category_id')
     newquestionuser_id = post.get('user_id')
     newquestionactive = post.get('active')
-    q = Question(question=newquestion, correct_answer=newquestioncorrect_answer, category_id=newquestioncategory_id, user_id=newquestionuser_id, active=newquestionactive);
+    q = Question(question=newquestion, correct_answer=newquestioncorrect_answer, category_id=newquestioncategory_id,
+                 user_id=newquestionuser_id, active=newquestionactive);
     db.session.add(q)
     db.session.commit()
 
@@ -129,9 +120,6 @@ def load_answersheet(question_id):
     image_data = answersheet.answersheet_image
     # I need to know the exact shape it had in order to load it from the database
     np_answersheet = np.fromstring(image_data, np.uint8).reshape(5848, 4139, 3)
-
-    # Test to see if it correctly shows the image (it does)
-    # cv2.imwrite('test.png', np_answersheet)
 
     ret, png = cv2.imencode('.png', np_answersheet)
     response = make_response(png.tobytes())
