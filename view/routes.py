@@ -1,9 +1,7 @@
 from view import view, db
-from flask import render_template, request, Flask, abort, jsonify
 from view import view
 from view import db
-from flask import Flask, render_template, abort, request, redirect, url_for, flash, make_response
-from flask import jsonify
+from flask import Flask, jsonify, render_template, abort, request, redirect, url_for, flash, make_response
 from flask_sqlalchemy import SQLAlchemy
 import main
 import json
@@ -19,11 +17,11 @@ from view.models import Question
 from view.models import QuestionSchema
 from view.models import Category
 from view.models import CategorySchema
+from view.models import Answersheet
 from view.models import User
 from view.models import UserSchema
 from view.models import Image
 from werkzeug.utils import secure_filename
-from werkzeug.datastructures import FileStorage
 from collections import OrderedDict
 
 
@@ -109,35 +107,35 @@ def nuke_all_images():
     return 'ok'
 
 
-@view.route("/test_answersheet_save", methods=['GET', 'POST'])
+@view.route("/test_answersheet/save", methods=['GET', 'POST'])
 def test_answersheet_save():
     # The image of a scan
     answer_image = app.save_answersheet()
     # convert the image to byte array so it can be saved in the database
     answer = answer_image.tostring()
     # create an Image object to store it in the database
-    new_image = Image(name='test', img_filename=None, img_data=answer)
+    new_answersheet = Answersheet(answersheet_image=answer)
     # add the object to the database session
-    db.session.add(new_image)
+    db.session.add(new_answersheet)
     # commit the session so that the image is stored in the database
     db.session.commit()
     return "test successful"
 
 
-@view.route("/test_answersheet_load", methods=['GET', 'POST'])
+@view.route("/test_answersheet/load", methods=['GET', 'POST'])
 def test_answersheet_load():
-    images = Image.query.all()
-    images = list(filter(lambda img: img.img_data != None, images))
+    images = Answersheet.query.all()
+    images = list(filter(lambda img: img.answersheet_image != None, images))
     # We get a list of all the images in the database, we only take 1 to show.
     image = images[0]
-    image_data = image.img_data
+    image_data = image.answersheet_image
     # I need to know the exact shape it had in order to load it from the database
-    nparr = np.fromstring(image_data, np.uint8).reshape(5848, 4139, 3)
+    np_answersheet = np.fromstring(image_data, np.uint8).reshape(5848, 4139, 3)
 
     # Test to see if it correctly shows the image (it does)
-    # cv2.imwrite('test.png', nparr)
+    # cv2.imwrite('test.png', np_answersheet)
 
-    ret, png = cv2.imencode('.png', nparr)
+    ret, png = cv2.imencode('.png', np_answersheet)
     response = make_response(png.tobytes())
     response.headers['Content-Type'] = 'image/png'
     return response

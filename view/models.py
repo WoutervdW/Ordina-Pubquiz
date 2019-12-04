@@ -84,15 +84,3 @@ class AnswerSheetQuestion(db.Model):
     answersheet_id = db.Column(db.Integer, db.ForeignKey('answersheet.id'))
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'))
 
-
-class Image(db.Model):
-    __tablename__ = 'images'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String())
-    img_filename = db.Column(db.String())
-    img_data = db.Column(db.LargeBinary)
-
-    def __repr__(self):
-        return '<image id={},name={}>'.format(self.id, self.name)
-
