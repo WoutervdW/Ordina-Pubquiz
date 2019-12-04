@@ -10,13 +10,6 @@ th {
     cursor: pointer;
 }
 
-#input[type=text] {
-#  width: 100%;
-#  padding: 12px 20px;
-#  background-color: #FFA133;
-#  color: white;
-#}
-
 /* The switch - the box around the slider */
 .switch {
   position: relative;

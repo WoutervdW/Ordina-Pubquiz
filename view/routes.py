@@ -85,16 +85,8 @@ def add_question():
 def update_question():
     post = request.get_json();
     id = post.get('id')
-    #question = post.get('question')
-    #questioncorrect_answer = post.get('correct_answer')
-    #questioncategory_id = post.get('category_id')
-    #questionuser_id = post.get('user_id')
     questionactive = post.get('active')
     q = Question.query.filter_by(id=id).first()
-    #q.question = question
-    #q.correct_answer = questioncorrect_answer
-    #q.category_id = questioncategory_id
-    #q.user_id = questionuser_id
     q.active = questionactive
     db.session.commit()
 
