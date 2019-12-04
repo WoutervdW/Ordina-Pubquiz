@@ -21,26 +21,21 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="question in questions | orderBy:propertyName:reverse" ng-class="{'selected':$index == selectedRow}">
+                <tr ng-repeat="question in questions | orderBy:propertyName:reverse">
                     <td>//question.question//</td>
                     <td>//question.correct_answer//</td>
                     <td>//getCategoryName(question.category_id)//</td>
                     <td>//getUserName(question.user_id)//</td>
-                    <td><label class="switch"><input type="checkbox" ng-checked = "//question.active//" ng-click = "updateQuestionActive(question.id)" ng-model = "changequestionactive"><span class="slider round"></span></label></td>
+                    <td><label class="switch"><input type="checkbox" ng-checked = "//question.active//" ng-click = "updateQuestionActive(question.id, !question.active)"><span class="slider round"></span></label></td>
                 </tr>
                 <tr>
                     <td><input type = "text" class = "form-control" ng-model = "newquestion"></td>
                     <td><input type = "text" class = "form-control" ng-model = "newquestioncorrect_answer"></td>
                     <td>
                         <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Dropdown button
-                        </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
+                            <select class="form-control">
+                                    <option ng-repeat = "category in categories">//category.name//</option>
+                            </select>
                         </div>
                     </td>
                     <td ng-model = "newquestionuser">//getCurrentUser().name//</td>
