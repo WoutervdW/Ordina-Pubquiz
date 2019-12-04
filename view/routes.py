@@ -19,6 +19,7 @@ from view.models import Category
 from view.models import CategorySchema
 from view.models import User
 from view.models import UserSchema
+from view.models import Image
 
 from collections import OrderedDict
 
