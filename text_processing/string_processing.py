@@ -1,5 +1,7 @@
 from fuzzywuzzy import fuzz, process
 import re
+from collections import Counter
+from text_processing.question_categories import Category
 
 
 # TODO: check string similarity using fuzzywuzzy (https://www.datacamp.com/community/tutorials/fuzzy-string-python)
@@ -9,7 +11,30 @@ import re
 #  (numbers in songs should be parsed as strings, in other answers they should probably be parsed as integers)
 
 def check_numerical_value(answer, correct_answer):
-    # Completely new code
+    """
+
+    :param answer: one string containing
+    :param correct_answer:
+    :return:
+    """
+    # Use regex to get all the numbers and compare those from the given answer to those each of the correct answers
+    # for 100% similarity
+
+    # Compare substrings. If a substring is a number and it matches an answer exactly, and the rest of the string
+    # is similar enough, return True
+
+    answer_values = re.findall(r'\d+', answer)  # Find all numbers in the answer
+    answer_value = int(''.join(map(str, answer_values)))  # concatenate all numbers in the answer
+
+    correct_answer_values = re.findall(r'\d+', correct_answer)  # Find all numbers in the correct answer
+
+    if len(correct_answer_values) == 0:
+        # No numbers in correct answer
+        return None
+
+    # Compare the lists of numbers for any differences in the number of elements
+    difference = list((Counter(correct_answer) - Counter(answer)).elements())
+    if len(difference) == 0:
 
     # DEPRECATED
     for answer_word in answer.split():  # For every word in the given answer
@@ -32,32 +57,38 @@ def check_string(answer, correct_answer):
     return fuzz.WRatio(answer, correct_answer) > 80
 
 
-def check_correct(answer, correct_answers, numerical):
+def check_correct(answer, correct_answers, category):
     """
     Check whether this answer is correct.
     :param answer: string representing the answer.
     :param correct_answers: list of possible correct answers.
-    :param numerical: boolean, whether the answer should be a number.
+    :param category: category of the question
+    param numerical: boolean, whether the answer should be a number.
     :return: true if the answer is (close enough to) correct, false otherwise.
     """
 
-    # Option 3: check if there is a common substring, if it is numerical, return True
     for correct_answer in correct_answers:
-        # Use regex to get all the numbers and compare those from the given answer to those each of the correct answers
-        # for 100% similarity
+        # number_correct has to be True if the number exists and is correct, False if the number exists but isn't
+        # correct and None if no number exists
+        number_correct = None
+        if category != Category.MUSIC:
+            number_correct = check_numerical_value(answer, correct_answer)  # Number-based comparison
 
-        # Compare substrings. If a substring is a number and it matches an answer exactly, and the rest of the string
-        # is similar enough, return True
-        if check_numerical_value(answer, correct_answer):
-            return True
+        if number_correct is None:
+            if check_string(answer, correct_answer):  # String-based comparison
+                return True
+        else:
+            if number_correct:
+                return True
+
             # See if the given answer contains a number that exactly matches one in the correct answers, as well as the
             # rest of the string being similar.
 
         # If no such number exists, check the answer for string-based similarity to any of the correct answers
         # If there is no numerical value that is wrong, compare the entire string. If it is similar (enough), return
         # True.
-        if check_string(answer, correct_answer):
-            return True
+        # if check_string(answer, correct_answer):
+        #    return True
 
     # If none of the correct answers were similar to correct answers, return False
     return False
@@ -70,7 +101,7 @@ def preprocess_string(answer):
 
 def compare_strings(answer, correct_answer_list):
     """
-
+    OLD
     :param answer: string
     :param correct_answer_list: list of strings
     :return: True if the string is similar to one of the correct answers, False otherwise
