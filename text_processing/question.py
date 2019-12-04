@@ -1,9 +1,9 @@
-from text_processing.question_categories import Categories
+from text_processing.question_categories import Category
 
 
 class Question:
     index = 0
-    category = Categories.STANDARD
+    category = Category.STANDARD
     correct_answer_lists = []
     answers = []
     numerical = False

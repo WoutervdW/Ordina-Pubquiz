@@ -1,6 +1,6 @@
 # TODO: way to set questions to be marked manually
 from text_processing.string_processing import check_correct
-from text_processing.question_categories import Categories
+from text_processing.question_categories import Category
 from text_processing.question import Question
 
 import pickle
@@ -14,20 +14,23 @@ def get_score(question):
     """
     score = 0
 
-    if question.category == Categories.STANDARD:
+    if question.category == Category.STANDARD:  # 1 answer, 1 point
         answer = question.answers[0]
         correct_answers = question.correct_answer_lists[0]
         # Grant 1 point if the answer is correct
         if check_correct(answer, correct_answers, question.numerical):
             score += 1
 
-    elif question.category == Categories.MUSIC:
+    elif question.category == Category.MUSIC:
         artist1 = question.answers[0]
         artist2 = question.answers[1]
         # Create one list with all correct artists
-        correct_artists = question.correct_answer_lists[0] + question.correct_answer_lists[1]
-        song_title = question.answers[2]
-        correct_song_titles = question.correct_answer_lists[2]
+        correct_artists = []
+        for correct_artist in range(len(question.correct_answer_lists)-1):
+            correct_artists += correct_artist  # question.correct_answer_lists[0] + question.correct_answer_lists[1]
+
+        song_title = question.answers[-1]
+        correct_song_titles = question.correct_answer_lists[-1]
         # Grant a point if both artists are correct
         if check_correct(artist1, correct_artists, question.numerical) and \
                 check_correct(artist2, correct_artists, question.numerical):
@@ -36,7 +39,7 @@ def get_score(question):
         if check_correct(song_title, correct_song_titles, question.numerical):
             score += 1
 
-    elif question.category == Categories.PHOTO:
+    elif question.category == Category.PHOTO:
         # There can be 1 or two people in a picture
         for answer, correct_answer in zip(question.answers, question.correct_answer_lists):
             if check_correct(answer, correct_answer, question.numerical):
