@@ -130,12 +130,13 @@ def line_segmentation(answer_image, save_image=False, image_path="lines/", image
     left_block_contours = []
     for c in contours_left_side:
         area = cv2.contourArea(c)
-        if 50000 < area < 80000:
+        if 50000 < area < 100000:
             left_block_contours.append(c)
 
     cv2.drawContours(left_side_img, left_block_contours, -1, (255, 0, 0), thickness=10)
     # show_image(left_side_img)
 
+    # cv2.imwrite("left.png", left_side_img)
     right_side_img = right_side.copy()
 
     # We draw a fake line over the image, this is so we can find the corners by finding areas with a certain size
@@ -145,17 +146,16 @@ def line_segmentation(answer_image, save_image=False, image_path="lines/", image
     contours_right_side, _ = cv2.findContours(right_side_processed, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     cv2.drawContours(right_side_img, contours_right_side, -1, (0, 255, 0), thickness=5)
 
-    # show_image(right_side_img)
 
     right_block_contours = []
     for c in contours_right_side:
         area = cv2.contourArea(c)
-        if 10000 < area < 30000:
+        if 5000 < area < 50000:
             right_block_contours.append(c)
 
     cv2.drawContours(right_side_img, right_block_contours, -1, (255, 0, 0), thickness=10)
     # show_image(right_side_img)
-    cv2.imwrite("center_test.png", right_side_img)
+    # cv2.imwrite("right.png", right_side_img)
 
     # We assume that the answer template had the correct format so we expect that the left and right side both found
     # and equal amount of results. If this is not the case we return nothing and the program fails for this sheet.
