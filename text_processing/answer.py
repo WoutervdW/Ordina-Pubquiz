@@ -1,11 +1,15 @@
 
 
 class Answer:
-    answer = ""
+    text = ""
     numerical = False
+    correct = False
+    confidence = 0
 
-    def __init__(self, answer, numerical):
-        self.answer = answer
+    def __init__(self, text, numerical):
+        self.text = text
         self.numerical = numerical
+
+
 
 
