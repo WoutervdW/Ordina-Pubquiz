@@ -101,5 +101,5 @@ def run_program(pubquiz_answer_sheets, save_image=False):
 def save_answersheet():
     pubquiz_anser_sheets = 'scan.pdf'
     pages = convert_pdf_to_image(pubquiz_anser_sheets)
-    return pages[0]
+    return pages
 

@@ -98,17 +98,21 @@ def nuke_all_answersheets():
 
 
 @view.route("/answersheet/save", methods=['GET', 'POST'])
-def answersheet_save():
+def answersheet_save_all():
     # The image of a scan
-    answer_image = app.save_answersheet()
-    # convert the image to byte array so it can be saved in the database
-    answer = answer_image.tostring()
-    # create an Image object to store it in the database
-    new_answersheet = Answersheet(answersheet_image=answer)
-    # add the object to the database session
-    db.session.add(new_answersheet)
-    # commit the session so that the image is stored in the database
-    db.session.commit()
+    answer_images = app.save_answersheet()
+    for answer_image in answer_images:
+        # convert the image to byte array so it can be saved in the database
+        answer = answer_image.tostring()
+        # create an Image object to store it in the database
+        # shape = answer_image
+        width = len(answer_image)
+        height = len(answer_image[0])
+        new_answersheet = Answersheet(answersheet_image=answer, image_width=width, image_height=height)
+        # add the object to the database session
+        db.session.add(new_answersheet)
+        # commit the session so that the image is stored in the database
+        db.session.commit()
     return "answersheets saved"
 
 
@@ -119,7 +123,9 @@ def load_answersheet(question_id):
         return "answersheet with id " + str(question_id) + " does not exist in the database."
     image_data = answersheet.answersheet_image
     # I need to know the exact shape it had in order to load it from the database
-    np_answersheet = np.fromstring(image_data, np.uint8).reshape(5848, 4139, 3)
+    width = answersheet.image_width
+    height = answersheet.image_height
+    np_answersheet = np.fromstring(image_data, np.uint8).reshape(width, height, 3)
 
     ret, png = cv2.imencode('.png', np_answersheet)
     response = make_response(png.tobytes())
