@@ -5,7 +5,7 @@ angular.module('module', [])
         $interpolateProvider.startSymbol('//');
         $interpolateProvider.endSymbol('//');
     })
-
+    //controller for index.html
     .controller('indexcontroller', function($scope, $http){
         $http({
             method: "GET",
@@ -20,6 +20,8 @@ angular.module('module', [])
             $scope.propertyName = propertyName;
         }
     })
+
+    //controller for questions.html
     .controller('questionscontroller', function($scope, $http){
          $http({
             method: "GET",
@@ -49,13 +51,12 @@ angular.module('module', [])
             var data = {"question": $scope.newquestion, "correct_answer": $scope.newquestioncorrect_answer, "category_id": "1", "user_id": "1", "active":$scope.newquestionactive};
             $http.post("/api/v1.0/newquestion", JSON.stringify(data))
             $scope.questions.push(data);
+            $scope.newquestion = "";
+            $scope.newquestioncorrect_answer = "";
         };
-        $scope.updateQuestionActive = function(questionid){
+        $scope.updateQuestionActive = function(questionid, active){
             currentquestion = $scope.questions.find(x => x.id === questionid)
-            //currentquestion.active = $scope.changequestionactive
-            //document.write(currentquestion.id)
-            //var data = {"id":$scope.currentquestionid, "question":$scope.currentquestion, "correct_answer":$scope.currentquestioncorrect_answer, "category_id":$scope.currentquestioncategory, "user_id":$scope.currentquestionuser, "active": $scope.currentquestionactive};
-            var data = {"id":currentquestion.id, "active":true}
+            var data = {"id":currentquestion.id, "active":active}
             $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
         }
         $scope.getCategoryName = function(category_id){
@@ -70,6 +71,7 @@ angular.module('module', [])
                 return users[user_id].username;
             return "";
         }
+        //todo: return user that is logged in
         $scope.getCurrentUser = function(){
             return {id: "1", name:"postgres"} ;
         }
