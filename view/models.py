@@ -71,11 +71,11 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(255))
 
+
 class CategorySchema(ma.Schema):
     class Meta:
         # Fields to expose
         fields = ('id', 'name')
-
 
 
 class AnswerSheetQuestion(db.Model):
@@ -84,10 +84,7 @@ class AnswerSheetQuestion(db.Model):
     answersheet_id = db.Column(db.Integer, db.ForeignKey('answersheet.id'))
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'))
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 605b2cb56b4c1781944d0b52612ec319936c443a
 class Image(db.Model):
     __tablename__ = 'images'
 
