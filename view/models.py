@@ -48,10 +48,11 @@ class Answer(db.Model):
 
 
 class User(db.Model):
-    __tablename__= 'user'
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255))
     password = db.Column(db.String(255))
+
 
 class UserSchema(ma.Schema):
     class Meta:
@@ -59,11 +60,12 @@ class UserSchema(ma.Schema):
         fields = ('id', 'username')
 
 
-
 class Answersheet(db.Model):
     __tablename__ = 'answersheet'
     id = db.Column(db.Integer, primary_key=True)
     answersheet_image = db.Column(db.LargeBinary)
+    image_width = db.Column(db.Integer)
+    image_height = db.Column(db.Integer)
 
 
 class Category(db.Model):
@@ -80,7 +82,7 @@ class CategorySchema(ma.Schema):
 
 class AnswerSheetQuestion(db.Model):
     __tablename__ = 'answersheetquestion'
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key=True)
     answersheet_id = db.Column(db.Integer, db.ForeignKey('answersheet.id'))
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'))
 

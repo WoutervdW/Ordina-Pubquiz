@@ -1,6 +1,4 @@
 from view import view, db
-from view import view
-from view import db
 from flask import Flask, jsonify, render_template, abort, request, redirect, url_for, flash, make_response
 from flask_sqlalchemy import SQLAlchemy
 import main
@@ -11,19 +9,10 @@ import datetime
 import app
 import cv2
 import numpy as np
-from view.models import Team
-from view.models import TeamSchema
-from view.models import Question
-from view.models import QuestionSchema
-from view.models import Category
-from view.models import CategorySchema
-from view.models import Answersheet
-from view.models import User
-from view.models import UserSchema
-from view.models import Image
+from view.models import Team, TeamSchema, Question, QuestionSchema, Category, CategorySchema, Answersheet, User, \
+    UserSchema
 from werkzeug.utils import secure_filename
 from collections import OrderedDict
-
 
 
 @view.route('/')
@@ -77,7 +66,8 @@ def add_question():
     newquestioncategory_id = post.get('category_id')
     newquestionuser_id = post.get('user_id')
     newquestionactive = post.get('active')
-    q = Question(question=newquestion, correct_answer=newquestioncorrect_answer, category_id=newquestioncategory_id, user_id=newquestionuser_id, active=newquestionactive);
+    q = Question(question=newquestion, correct_answer=newquestioncorrect_answer, category_id=newquestioncategory_id,
+                 user_id=newquestionuser_id, active=newquestionactive);
     db.session.add(q)
     db.session.commit()
 
@@ -99,44 +89,61 @@ def run_program():
     return line
 
 
-@view.route('/images/nuke', methods=['GET'])
-def nuke_all_images():
-    Image.query.delete()
+@view.route('/answersheet/nuke', methods=['GET'])
+def nuke_all_answersheets():
+    Answersheet.query.delete()
     db.session.commit()
-    db.engine.execute('alter sequence images_id_seq RESTART with 1')
+    db.engine.execute('alter sequence answersheet_id_seq RESTART with 1')
     return 'ok'
 
 
-@view.route("/test_answersheet/save", methods=['GET', 'POST'])
-def test_answersheet_save():
+@view.route("/answersheet/save", methods=['GET', 'POST'])
+def answersheet_save_all():
     # The image of a scan
-    answer_image = app.save_answersheet()
-    # convert the image to byte array so it can be saved in the database
-    answer = answer_image.tostring()
-    # create an Image object to store it in the database
-    new_answersheet = Answersheet(answersheet_image=answer)
-    # add the object to the database session
-    db.session.add(new_answersheet)
-    # commit the session so that the image is stored in the database
-    db.session.commit()
-    return "test successful"
+    answer_images = app.save_answersheet()
+    for answer_image in answer_images:
+        # convert the image to byte array so it can be saved in the database
+        answer = answer_image.tostring()
+        # create an Image object to store it in the database
+        # shape = answer_image
+        width = len(answer_image)
+        height = len(answer_image[0])
+        new_answersheet = Answersheet(answersheet_image=answer, image_width=width, image_height=height)
+        # add the object to the database session
+        db.session.add(new_answersheet)
+        # commit the session so that the image is stored in the database
+        db.session.commit()
+    return "answersheets saved"
 
 
-@view.route("/test_answersheet/load", methods=['GET', 'POST'])
-def test_answersheet_load():
-    images = Answersheet.query.all()
-    images = list(filter(lambda img: img.answersheet_image != None, images))
-    # We get a list of all the images in the database, we only take 1 to show.
-    image = images[0]
-    image_data = image.answersheet_image
+@view.route("/load_answersheet/<int:question_id>", methods=['GET', 'POST'])
+def load_answersheet(question_id):
+    answersheet = Answersheet.query.filter_by(id=question_id).first()
+    if answersheet is None:
+        return "answersheet with id " + str(question_id) + " does not exist in the database."
+    image_data = answersheet.answersheet_image
     # I need to know the exact shape it had in order to load it from the database
-    np_answersheet = np.fromstring(image_data, np.uint8).reshape(5848, 4139, 3)
-
-    # Test to see if it correctly shows the image (it does)
-    # cv2.imwrite('test.png', np_answersheet)
+    width = answersheet.image_width
+    height = answersheet.image_height
+    np_answersheet = np.fromstring(image_data, np.uint8).reshape(width, height, 3)
 
     ret, png = cv2.imencode('.png', np_answersheet)
     response = make_response(png.tobytes())
     response.headers['Content-Type'] = 'image/png'
     return response
+
+
+@view.route("/answersheet/load/<int:answersheet_id>", methods=['GET', 'POST'])
+def answersheet_single(answersheet_id):
+    return render_template("answersheet.html", answersheet_id=[answersheet_id])
+
+
+@view.route("/answersheet/load", methods=['GET', 'POST'])
+def answersheet_all():
+    # TODO With large number of answersheets saved in the database make a 'next', 'previous' button functionality.
+    answersheets = Answersheet.query.all()
+    ids = []
+    for answersheet in answersheets:
+        ids.append(int(answersheet.id))
+    return render_template("answersheet.html", answersheet_id=ids)
 

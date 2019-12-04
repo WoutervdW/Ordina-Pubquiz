@@ -18,13 +18,13 @@ def get_words_image(line_image, multiply_factor, res):
         rect = find_rect(x_new, y_new, width_new, height_new)
         # We want to apply the crop and saving on the original line image
         cropped = crop_and_warp(line_image[0], rect)
-        words.append([cropped, line_image[4], index])
+        words.append([cropped, line_image[1], index])
         index += 1
     return words
 
 
 def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res):
-    path = output_folder + sheet_name + "/line_" + str(line_image[4]) + "/words"
+    path = output_folder + sheet_name + "/line_" + str(line_image[1]) + "/words"
     if not os.path.exists(path):
         os.makedirs(path)
     index = 0
@@ -50,7 +50,7 @@ def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res)
         index += 1
 
     # output summary image with bounding boxes around words
-    cv2.imwrite(path + "/line_" + str(line_image[4]) + '_summary.png', line_image[0])
+    cv2.imwrite(path + "/line_" + str(line_image[1]) + '_summary.png', line_image[0])
 
 
 def word_segmentation(line_image, kernel_size=25, sigma=11, theta=7, min_area=1000):

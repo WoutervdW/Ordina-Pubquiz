@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<script>
+
+</script>
+<body>
+{% extends "base.html" %}
+{% block content %}
+{% for id in answersheet_id %}
+<div>
+    <img width=50% src="{{ url_for('load_answersheet', question_id=id) }}">
+</div>
+{% endfor %}
+{%endblock%}
+</body>
+</html>

@@ -6,7 +6,7 @@ from app.line_segmentation import line_segmentation
 
 def read_number_of_lines(path, file_name):
     answer_sheet_image = cv2.imread(path + file_name + "_image.png")
-    image_path = "test_files/line_files/" + file_name + "/"
+    image_path = "test_files/line_files/"
     # If the folder does not exist yet we want to create it
     if not os.path.exists(image_path):
         os.makedirs(image_path)
@@ -63,7 +63,7 @@ class LineSegmentationTest(unittest.TestCase):
         file_name = "scan_1"
         line_length = read_number_of_lines(path, file_name)
         # We don't count the big input field in this one, so we are looking for 23 lines.
-        self.assertEqual(line_length, 25)
+        self.assertEqual(line_length, 23)
 
     def test_image_to_lines_scan3(self):
         path = "test_files/image_files/"
