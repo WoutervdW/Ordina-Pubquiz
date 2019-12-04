@@ -53,6 +53,13 @@ class User(db.Model):
     username = db.Column(db.String(255))
     password = db.Column(db.String(255))
 
+class UserSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('id', 'username')
+
+
+
 class Answersheet(db.Model):
     __tablename__ = 'answersheet'
     id = db.Column(db.Integer, primary_key=True)

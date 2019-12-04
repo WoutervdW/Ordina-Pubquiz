@@ -1,10 +1,16 @@
+from view import view, db
 from view import view
 from view import db
-from flask import Flask, render_template, abort, request, redirect, url_for, flash, make_response
-from flask import jsonify
+from flask import Flask, jsonify, render_template, abort, request, redirect, url_for, flash, make_response
 from flask_sqlalchemy import SQLAlchemy
 import main
 import json
+import random
+import string
+import datetime
+import app
+import cv2
+import numpy as np
 from view.models import Team
 from view.models import TeamSchema
 from view.models import Question
@@ -12,14 +18,12 @@ from view.models import QuestionSchema
 from view.models import Category
 from view.models import CategorySchema
 from view.models import Answersheet
+from view.models import User
+from view.models import UserSchema
+from view.models import Image
 from werkzeug.utils import secure_filename
 from collections import OrderedDict
-import random
-import string
-import datetime
-import app
-import cv2
-import numpy as np
+
 
 
 @view.route('/')
@@ -46,25 +50,54 @@ def get_questions():
     questions_schema = QuestionSchema(many=True)
     allquestions = Question.query.all()
     result = questions_schema.dump(allquestions)
-    return jsonify(result);
+    return jsonify(result)
 
 
-@view.route('/api/v1.-/categories', methods=['GET'])
+@view.route('/api/v1.0/categories', methods=['GET'])
 def get_categories():
     categories_schema = CategorySchema(many=True)
     allcategories = Category.query.all()
     result = categories_schema.dump(allcategories)
-    return jsonify(result);
+    return jsonify(result)
+
+
+@view.route('/api/v1.0/users', methods=['GET'])
+def get_users():
+    users_schema = UserSchema(many=True)
+    allusers = User.query.all()
+    result = users_schema.dump(allusers)
+    return jsonify(result)
 
 
 @view.route('/api/v1.0/newquestion', methods=['POST'])
 def add_question():
     post = request.get_json();
-    newquestion = post.get('question');
-    newcorrect_answer = post.get('correct_answer');
-    q = Question(question = newquestion, correct_answer = newcorrect_answer);
-    db.session.add(q);
-    db.session.commit();
+    newquestion = post.get('question')
+    newquestioncorrect_answer = post.get('correct_answer')
+    newquestioncategory_id = post.get('category_id')
+    newquestionuser_id = post.get('user_id')
+    newquestionactive = post.get('active')
+    q = Question(question=newquestion, correct_answer=newquestioncorrect_answer, category_id=newquestioncategory_id, user_id=newquestionuser_id, active=newquestionactive);
+    db.session.add(q)
+    db.session.commit()
+
+
+@view.route('/api/v1.0/updatequestion', methods=['POST'])
+def update_question():
+    post = request.get_json();
+    id = post.get('id')
+    #question = post.get('question')
+    #questioncorrect_answer = post.get('correct_answer')
+    #questioncategory_id = post.get('category_id')
+    #questionuser_id = post.get('user_id')
+    questionactive = post.get('active')
+    q = Question.query.filter_by(id=id).first()
+    #q.question = question
+    #q.correct_answer = questioncorrect_answer
+    #q.category_id = questioncategory_id
+    #q.user_id = questionuser_id
+    q.active = questionactive
+    db.session.commit()
 
 
 @view.route('/run_program')
