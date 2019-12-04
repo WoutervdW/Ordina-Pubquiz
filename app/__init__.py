@@ -97,3 +97,9 @@ def run_program(pubquiz_answer_sheets, save_image=False):
             sheet_name = sheet_name + "_" + str(p)
             process_sheet(pages[p], model, save_image, sheet_name)
 
+
+def save_answersheet():
+    pubquiz_anser_sheets = 'scan.pdf'
+    pages = convert_pdf_to_image(pubquiz_anser_sheets)
+    return pages[0]
+

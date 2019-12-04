@@ -1,7 +1,10 @@
 from view import view, db
 from flask import render_template, request, Flask, abort, jsonify
+from view import view
+from view import db
+from flask import Flask, render_template, abort, request, redirect, url_for, flash, make_response
+from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
-
 import main
 import json
 import random
@@ -10,7 +13,6 @@ import datetime
 import app
 import cv2
 import numpy as np
-
 from view.models import Team
 from view.models import TeamSchema
 from view.models import Question
@@ -20,13 +22,14 @@ from view.models import CategorySchema
 from view.models import User
 from view.models import UserSchema
 from view.models import Image
-
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import FileStorage
 from collections import OrderedDict
+
 
 
 @view.route('/')
 @view.route('/index')
-@view.route('/sander')
 def index():
     return render_template('index.html')
 
@@ -101,10 +104,10 @@ def update_question():
 
 @view.route('/run_program')
 def run_program():
-    line = main.test_test()
     # We wil use this url shortcut to start the program
     main.run_program()
     return line
+
 
 @view.route('/images/nuke', methods=['GET'])
 def nuke_all_images():

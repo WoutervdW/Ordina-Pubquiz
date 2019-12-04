@@ -7,10 +7,6 @@ https://towardsdatascience.com/build-a-handwritten-text-recognition-system-using
 import app
 
 
-def test_test():
-    return "Hoi Sander!"
-
-
 def run_program():
     # We should be able to read all the files in a certain folder
     # os.listdir(input_folder) something like this.

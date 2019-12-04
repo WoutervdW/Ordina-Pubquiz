@@ -1,8 +1,8 @@
-"""empty message
+"""create all tables!
 
-Revision ID: 6afa06e193b4
+Revision ID: 437a64b193ff
 Revises: 
-Create Date: 2019-11-29 12:32:12.122874
+Create Date: 2019-12-03 12:17:15.091515
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '6afa06e193b4'
+revision = '437a64b193ff'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -28,6 +28,13 @@ def upgrade():
     sa.Column('name', sa.String(length=255), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('images',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(), nullable=True),
+    sa.Column('img_filename', sa.String(), nullable=True),
+    sa.Column('img_data', sa.LargeBinary(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('team',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('teamname', sa.String(length=255), nullable=True),
@@ -43,10 +50,11 @@ def upgrade():
     op.create_table('question',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.Column('category_id', sa.String(length=255), nullable=True),
+    sa.Column('category_id', sa.Integer(), nullable=True),
     sa.Column('question', sa.String(length=255), nullable=True),
     sa.Column('correct_answer', sa.String(length=255), nullable=True),
     sa.Column('active', sa.Boolean(), nullable=True),
+    sa.ForeignKeyConstraint(['category_id'], ['category.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -81,6 +89,7 @@ def downgrade():
     op.drop_table('question')
     op.drop_table('user')
     op.drop_table('team')
+    op.drop_table('images')
     op.drop_table('category')
     op.drop_table('answersheet')
     # ### end Alembic commands ###

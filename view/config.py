@@ -11,6 +11,8 @@ class Config(object):
     database = os.environ['POSTGRES_DB']
     port = os.environ['POSTGRES_PORT']
 
+    session_type = os.environ['SESSION_TYPE']
+
 
     SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False

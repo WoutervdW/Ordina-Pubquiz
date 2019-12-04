@@ -24,7 +24,7 @@ class Question(db.Model):
     __tablename__ = 'question'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    category_id = db.Column(db.String(255), db.ForeignKey('category.id'))
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     question = db.Column(db.String(255))
     correct_answer = db.Column(db.String(255))
     active = db.Column(db.Boolean)
@@ -84,6 +84,10 @@ class AnswerSheetQuestion(db.Model):
     answersheet_id = db.Column(db.Integer, db.ForeignKey('answersheet.id'))
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'))
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 605b2cb56b4c1781944d0b52612ec319936c443a
 class Image(db.Model):
     __tablename__ = 'images'
 
