@@ -64,6 +64,8 @@ class Answersheet(db.Model):
     __tablename__ = 'answersheet'
     id = db.Column(db.Integer, primary_key=True)
     answersheet_image = db.Column(db.LargeBinary)
+    image_width = db.Column(db.Integer)
+    image_height = db.Column(db.Integer)
 
 
 class Category(db.Model):
