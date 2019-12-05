@@ -2,6 +2,8 @@ import numpy as np
 import cv2
 import operator
 import os
+from view.models import Answer
+from view import db
 
 
 def show_image(img):
@@ -180,6 +182,33 @@ def line_segmentation(answer_image, save_image=False, image_path="lines/", image
         # part we can easily identify which line it is.
         finished_line = [cropped_full, x]
         lines.append(finished_line)
+
+        # Save the line image to the database!
+        # convert the image to byte array so it can be saved in the database
+        answer = answer_image.tostring()
+        # create an Image object to store it in the database
+        # shape = answer_image
+        width = len(answer_image)
+        height = len(answer_image[0])
+
+        print("save line to database")
+        # TODO fill in the other details as well! (not just the image)
+        new_answer = Answer(
+            team_id=0,
+            question_id=0,
+            user_id=0,
+            answer_given="",
+            correct=False,
+            confidence=0.0,
+            answer_image=answer,
+            image_width=width,
+            image_height=height
+        )
+        # add the object to the database session
+        db.session.add(new_answer)
+        # commit the session so that the image is stored in the database
+        db.session.commit()
+
         if save_image:
             path = image_path + image_name
             if not os.path.exists(path):
