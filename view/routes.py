@@ -9,8 +9,8 @@ import datetime
 import app
 import cv2
 import numpy as np
-from view.models import Team, TeamSchema, Question, QuestionSchema, Category, CategorySchema, Answersheet, User, \
-    UserSchema, Answer, AnswerSchema
+from view.models import Team, TeamSchema, Question, QuestionSchema, Category, CategorySchema, Answersheet, Person, \
+ PersonSchema, Answer, AnswerSchema
 from werkzeug.utils import secure_filename
 from collections import OrderedDict
 
@@ -55,11 +55,11 @@ def get_categories():
     return jsonify(result)
 
 
-@view.route('/api/v1.0/users', methods=['GET'])
-def get_users():
-    users_schema = UserSchema(many=True)
-    allusers = User.query.all()
-    result = users_schema.dump(allusers)
+@view.route('/api/v1.0/persons', methods=['GET'])
+def get_persons():
+    persons_schema = PersonSchema(many=True)
+    answers = Person.query.all()
+    result = persons_schema.dump(answers)
     return jsonify(result)
 
 
@@ -77,10 +77,10 @@ def add_question():
     newquestion = post.get('question')
     newquestioncorrect_answer = post.get('correct_answer')
     newquestioncategory_id = post.get('category_id')
-    newquestionuser_id = post.get('user_id')
+    newquestionperson_id = post.get('person_id')
     newquestionactive = post.get('active')
     q = Question(question=newquestion, correct_answer=newquestioncorrect_answer, category_id=newquestioncategory_id,
-                 user_id=newquestionuser_id, active=newquestionactive);
+        person_id=newquestionperson_id, active=newquestionactive);
     db.session.add(q)
     db.session.commit()
 
@@ -94,6 +94,16 @@ def update_question():
     q.active = questionactive
     db.session.commit()
 
+
+#@view.route('/api/v1.0/updateanswer', methods=['POST'])
+#def update_answer():
+ #   post = request.get_json();
+ #   id = post.get('id')
+ #   answercorrect = post.get('correct')
+ #   q = Answer.query.filter_by(id=id).first()
+#    q.correct = answercorrect
+#    db.session.commit()
+#
 
 @view.route('/run_program')
 def run_program():

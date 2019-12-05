@@ -17,8 +17,8 @@
                     <th scope = "col" ng-click = "sortBy('answer_given')" >Antwoord</th>
                     <th scope = "col" ng-click = "sortBy('correct')">Correct</th>
                     <th scope = "col" ng-click = "sortBy('answer_image')">Afbeelding</th>
-                    <th scope = "col" ng-click = "sortBy('user_id')">Laatst nagekeken door</th>
-                    <th scope = "col" ng-click = "sortBy('confidene')">Zekerheid systeem</th>
+                    <th scope = "col" ng-click = "sortBy('person_id')">Laatst nagekeken door</th>
+                    <th scope = "col" ng-click = "sortBy('confidence')">Zekerheid systeem</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,9 +26,10 @@
                     <td>//answer.team_id//</td>
                     <td>//answer.question_id//</td>
                     <td>//answer.answer_given//</td>
-                    <td><label class="switch"><input type="checkbox" ng-checked = "//answer.correct//" ng-click = "updateAnswerCheck(answer.id)"><span class="slider round"></span></label></td>
+                    <td><label class="switch"><input type="checkbox" ng-model="answer.correct" ng-change = "updateAnswerCheck(answer)"><span class="slider round"></span></label></td>
                     <td>//answer.answer_image//</td>
                     <td>//getCurrentUser().name//</td>
+                   <!-- <td>//getPersonName(answer.person_id)//</td> -->
                     <td>//answer.confidence//</td>
                    <!-- <td> -->
                 </tr.

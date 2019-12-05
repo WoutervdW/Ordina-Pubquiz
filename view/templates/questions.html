@@ -16,7 +16,7 @@
                     <th scope = "col" ng-click = "sortBy('question')" >Vraag</th>
                     <th scope = "col" ng-click = "sortBy('correct_answer')">Correct antwoord</th>
                     <th scope = "col" ng-click = "sortBy('category_id')">Categorie</th>
-                    <th scope = "col" ng-click = "sortBy('user_id')">Aangemaakt door</th>
+                    <th scope = "col" ng-click = "sortBy('person_id')">Aangemaakt door</th>
                     <th scope = "col" ng-click = "sortBy('active')">Actief</th>
                 </tr>
             </thead>
@@ -25,7 +25,7 @@
                     <td>//question.question//</td>
                     <td>//question.correct_answer//</td>
                     <td>//getCategoryName(question.category_id)//</td>
-                    <td>//getUserName(question.user_id)//</td>
+                    <td>//getPersonName(question.person_id)//</td>
                     <td><label class="switch"><input type="checkbox" ng-model="question.active" ng-change="updateQuestionActive(question)"><span class="slider round"></span></label></td>
                 </tr>
                 <tr>
@@ -38,7 +38,7 @@
                             </select>
                         </div>
                     </td>
-                    <td ng-model = "newquestionuser">//getLoggedinUser().name//</td>
+                    <td ng-model = "newquestionperson">//getLoggedinPerson().name//</td>
                     <td><label class="switch"><input type="checkbox" ng-model = "newquestionactive"  ng-init="newquestionactive=true"><span class="slider round"></span></label></td>
                     <td><button class =  "btn btn-primary" ng-click = "addQuestion()">Voeg toe</button></td>
                 </tr>
