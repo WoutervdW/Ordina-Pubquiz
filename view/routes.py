@@ -10,7 +10,7 @@ import app
 import cv2
 import numpy as np
 from view.models import Team, TeamSchema, Question, QuestionSchema, Category, CategorySchema, Answersheet, User, \
-    UserSchema
+    UserSchema, Answer, AnswerSchema
 from werkzeug.utils import secure_filename
 from collections import OrderedDict
 
@@ -24,6 +24,11 @@ def index():
 @view.route('/questions')
 def questions():
     return render_template('questions.html')
+
+
+@view.route('/answers')
+def answers():
+    return render_template('answers.html')
 
 
 @view.route('/api/v1.0/teams', methods=['GET'])
@@ -55,6 +60,14 @@ def get_users():
     users_schema = UserSchema(many=True)
     allusers = User.query.all()
     result = users_schema.dump(allusers)
+    return jsonify(result)
+
+
+@view.route('/api/v1.0/answers', methods=['GET'])
+def get_answers():
+    answers_schema = AnswerSchema(many=True)
+    allanswers = Answer.query.all()
+    result = answers_schema.dump(allanswers)
     return jsonify(result)
 
 

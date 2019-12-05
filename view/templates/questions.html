@@ -8,7 +8,7 @@
 <body>
 {% extends "base.html" %}
 {% block content %}
-<div class = "container"  ng-app = "module" ng-controller = "questionscontroller">
+<div class = "container"  ng-app = "module" ng-controller = "controller">
     <div class = "table-responsive">
         <table class="table table-hover table-sm">
             <thead>
@@ -33,12 +33,12 @@
                     <td><input type = "text" class = "form-control" ng-model = "newquestioncorrect_answer"></td>
                     <td>
                         <div class="dropdown">
-                            <select class="form-control">
-                                    <option ng-repeat = "category in categories">//category.name//</option>
+                            <select class="form-control" ng-model="newquestioncategory">
+                                <option ng-repeat = "category in categories" value="//category.id//">//category.name//</option>
                             </select>
                         </div>
                     </td>
-                    <td ng-model = "newquestionuser">//getCurrentUser().name//</td>
+                    <td ng-model = "newquestionuser">//getLoggedinUser().name//</td>
                     <td><label class="switch"><input type="checkbox" ng-model = "newquestionactive"><span class="slider round"></span></label></td>
                     <td><button class =  "btn btn-primary" ng-click = "addQuestion()">Voeg toe</button></td>
                 </tr>

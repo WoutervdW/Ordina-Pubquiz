@@ -1,5 +1,4 @@
-from view import db
-from view import ma
+from view import db, ma
 import json
 
 
@@ -42,9 +41,16 @@ class Answer(db.Model):
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable = False)
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable = False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
+    answer_given = db.Column(db.String(255))
     correct = db.Column(db.Boolean)
     answer_image = db.Column(db.LargeBinary)
     confidence = db.Column(db.Float)
+
+
+class AnswerSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('id', 'team_id', 'question_id', 'user_id', 'answer_given', 'correct', 'answer_image', 'confidence')
 
 
 class User(db.Model):
@@ -70,7 +76,7 @@ class Answersheet(db.Model):
 
 class Category(db.Model):
     __tablename__ = 'category'
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
 
 
