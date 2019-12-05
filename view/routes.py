@@ -26,9 +26,9 @@ def questions():
     return render_template('questions.html')
 
 
-@view.route('/answers')
+@view.route('/answerchecking')
 def answers():
-    return render_template('answers.html')
+    return render_template('answerchecking.html')
 
 
 @view.route('/api/v1.0/teams', methods=['GET'])
@@ -95,15 +95,15 @@ def update_question():
     db.session.commit()
 
 
-#@view.route('/api/v1.0/updateanswer', methods=['POST'])
-#def update_answer():
- #   post = request.get_json();
- #   id = post.get('id')
- #   answercorrect = post.get('correct')
- #   q = Answer.query.filter_by(id=id).first()
-#    q.correct = answercorrect
-#    db.session.commit()
-#
+@view.route('/api/v1.0/updateanswer', methods=['POST'])
+def update_answer():
+    post = request.get_json();
+    id = post.get('id')
+    answercorrect = post.get('correct')
+    q = Answer.query.filter_by(id=id).first()
+    q.correct = answercorrect
+    db.session.commit()
+
 
 @view.route('/run_program')
 def run_program():
