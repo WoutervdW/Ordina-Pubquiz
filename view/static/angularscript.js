@@ -51,10 +51,10 @@ angular.module('module', [])
             var data = {"id":question.id, "active":question.active}
             $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
         }
-        /*$scope.updateAnswerCheck = function(answer){
+        $scope.updateAnswerCheck = function(answer){
             var data = {"id": answer.id, "correct": answer.correct}
             $http.post("/api/v1.0/updateanswer", JSON.stringify(data))
-        }*/
+        }
         $scope.getCategoryName = function(category_id){
             var cat = $scope.categories.find(function(category){
                 return category.id == category_id;
@@ -70,7 +70,7 @@ angular.module('module', [])
 
         //todo: return person that is logged in
         $scope.getLoggedinPerson = function(){
-            return {id: "1", name:"admin"} ;
+            return {id: "2", name:"admin"} ;
         }
     });
 
