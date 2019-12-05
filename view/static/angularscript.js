@@ -26,9 +26,9 @@ angular.module('module', [])
         });
         $http({
             method: "GET",
-            url: "/api/v1.0/users"
+            url: "/api/v1.0/persons"
         }).then(function (response){
-            $scope.users = response.data;
+            $scope.persons = response.data;
         });
         $http({
             method: "GET",
@@ -41,31 +41,35 @@ angular.module('module', [])
             $scope.propertyName = propertyName;
         }
         $scope.addQuestion = function(category_id){
-            var data = {"question": $scope.newquestion, "correct_answer": $scope.newquestioncorrect_answer, "category_id": $scope.newquestioncategory, "user_id": $scope.getLoggedinUser().id, "active":$scope.newquestionactive};
+            var data = {"question": $scope.newquestion, "correct_answer": $scope.newquestioncorrect_answer, "category_id": $scope.newquestioncategory, "person_id": $scope.getLoggedinPerson().id, "active":$scope.newquestionactive};
             $http.post("/api/v1.0/newquestion", JSON.stringify(data))
             $scope.questions.push(data);
             $scope.newquestion = "";
             $scope.newquestioncorrect_answer = "";
         }
         $scope.updateQuestionActive = function(question){
-
             var data = {"id":question.id, "active":question.active}
             $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
         }
-         $scope.getCategoryName = function(category_id){
+        /*$scope.updateAnswerCheck = function(answer){
+            var data = {"id": answer.id, "correct": answer.correct}
+            $http.post("/api/v1.0/updateanswer", JSON.stringify(data))
+        }*/
+        $scope.getCategoryName = function(category_id){
             categories = $scope.categories;
+            //document.write(categories.filter(categories.id == category_id));
             if (category_id in categories)
                 return categories[category_id].name;
             return "";
         }
-        $scope.getUserName = function(user_id){
-            users = $scope.users;
-            if (user_id in users)
-                return users[user_id].username;
+        $scope.getPersonName = function(person_id){
+            persons = $scope.persons;
+            if (person_id in persons)
+               return persons[person_id].username;
             return "";
         }
-        //todo: return user that is logged in
-        $scope.getLoggedinUser = function(){
+        //todo: return person that is logged in
+        $scope.getLoggedinPerson = function(){
             return {id: "1", name:"postgres"} ;
         }
     });
