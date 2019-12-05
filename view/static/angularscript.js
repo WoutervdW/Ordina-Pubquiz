@@ -52,7 +52,7 @@ angular.module('module', [])
             $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
         }
         $scope.updateAnswerCheck = function(answer){
-            var data = {"id": answer.id, "correct": answer.correct}
+            var data = {"id": answer.id, "correct": answer.correct, "person_id":$scope.getLoggedinPerson().id}
             $http.post("/api/v1.0/updateanswer", JSON.stringify(data))
         }
         $scope.getCategoryName = function(category_id){

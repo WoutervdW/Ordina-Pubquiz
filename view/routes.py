@@ -100,8 +100,10 @@ def update_answer():
     post = request.get_json();
     id = post.get('id')
     answercorrect = post.get('correct')
+    person_id = post.get('person_id')
     q = Answer.query.filter_by(id=id).first()
     q.correct = answercorrect
+    q.person_id = person_id
     db.session.commit()
 
 
