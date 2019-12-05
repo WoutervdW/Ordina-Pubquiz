@@ -148,15 +148,13 @@ def load_answersheet(question_id):
 
 @view.route("/answersheet/load/<int:answersheet_id>", methods=['GET', 'POST'])
 def answersheet_single(answersheet_id):
-    return render_template("answersheet.html", answersheet_id=[answersheet_id])
+    return render_template("answersheet.html", answersheets=[answersheet_id])
 
 
 @view.route("/answersheet/load", methods=['GET', 'POST'])
 def answersheet_all():
     # TODO With large number of answersheets saved in the database make a 'next', 'previous' button functionality.
-    answersheets = Answersheet.query.all()
-    ids = []
-    for answersheet in answersheets:
-        ids.append(int(answersheet.id))
-    return render_template("answersheet.html", answersheet_id=ids)
+    page = request.args.get('page', 1, type=int)
+    answersheets = Answersheet.query.paginate(page, view.config['POSTS_PER_PAGE'], False).items
+    return render_template("answersheet.html", answersheets=answersheets)
 

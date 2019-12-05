@@ -11,9 +11,9 @@
 <body>
 {% extends "base.html" %}
 {% block content %}
-{% for id in answersheet_id %}
+{% for answersheet in answersheets %}
 <div>
-    <img width=50% src="{{ url_for('load_answersheet', question_id=id) }}">
+    <img width=50% src="{{ url_for('load_answersheet', question_id=answersheet.id) }}">
 </div>
 {% endfor %}
 {%endblock%}
