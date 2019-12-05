@@ -47,9 +47,9 @@ angular.module('module', [])
             $scope.newquestion = "";
             $scope.newquestioncorrect_answer = "";
         }
-        $scope.updateQuestionActive = function(questionid, active){
-            currentquestion = $scope.questions.find(x => x.id === questionid)
-            var data = {"id":currentquestion.id, "active":active}
+        $scope.updateQuestionActive = function(question){
+
+            var data = {"id":question.id, "active":question.active}
             $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
         }
          $scope.getCategoryName = function(category_id){
@@ -58,7 +58,6 @@ angular.module('module', [])
                 return categories[category_id].name;
             return "";
         }
-
         $scope.getUserName = function(user_id){
             users = $scope.users;
             if (user_id in users)
