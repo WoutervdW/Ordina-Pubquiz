@@ -109,7 +109,7 @@ def update_question():
 def run_program():
     # We wil use this url shortcut to start the program
     main.run_program()
-    return line
+    return "program finished"
 
 
 @view.route('/answersheet/nuke', methods=['GET'])
@@ -167,10 +167,54 @@ def answersheet_all():
     page = request.args.get('page', 1, type=int)
     answersheets = Answersheet.query.paginate(page, view.config['POSTS_PER_PAGE'], False)
 
-    next_url = url_for('answersheet_all', page=answersheets.next_num) \
-        if answersheets.has_next else None
-    prev_url = url_for('answersheet_all', page=answersheets.prev_num) \
-        if answersheets.has_prev else None
+    next_url = None
+    if answersheets.has_next:
+        next_url = url_for('answersheet_all', page=answersheets.next_num)
+
+    prev_url = None
+    if answersheets.has_prev:
+        prev_url = url_for('answersheet_all', page=answersheets.prev_num)
 
     return render_template("answersheet.html", answersheets=answersheets.items, next_url=next_url, prev_url=prev_url)
 
+
+@view.route('/answer/nuke', methods=['GET'])
+def nuke_all_answers():
+    Answer.query.delete()
+    db.session.commit()
+    db.engine.execute('alter sequence answer_id_seq RESTART with 1')
+    return 'ok'
+
+
+@view.route("/load_answer/<int:answer_id>", methods=['GET', 'POST'])
+def load_answer(answer_id):
+    answer = Answer.query.filter_by(id=answer_id).first()
+    if answer is None:
+        return "answer with id " + str(answer_id) + " does not exist in the database."
+    image_data = answer.answer_image
+    # I need to know the exact shape it had in order to load it from the database
+    width = answer.image_width
+    height = answer.image_height
+    np_answer = np.fromstring(image_data, np.uint8).reshape(width, height, 3)
+
+    ret, png = cv2.imencode('.png', np_answer)
+    response = make_response(png.tobytes())
+    response.headers['Content-Type'] = 'image/png'
+    return response
+
+
+@view.route("/answer/load", methods=['GET', 'POST'])
+def answer_all():
+    # page = request.args.get('page', 1, type=int)
+    answer_list = Answer.query.paginate(1, 50, False)
+    print(len(answer_list.items))
+
+    next_url = None
+    # if answer_list.has_next:
+    #     next_url = url_for('answers_all', page=answer_list.next_num)
+    #
+    prev_url = None
+    # if answer_list.has_prev:
+    #     prev_url = url_for('answers_all', page=answer_list.prev_num)
+
+    return render_template("answer.html", answers=answer_list.items, next_url=next_url, prev_url=prev_url)

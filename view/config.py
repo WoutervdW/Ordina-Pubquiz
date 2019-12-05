@@ -3,6 +3,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
+    print("Config")
     # ...
     # ...
     user = os.environ['POSTGRES_USER']

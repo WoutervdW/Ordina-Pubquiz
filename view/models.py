@@ -43,8 +43,10 @@ class Answer(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable = False)
     answer_given = db.Column(db.String(255))
     correct = db.Column(db.Boolean)
-    answer_image = db.Column(db.LargeBinary)
     confidence = db.Column(db.Float)
+    answer_image = db.Column(db.LargeBinary)
+    image_width = db.Column(db.Integer)
+    image_height = db.Column(db.Integer)
 
 
 class AnswerSchema(ma.Schema):
