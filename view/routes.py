@@ -26,9 +26,9 @@ def questions():
     return render_template('questions.html')
 
 
-@view.route('/answers')
+@view.route('/answerchecking')
 def answers():
-    return render_template('answers.html')
+    return render_template('answerchecking.html')
 
 
 @view.route('/api/v1.0/teams', methods=['GET'])
