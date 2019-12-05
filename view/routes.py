@@ -155,6 +155,12 @@ def answersheet_single(answersheet_id):
 def answersheet_all():
     # TODO With large number of answersheets saved in the database make a 'next', 'previous' button functionality.
     page = request.args.get('page', 1, type=int)
-    answersheets = Answersheet.query.paginate(page, view.config['POSTS_PER_PAGE'], False).items
-    return render_template("answersheet.html", answersheets=answersheets)
+    answersheets = Answersheet.query.paginate(page, view.config['POSTS_PER_PAGE'], False)
+
+    next_url = url_for('answersheet_all', page=answersheets.next_num) \
+        if answersheets.has_next else None
+    prev_url = url_for('answersheet_all', page=answersheets.prev_num) \
+        if answersheets.has_prev else None
+
+    return render_template("answersheet.html", answersheets=answersheets.items, next_url=next_url, prev_url=prev_url)
 
