@@ -1,35 +1,24 @@
-
 // define angular interpolationtags as {a a}
 angular.module('module', [])
     .config(function($interpolateProvider) {
         $interpolateProvider.startSymbol('//');
         $interpolateProvider.endSymbol('//');
     })
-    //controller for index.html
-    .controller('indexcontroller', function($scope, $http){
+    //controller
+    .controller('controller', function($scope, $http){
         $http({
             method: "GET",
             url: "/api/v1.0/teams"
         }).then(function mySuccess(response){
             $scope.teams = response.data;
         });
-        $scope.propertyName = 'score';
-        $scope.reverse = 'false';
-        $scope.sortBy = function(propertyName) {
-            $scope.reverse = $scope.propertyName === propertyName ? !$scope.reverse : false;
-            $scope.propertyName = propertyName;
-        }
-    })
-
-    //controller for questions.html
-    .controller('questionscontroller', function($scope, $http){
          $http({
             method: "GET",
             url: "/api/v1.0/questions"
         }).then(function (response){
             $scope.questions = response.data;
         });
-        $http({
+         $http({
             method: "GET",
             url: "/api/v1.0/categories"
         }).then(function (response){
@@ -37,42 +26,52 @@ angular.module('module', [])
         });
         $http({
             method: "GET",
-            url: "/api/v1.0/users"
+            url: "/api/v1.0/persons"
         }).then(function (response){
-            $scope.users = response.data;
+            $scope.persons = response.data;
         });
-        $scope.propertyName = 'question';
-        $scope.reverse = 'false';
-        $scope.sortBy = function(propertyName) {
+        $http({
+            method: "GET",
+            url: "/api/v1.0/answers"
+        }).then(function (response){
+            $scope.answers = response.data;
+        });
+        $scope.sortBy = function sortBy(propertyName){
             $scope.reverse = $scope.propertyName === propertyName ? !$scope.reverse : false;
             $scope.propertyName = propertyName;
         }
-        $scope.addQuestion = function(){
-            var data = {"question": $scope.newquestion, "correct_answer": $scope.newquestioncorrect_answer, "category_id": "1", "user_id": "1", "active":$scope.newquestionactive};
+        $scope.addQuestion = function(category_id){
+            var data = {"question": $scope.newquestion, "correct_answer": $scope.newquestioncorrect_answer, "category_id": $scope.newquestioncategory, "person_id": $scope.getLoggedinPerson().id, "active":$scope.newquestionactive};
             $http.post("/api/v1.0/newquestion", JSON.stringify(data))
             $scope.questions.push(data);
             $scope.newquestion = "";
             $scope.newquestioncorrect_answer = "";
-        };
-        $scope.updateQuestionActive = function(questionid, active){
-            currentquestion = $scope.questions.find(x => x.id === questionid)
-            var data = {"id":currentquestion.id, "active":active}
+        }
+        $scope.updateQuestionActive = function(question){
+            var data = {"id":question.id, "active":question.active}
             $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
         }
+        $scope.updateAnswerCheck = function(answer){
+            var data = {"id": answer.id, "correct": answer.correct}
+            $http.post("/api/v1.0/updateanswer", JSON.stringify(data))
+        }
         $scope.getCategoryName = function(category_id){
-            categories = $scope.categories;
-            if (category_id in categories)
-                return (categories[category_id]).name;
-            return "";
+            var cat = $scope.categories.find(function(category){
+                return category.id == category_id;
+            });
+            return cat.name;
         }
-        $scope.getUserName = function(user_id){
-            users = $scope.users;
-            if (user_id in users)
-                return users[user_id].username;
-            return "";
+        $scope.getPersonName = function(person_id){
+            var per = $scope.persons.find(function(person){
+                return person.id == person_id;
+            })
+            return per.personname;
         }
-        //todo: return user that is logged in
-        $scope.getCurrentUser = function(){
-            return {id: "1", name:"postgres"} ;
+
+        //todo: return person that is logged in
+        $scope.getLoggedinPerson = function(){
+            return {id: "2", name:"admin"} ;
         }
     });
+
+

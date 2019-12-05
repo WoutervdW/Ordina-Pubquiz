@@ -3,6 +3,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
+    print("Config")
     # ...
     # ...
     user = os.environ['POSTGRES_USER']
@@ -16,6 +17,8 @@ class Config(object):
 
     SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    POSTS_PER_PAGE = 2
 
 
 

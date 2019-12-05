@@ -103,10 +103,11 @@ CREATE TABLE answer (
     id integer NOT NULL,
     team_id integer NOT NULL,
     question_id integer NOT NULL,
-    user_id integer NOT NULL,
+    answer_given character varying(255),
     correct boolean,
     answer_image bytea,
-    confidence double precision
+    confidence double precision,
+    person_id integer NOT NULL
 );
 
 
@@ -139,7 +140,9 @@ ALTER SEQUENCE answer_id_seq OWNED BY answer.id;
 
 CREATE TABLE answersheet (
     id integer NOT NULL,
-    answersheet_image bytea
+    answersheet_image bytea,
+    image_height integer,
+    image_width integer
 );
 
 
@@ -234,16 +237,50 @@ ALTER SEQUENCE category_id_seq OWNED BY category.id;
 
 
 --
+-- Name: person; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE person (
+    id integer NOT NULL,
+    personname character varying(255),
+    password character varying(255)
+);
+
+
+ALTER TABLE person OWNER TO postgres;
+
+--
+-- Name: person_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE person_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE person_id_seq OWNER TO postgres;
+
+--
+-- Name: person_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE person_id_seq OWNED BY person.id;
+
+
+--
 -- Name: question; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE question (
     id integer NOT NULL,
-    user_id integer,
-    category_id character varying(255),
+    category_id integer,
     question character varying(255),
     correct_answer character varying(255),
-    active boolean
+    active boolean,
+    person_id integer
 );
 
 
@@ -305,40 +342,6 @@ ALTER SEQUENCE team_id_seq OWNED BY team.id;
 
 
 --
--- Name: user; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE "user" (
-    id integer NOT NULL,
-    username character varying(255),
-    password character varying(255)
-);
-
-
-ALTER TABLE "user" OWNER TO postgres;
-
---
--- Name: user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE user_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE user_id_seq OWNER TO postgres;
-
---
--- Name: user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE user_id_seq OWNED BY "user".id;
-
-
---
 -- Name: answer id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -367,6 +370,13 @@ ALTER TABLE ONLY category ALTER COLUMN id SET DEFAULT nextval('category_id_seq':
 
 
 --
+-- Name: person id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY person ALTER COLUMN id SET DEFAULT nextval('person_id_seq'::regclass);
+
+
+--
 -- Name: question id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -381,18 +391,11 @@ ALTER TABLE ONLY team ALTER COLUMN id SET DEFAULT nextval('team_id_seq'::regclas
 
 
 --
--- Name: user id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY "user" ALTER COLUMN id SET DEFAULT nextval('user_id_seq'::regclass);
-
-
---
 -- Data for Name: alembic_version; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY alembic_version (version_num) FROM stdin;
-6afa06e193b4
+f91f0c2a9fa8
 \.
 
 
@@ -400,7 +403,8 @@ COPY alembic_version (version_num) FROM stdin;
 -- Data for Name: answer; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY answer (id, team_id, question_id, user_id, correct, answer_image, confidence) FROM stdin;
+COPY answer (id, team_id, question_id, answer_given, correct, answer_image, confidence, person_id) FROM stdin;
+4	1	13	antwoord	t	\N	97	2
 \.
 
 
@@ -408,14 +412,14 @@ COPY answer (id, team_id, question_id, user_id, correct, answer_image, confidenc
 -- Name: answer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('answer_id_seq', 1, false);
+SELECT pg_catalog.setval('answer_id_seq', 4, true);
 
 
 --
 -- Data for Name: answersheet; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY answersheet (id, answersheet_image) FROM stdin;
+COPY answersheet (id, answersheet_image, image_height, image_width) FROM stdin;
 \.
 
 
@@ -446,8 +450,9 @@ SELECT pg_catalog.setval('answersheetquestion_id_seq', 1, false);
 --
 
 COPY category (id, name) FROM stdin;
-1	music
-2	music
+3	natuur
+4	muziek
+5	sport
 \.
 
 
@@ -455,28 +460,42 @@ COPY category (id, name) FROM stdin;
 -- Name: category_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('category_id_seq', 2, true);
+SELECT pg_catalog.setval('category_id_seq', 5, true);
+
+
+--
+-- Data for Name: person; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY person (id, personname, password) FROM stdin;
+1	admin	admin
+2	answerchecker	answerchecker
+\.
+
+
+--
+-- Name: person_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('person_id_seq', 2, true);
 
 
 --
 -- Data for Name: question; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY question (id, user_id, category_id, question, correct_answer, active) FROM stdin;
-1	1	1	hoe gaat het?	goed	t
-2	\N	\N	\N	\N	\N
-3	\N	\N	\N	\N	\N
-4	\N	\N	\N	\N	\N
-5	\N	\N	\N	\N	\N
-6	\N	\N	\N	\N	\N
-7	\N	\N	hoe laat is het?	het is 9 uur	\N
-8	\N	\N	hoe laat is het?	het is 9 uur	\N
-9	\N	\N	hoe laat is het?	het is 9 uur	\N
-10	\N	\N	asdf	asdf	\N
-11	\N	\N	sdfsdfsdf	sdfsfsfd	\N
-12	\N	\N	Hoe heet ik?	Marijn	\N
-13	\N	\N	Waar is iedereen?	Geen idee	\N
-14	\N	\N	werkt het nu?	ja	\N
+COPY question (id, category_id, question, correct_answer, active, person_id) FROM stdin;
+14	3	asdf	asdf	t	1
+15	5	sdf	sdf	t	1
+16	4	piet	dirk	t	1
+17	3	dsaf	sadf	t	1
+18	4	asfd	asdf	t	1
+19	4	asdf	asdf	t	1
+20	4	asdf	asdf	t	1
+21	4	\N	\N	t	1
+22	4	asdfasdfsa	dfasdfasdfasdfasdfsa	t	1
+13	3	vraag?	antwoord	f	1
+23	3	asdfasdf	adsfasdf	t	1
 \.
 
 
@@ -484,7 +503,7 @@ COPY question (id, user_id, category_id, question, correct_answer, active) FROM 
 -- Name: question_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('question_id_seq', 14, true);
+SELECT pg_catalog.setval('question_id_seq', 23, true);
 
 
 --
@@ -503,23 +522,6 @@ COPY team (id, teamname, score) FROM stdin;
 --
 
 SELECT pg_catalog.setval('team_id_seq', 3, true);
-
-
---
--- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY "user" (id, username, password) FROM stdin;
-1	admin	admin
-2	postgres	password
-\.
-
-
---
--- Name: user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('user_id_seq', 2, true);
 
 
 --
@@ -563,6 +565,14 @@ ALTER TABLE ONLY category
 
 
 --
+-- Name: person person_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY person
+    ADD CONSTRAINT person_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: question question_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -579,11 +589,11 @@ ALTER TABLE ONLY team
 
 
 --
--- Name: user user_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: answer answer_person_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY "user"
-    ADD CONSTRAINT user_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY answer
+    ADD CONSTRAINT answer_person_id_fkey FOREIGN KEY (person_id) REFERENCES person(id);
 
 
 --
@@ -603,14 +613,6 @@ ALTER TABLE ONLY answer
 
 
 --
--- Name: answer answer_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY answer
-    ADD CONSTRAINT answer_user_id_fkey FOREIGN KEY (user_id) REFERENCES "user"(id);
-
-
---
 -- Name: answersheetquestion answersheetquestion_answersheet_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -627,11 +629,19 @@ ALTER TABLE ONLY answersheetquestion
 
 
 --
--- Name: question question_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: question question_category_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY question
-    ADD CONSTRAINT question_user_id_fkey FOREIGN KEY (user_id) REFERENCES "user"(id);
+    ADD CONSTRAINT question_category_id_fkey FOREIGN KEY (category_id) REFERENCES category(id);
+
+
+--
+-- Name: question question_person_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY question
+    ADD CONSTRAINT question_person_id_fkey FOREIGN KEY (person_id) REFERENCES person(id);
 
 
 --
@@ -684,17 +694,6 @@ SET search_path = public, pg_catalog;
 SET default_tablespace = '';
 
 SET default_with_oids = false;
-
---
--- Name: alembic_version; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE alembic_version (
-    version_num character varying(32) NOT NULL
-);
-
-
-ALTER TABLE alembic_version OWNER TO postgres;
 
 --
 -- Name: answer; Type: TABLE; Schema: public; Owner: postgres
@@ -989,15 +988,6 @@ ALTER TABLE ONLY "user" ALTER COLUMN id SET DEFAULT nextval('user_id_seq'::regcl
 
 
 --
--- Data for Name: alembic_version; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY alembic_version (version_num) FROM stdin;
-6afa06e193b4
-\.
-
-
---
 -- Data for Name: answer; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1103,14 +1093,6 @@ COPY "user" (id, username, password) FROM stdin;
 --
 
 SELECT pg_catalog.setval('user_id_seq', 1, false);
-
-
---
--- Name: alembic_version alembic_version_pkc; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY alembic_version
-    ADD CONSTRAINT alembic_version_pkc PRIMARY KEY (version_num);
 
 
 --

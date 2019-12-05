@@ -15,6 +15,8 @@ from app.word_segmentation import word_segmentation, prepare_image, find_rect, s
 import os
 import cv2
 import argparse
+from view import db
+from view.models import Answersheet
 
 
 def infer(_model, word_image):
@@ -67,14 +69,14 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         words = get_words_image(line_image, multiply_factor, res)
         words_results = []
         result_line = "line " + str(words[0][1]) + " predictions"
-        for word in words:
-            # TODO add contrast to each word
-            read_results = read_word_from_image(word[0], model)
-            words_results.append(read_results)
-            result_line = result_line + " word: " + str(word[2]) + " " + str(read_results[0]) + " with probability " + str(read_results[1])
-            print(words_results)
-        result_line = result_line + "\n"
-        f.write(result_line)
+        # for word in words:
+        #     # TODO add contrast to each word
+        #     read_results = read_word_from_image(word[0], model)
+        #     words_results.append(read_results)
+        #     result_line = result_line + " word: " + str(word[2]) + " " + str(read_results[0]) + " with probability " + str(read_results[1])
+        #     print(words_results)
+        # result_line = result_line + "\n"
+        # f.write(result_line)
 
     # For now write the results to a file.
     # TODO connect this to the answer checker.
@@ -95,6 +97,21 @@ def run_program(pubquiz_answer_sheets, save_image=False):
             if file_extension[1] == ".pdf":
                 sheet_name = sheet_name[0:-4]
             sheet_name = sheet_name + "_" + str(p)
+
+            print("saving answersheet to the database")
+            # Save the image to the database!
+            # convert the image to byte array so it can be saved in the database
+            answer = pages[p].tostring()
+            # create an Image object to store it in the database
+            # shape = pages[p]
+            width = len(pages[p])
+            height = len(pages[p][0])
+            new_answersheet = Answersheet(answersheet_image=answer, image_width=width, image_height=height)
+            # add the object to the database session
+            db.session.add(new_answersheet)
+            # commit the session so that the image is stored in the database
+            db.session.commit()
+
             process_sheet(pages[p], model, save_image, sheet_name)
 
 

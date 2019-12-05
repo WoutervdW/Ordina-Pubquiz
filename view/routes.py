@@ -9,8 +9,8 @@ import datetime
 import app
 import cv2
 import numpy as np
-from view.models import Team, TeamSchema, Question, QuestionSchema, Category, CategorySchema, Answersheet, User, \
-    UserSchema
+from view.models import Team, TeamSchema, Question, QuestionSchema, Category, CategorySchema, Answersheet, Person, \
+ PersonSchema, Answer, AnswerSchema
 from werkzeug.utils import secure_filename
 from collections import OrderedDict
 
@@ -24,6 +24,11 @@ def index():
 @view.route('/questions')
 def questions():
     return render_template('questions.html')
+
+
+@view.route('/answerchecking')
+def answers():
+    return render_template('answerchecking.html')
 
 
 @view.route('/api/v1.0/teams', methods=['GET'])
@@ -50,11 +55,19 @@ def get_categories():
     return jsonify(result)
 
 
-@view.route('/api/v1.0/users', methods=['GET'])
-def get_users():
-    users_schema = UserSchema(many=True)
-    allusers = User.query.all()
-    result = users_schema.dump(allusers)
+@view.route('/api/v1.0/persons', methods=['GET'])
+def get_persons():
+    persons_schema = PersonSchema(many=True)
+    answers = Person.query.all()
+    result = persons_schema.dump(answers)
+    return jsonify(result)
+
+
+@view.route('/api/v1.0/answers', methods=['GET'])
+def get_answers():
+    answers_schema = AnswerSchema(many=True)
+    allanswers = Answer.query.all()
+    result = answers_schema.dump(allanswers)
     return jsonify(result)
 
 
@@ -64,10 +77,10 @@ def add_question():
     newquestion = post.get('question')
     newquestioncorrect_answer = post.get('correct_answer')
     newquestioncategory_id = post.get('category_id')
-    newquestionuser_id = post.get('user_id')
+    newquestionperson_id = post.get('person_id')
     newquestionactive = post.get('active')
     q = Question(question=newquestion, correct_answer=newquestioncorrect_answer, category_id=newquestioncategory_id,
-                 user_id=newquestionuser_id, active=newquestionactive);
+        person_id=newquestionperson_id, active=newquestionactive);
     db.session.add(q)
     db.session.commit()
 
@@ -82,11 +95,21 @@ def update_question():
     db.session.commit()
 
 
+@view.route('/api/v1.0/updateanswer', methods=['POST'])
+def update_answer():
+    post = request.get_json();
+    id = post.get('id')
+    answercorrect = post.get('correct')
+    q = Answer.query.filter_by(id=id).first()
+    q.correct = answercorrect
+    db.session.commit()
+
+
 @view.route('/run_program')
 def run_program():
     # We wil use this url shortcut to start the program
     main.run_program()
-    return line
+    return "program finished"
 
 
 @view.route('/answersheet/nuke', methods=['GET'])
@@ -135,15 +158,64 @@ def load_answersheet(question_id):
 
 @view.route("/answersheet/load/<int:answersheet_id>", methods=['GET', 'POST'])
 def answersheet_single(answersheet_id):
-    return render_template("answersheet.html", answersheet_id=[answersheet_id])
+    return render_template("answersheet.html", answersheets=[answersheet_id])
 
 
 @view.route("/answersheet/load", methods=['GET', 'POST'])
 def answersheet_all():
     # TODO With large number of answersheets saved in the database make a 'next', 'previous' button functionality.
-    answersheets = Answersheet.query.all()
-    ids = []
-    for answersheet in answersheets:
-        ids.append(int(answersheet.id))
-    return render_template("answersheet.html", answersheet_id=ids)
+    page = request.args.get('page', 1, type=int)
+    answersheets = Answersheet.query.paginate(page, view.config['POSTS_PER_PAGE'], False)
 
+    next_url = None
+    if answersheets.has_next:
+        next_url = url_for('answersheet_all', page=answersheets.next_num)
+
+    prev_url = None
+    if answersheets.has_prev:
+        prev_url = url_for('answersheet_all', page=answersheets.prev_num)
+
+    return render_template("answersheet.html", answersheets=answersheets.items, next_url=next_url, prev_url=prev_url)
+
+
+@view.route('/answer/nuke', methods=['GET'])
+def nuke_all_answers():
+    Answer.query.delete()
+    db.session.commit()
+    db.engine.execute('alter sequence answer_id_seq RESTART with 1')
+    return 'ok'
+
+
+@view.route("/load_answer/<int:answer_id>", methods=['GET', 'POST'])
+def load_answer(answer_id):
+    print("loading answer with id " + str(answer_id))
+    answer = Answer.query.filter_by(id=answer_id).first()
+    if answer is None:
+        return "answer with id " + str(answer_id) + " does not exist in the database."
+    image_data = answer.answer_image
+    # I need to know the exact shape it had in order to load it from the database
+    width = answer.image_width
+    height = answer.image_height
+    np_answer = np.fromstring(image_data, np.uint8).reshape(width, height, 3)
+
+    ret, png = cv2.imencode('.png', np_answer)
+    response = make_response(png.tobytes())
+    response.headers['Content-Type'] = 'image/png'
+    return response
+
+
+@view.route("/answer/load", methods=['GET', 'POST'])
+def answer_all():
+    # page = request.args.get('page', 1, type=int)
+    answer_list = Answer.query.paginate(1, 500, False)
+    print(len(answer_list.items))
+
+    next_url = None
+    # if answer_list.has_next:
+    #     next_url = url_for('answers_all', page=answer_list.next_num)
+    #
+    prev_url = None
+    # if answer_list.has_prev:
+    #     prev_url = url_for('answers_all', page=answer_list.prev_num)
+
+    return render_template("answer.html", answers=answer_list.items, next_url=next_url, prev_url=prev_url)

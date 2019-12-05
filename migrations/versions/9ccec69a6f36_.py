@@ -1,8 +1,8 @@
-"""create all tables!
+"""empty message
 
-Revision ID: 437a64b193ff
+Revision ID: 9ccec69a6f36
 Revises: 
-Create Date: 2019-12-03 12:17:15.091515
+Create Date: 2019-12-05 14:02:41.546392
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '437a64b193ff'
+revision = '9ccec69a6f36'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,6 +21,8 @@ def upgrade():
     op.create_table('answersheet',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('answersheet_image', sa.LargeBinary(), nullable=True),
+    sa.Column('image_width', sa.Integer(), nullable=True),
+    sa.Column('image_height', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('category',
@@ -28,11 +30,10 @@ def upgrade():
     sa.Column('name', sa.String(length=255), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('images',
+    op.create_table('person',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(), nullable=True),
-    sa.Column('img_filename', sa.String(), nullable=True),
-    sa.Column('img_data', sa.LargeBinary(), nullable=True),
+    sa.Column('personname', sa.String(length=255), nullable=True),
+    sa.Column('password', sa.String(length=255), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('team',
@@ -41,34 +42,31 @@ def upgrade():
     sa.Column('score', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('user',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('username', sa.String(length=255), nullable=True),
-    sa.Column('password', sa.String(length=255), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
     op.create_table('question',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('person_id', sa.Integer(), nullable=True),
     sa.Column('category_id', sa.Integer(), nullable=True),
     sa.Column('question', sa.String(length=255), nullable=True),
     sa.Column('correct_answer', sa.String(length=255), nullable=True),
     sa.Column('active', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['category_id'], ['category.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.ForeignKeyConstraint(['person_id'], ['person.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('answer',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('team_id', sa.Integer(), nullable=False),
     sa.Column('question_id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('person_id', sa.Integer(), nullable=False),
+    sa.Column('answer_given', sa.String(length=255), nullable=True),
     sa.Column('correct', sa.Boolean(), nullable=True),
-    sa.Column('answer_image', sa.LargeBinary(), nullable=True),
     sa.Column('confidence', sa.Float(), nullable=True),
+    sa.Column('answer_image', sa.LargeBinary(), nullable=True),
+    sa.Column('image_width', sa.Integer(), nullable=True),
+    sa.Column('image_height', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['person_id'], ['person.id'], ),
     sa.ForeignKeyConstraint(['question_id'], ['question.id'], ),
     sa.ForeignKeyConstraint(['team_id'], ['team.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('answersheetquestion',
@@ -87,9 +85,8 @@ def downgrade():
     op.drop_table('answersheetquestion')
     op.drop_table('answer')
     op.drop_table('question')
-    op.drop_table('user')
     op.drop_table('team')
-    op.drop_table('images')
+    op.drop_table('person')
     op.drop_table('category')
     op.drop_table('answersheet')
     # ### end Alembic commands ###
