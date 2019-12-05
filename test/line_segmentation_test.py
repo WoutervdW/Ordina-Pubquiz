@@ -55,7 +55,7 @@ class LineSegmentationTest(unittest.TestCase):
         path = "test_files/image_files/"
         file_name = "scan_0"
         line_length = read_number_of_lines(path, file_name)
-        self.assertEqual(line_length, 27)
+        self.assertEqual(line_length, 28)
 
     def test_image_to_lines_scan_1(self):
         path = "test_files/image_files/"
@@ -85,6 +85,12 @@ class LineSegmentationTest(unittest.TestCase):
     def test_image_to_lines_scan_5(self):
         path = "test_files/image_files/"
         file_name = "scan_5"
+        line_length = read_number_of_lines(path, file_name)
+        self.assertEqual(line_length, 11)
+
+    def test_image_to_lines_scan_6(self):
+        path = "test_files/image_files/"
+        file_name = "scan_6"
         line_length = read_number_of_lines(path, file_name)
         self.assertEqual(line_length, 11)
 

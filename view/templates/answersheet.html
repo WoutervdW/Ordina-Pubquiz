@@ -11,11 +11,17 @@
 <body>
 {% extends "base.html" %}
 {% block content %}
-{% for id in answersheet_id %}
+{% for answersheet in answersheets %}
 <div>
-    <img width=50% src="{{ url_for('load_answersheet', question_id=id) }}">
+    <img width=50% src="{{ url_for('load_answersheet', question_id=answersheet.id) }}">
 </div>
 {% endfor %}
+{% if prev_url %}
+    <a href="{{ prev_url }}">Newer posts</a>
+    {% endif %}
+    {% if next_url %}
+    <a href="{{ next_url }}">Older posts</a>
+    {% endif %}
 {%endblock%}
 </body>
 </html>

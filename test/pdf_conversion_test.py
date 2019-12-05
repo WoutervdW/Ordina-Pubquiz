@@ -30,7 +30,7 @@ class PdfConversionTest(unittest.TestCase):
         pubquiz_answer_sheet = path + file_name + '.pdf'
         answer_sheets_image = convert_pdf_to_image(pubquiz_answer_sheet)
 
-        self.assertEqual(len(answer_sheets_image), 6)
+        self.assertEqual(len(answer_sheets_image), 7)
 
         # If the test is successful we save the the images if the folder is empty so we can use these in the next tests
         path = 'test_files/image_files/'
