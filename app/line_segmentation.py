@@ -105,17 +105,17 @@ def find_corners_center(corners_left, corners_right):
     return corners_full
 
 
-def line_segmentation(answer_image, save_image=False, image_path="lines/", image_name="scan"):
+def line_segmentation(answer_image_original, save_image=False, image_path="lines/", image_name="scan"):
     # New strategy. First find the points on the left side and then on the right side.
     # Than take the points together and find the lines.
-    # processed = pre_process_image(answer_image, False)
-    height, width, _ = answer_image.shape
+    # processed = pre_process_image(answer_image_original, False)
+    height, width, _ = answer_image_original.shape
     # We choose 1500 because that will definitely have all the points within the image
     # and the posibility of having a similar looking area is minimized.
     # TODO Make the (width-900) a bit more nicer (if you change it in 1 place you might forget it here)
     offset_range = 900
-    left_side = answer_image[0:height, 0:offset_range]
-    right_side = answer_image[0:height, (width-offset_range):width]
+    left_side = answer_image_original[0:height, 0:offset_range]
+    right_side = answer_image_original[0:height, (width-offset_range):width]
     # show_image(right_side)
 
     left_side_img = left_side.copy()
@@ -139,7 +139,7 @@ def line_segmentation(answer_image, save_image=False, image_path="lines/", image
     cv2.drawContours(left_side_img, left_block_contours, -1, (255, 0, 0), thickness=10)
     # show_image(left_side_img)
 
-    # cv2.imwrite("left.png", left_side_img)
+    # cv2.imwrite("out/" + image_name + "_left.png", left_side_img)
     right_side_img = right_side.copy()
 
     # We draw a fake line over the image, this is so we can find the corners by finding areas with a certain size
@@ -148,7 +148,6 @@ def line_segmentation(answer_image, save_image=False, image_path="lines/", image
     right_side_processed = pre_process_image(right_side_img, False)
     contours_right_side, _ = cv2.findContours(right_side_processed, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     cv2.drawContours(right_side_img, contours_right_side, -1, (0, 255, 0), thickness=5)
-
 
     right_block_contours = []
     for c in contours_right_side:
@@ -159,7 +158,7 @@ def line_segmentation(answer_image, save_image=False, image_path="lines/", image
 
     cv2.drawContours(right_side_img, right_block_contours, -1, (255, 0, 0), thickness=10)
     # show_image(right_side_img)
-    # cv2.imwrite("right.png", right_side_img)
+    # cv2.imwrite("out/" + image_name + "_right.png", right_side_img)
 
     # We assume that the answer template had the correct format so we expect that the left and right side both found
     # and equal amount of results. If this is not the case we return nothing and the program fails for this sheet.
@@ -175,8 +174,7 @@ def line_segmentation(answer_image, save_image=False, image_path="lines/", image
         # We will use the original image to crop from.
 
         corners_full = find_corners_center(corners_left, corners_right)
-        cropped_full = crop_and_warp(answer_image, corners_full)
-        # show_image(cropped_full)
+        cropped_full = crop_and_warp(answer_image_original, corners_full)
 
         # We also pass the line index along wiht this collection of lines. This is so that for the word recognition
         # part we can easily identify which line it is.
@@ -185,24 +183,24 @@ def line_segmentation(answer_image, save_image=False, image_path="lines/", image
 
         # Save the line image to the database!
         # convert the image to byte array so it can be saved in the database
-        answer = answer_image.tostring()
+        answer = cropped_full.tostring()
         # create an Image object to store it in the database
         # shape = answer_image
-        width = len(answer_image)
-        height = len(answer_image[0])
+        line_width = len(cropped_full)
+        line_height = len(cropped_full[0])
 
-        print("save line to database")
+        print("save line to database with width %s and height %s" % (line_width, line_height))
         # TODO fill in the other details as well! (not just the image)
         new_answer = Answer(
-            team_id=0,
-            question_id=0,
-            user_id=0,
+            team_id=1,
+            question_id=1,
+            person_id=1,
             answer_given="",
             correct=False,
             confidence=0.0,
             answer_image=answer,
-            image_width=width,
-            image_height=height
+            image_width=line_width,
+            image_height=line_height
         )
         # add the object to the database session
         db.session.add(new_answer)

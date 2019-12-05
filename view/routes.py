@@ -190,6 +190,7 @@ def nuke_all_answers():
 
 @view.route("/load_answer/<int:answer_id>", methods=['GET', 'POST'])
 def load_answer(answer_id):
+    print("loading answer with id " + str(answer_id))
     answer = Answer.query.filter_by(id=answer_id).first()
     if answer is None:
         return "answer with id " + str(answer_id) + " does not exist in the database."
@@ -208,7 +209,7 @@ def load_answer(answer_id):
 @view.route("/answer/load", methods=['GET', 'POST'])
 def answer_all():
     # page = request.args.get('page', 1, type=int)
-    answer_list = Answer.query.paginate(1, 50, False)
+    answer_list = Answer.query.paginate(1, 500, False)
     print(len(answer_list.items))
 
     next_url = None
