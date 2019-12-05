@@ -90,13 +90,13 @@
         [["David Guetta"], ["sia"], ["Titanium"]],
         [["Bonnie st. Claire"], ["Ron Brandsteder"], ["Dokter Bernhard"]]
     ]
-    categories = [Categories.PHOTO, Categories.PHOTO, Categories.PHOTO, Categories.PHOTO, Categories.PHOTO,
-                  Categories.PHOTO, Categories.PHOTO, Categories.PHOTO, Categories.PHOTO, Categories.PHOTO,
-                  Categories.STANDARD, Categories.STANDARD, Categories.STANDARD, Categories.STANDARD,
-                  Categories.STANDARD, Categories.STANDARD, Categories.STANDARD, Categories.STANDARD,
-                  Categories.STANDARD, Categories.STANDARD, Categories.STANDARD, Categories.STANDARD,
-                  Categories.STANDARD, Categories.STANDARD, Categories.STANDARD, Categories.STANDARD,
-                  Categories.STANDARD, Categories.STANDARD, Categories.STANDARD, Categories.STANDARD,
-                  Categories.MUSIC, Categories.MUSIC, Categories.MUSIC, Categories.MUSIC, Categories.MUSIC,
-                  Categories.MUSIC, Categories.MUSIC, Categories.MUSIC, Categories.MUSIC, Categories.MUSIC,
+    Categories = [Category.PHOTO, Category.PHOTO, Category.PHOTO, Category.PHOTO, Category.PHOTO,
+                  Category.PHOTO, Category.PHOTO, Category.PHOTO, Category.PHOTO, Category.PHOTO,
+                  Category.STANDARD, Category.STANDARD, Category.STANDARD, Category.STANDARD,
+                  Category.STANDARD, Category.STANDARD, Category.STANDARD, Category.STANDARD,
+                  Category.STANDARD, Category.STANDARD, Category.STANDARD, Category.STANDARD,
+                  Category.STANDARD, Category.STANDARD, Category.STANDARD, Category.STANDARD,
+                  Category.STANDARD, Category.STANDARD, Category.STANDARD, Category.STANDARD,
+                  Category.MUSIC, Category.MUSIC, Category.MUSIC, Category.MUSIC, Category.MUSIC,
+                  Category.MUSIC, Category.MUSIC, Category.MUSIC, Category.MUSIC, Category.MUSIC,
                   ]

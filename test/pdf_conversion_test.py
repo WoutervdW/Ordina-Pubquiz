@@ -15,7 +15,7 @@ class PdfConversionTest(unittest.TestCase):
         rather than 1 pdf with 2 pages so we would need to call the function twice regardless.
         """
         file_name = "scan"
-        pubquiz_answer_sheet = 'test_files/pdf_files/' + file_name + '.pdf'
+        pubquiz_answer_sheet = '../' + file_name + '.pdf'
         answer_sheets_image = convert_pdf_to_image(pubquiz_answer_sheet)
         # For this test we only read 1 file
         answer_sheet_image = answer_sheets_image[0]
@@ -26,21 +26,24 @@ class PdfConversionTest(unittest.TestCase):
 
     def test_multiple_pdf_pages(self):
         file_name = "scan"
-        path = 'test_files/pdf_files/'
+        path = '../'
         pubquiz_answer_sheet = path + file_name + '.pdf'
         answer_sheets_image = convert_pdf_to_image(pubquiz_answer_sheet)
 
-        self.assertEqual(len(answer_sheets_image), 3)
+        self.assertEqual(len(answer_sheets_image), 6)
 
         # If the test is successful we save the the images if the folder is empty so we can use these in the next tests
-        if len(os.listdir('test_files/image_files/')) == 0:
+        path = 'test_files/image_files/'
+        if not os.path.exists(path):
+            os.makedirs(path)
+        if len(os.listdir(path)) == 0:
             for index in range(0, len(answer_sheets_image)):
                 # We only save if the test was ok and the file does not exist yet.
-                cv2.imwrite("test_files/image_files/" + file_name + "_" + str(index) + "_image.png", answer_sheets_image[index])
+                cv2.imwrite(path + file_name + "_" + str(index) + "_image.png", answer_sheets_image[index])
 
     def test_wrong_file_path(self):
         file_name = "wrong_file_name"
-        pubquiz_answer_sheet = 'test_files/pdf_files/' + file_name + '.pdf'
+        pubquiz_answer_sheet = '../' + file_name + '.pdf'
         # For this test we only read 1 file
         answer_sheet_image = convert_pdf_to_image(pubquiz_answer_sheet)
         self.assertEqual(answer_sheet_image, None)

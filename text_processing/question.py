@@ -1,11 +1,11 @@
-from text_processing.question_categories import Categories
+from text_processing.question_categories import Category
 
 
 class Question:
-    index = 0
-    category = Categories.STANDARD
-    correct_answer_lists = []
-    answers = []
+    ID = 0
+    category = Category.STANDARD
+    correct_answer_lists = None
+    answers = None
     numerical = False
 
     # property indicating it is a numerical question

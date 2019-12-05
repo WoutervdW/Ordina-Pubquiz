@@ -13,7 +13,7 @@ def show_image(img):
     cv2.destroyAllWindows()
 
 
-def find_corners_contour(polygon, width=0, add_x=False):
+def find_corners_contour(polygon, offset=0, add_x=False):
     """
     returns the 4 corners of the given polygon.
     If the points are within a certain range we will save it
@@ -24,11 +24,11 @@ def find_corners_contour(polygon, width=0, add_x=False):
     top_right, _ = max(enumerate([pt[0][0] - pt[0][1] for pt in polygon]), key=operator.itemgetter(1))
 
     if add_x:
-        # TODO Make the (width-700) a bit more nicer (if you change it in 1 place you might forget it here)
-        polygon[top_left][0][0] = polygon[top_left][0][0] + (width - 700)
-        polygon[top_right][0][0] = polygon[top_right][0][0] + (width - 700)
-        polygon[bottom_right][0][0] = polygon[bottom_right][0][0] + (width - 700)
-        polygon[bottom_left][0][0] = polygon[bottom_left][0][0] + (width - 700)
+        # TODO Make the (width-1500) a bit more nicer (if you change it in 1 place you might forget it here)
+        polygon[top_left][0][0] = polygon[top_left][0][0] + offset
+        polygon[top_right][0][0] = polygon[top_right][0][0] + offset
+        polygon[bottom_right][0][0] = polygon[bottom_right][0][0] + offset
+        polygon[bottom_left][0][0] = polygon[bottom_left][0][0] + offset
 
     return [polygon[top_left][0], polygon[top_right][0], polygon[bottom_right][0], polygon[bottom_left][0]]
 
@@ -91,20 +91,6 @@ def crop_and_warp(img, crop_rect):
 
 
 def find_corners_center(corners_left, corners_right):
-    # find smallest and largest x of the left block. It has 4 points
-    # TODO Written in full maybe find a neater way to find the corners instead of hand picking them like this.
-    # The corner points for left and right are given like:  bottom_left, bottom_right, top_right, top_left: [0, 1, 2, 3]
-
-    # top left of the center part is the top right of the left part
-    top_left_center = corners_left[2]
-    # top right of the center is the top left or the right part
-    top_right_center = corners_right[3]
-    # bottom right of the center is the bottom left of the right part
-    bottom_right_center = corners_right[0]
-    # bottom left of the center is the bottom right of the left part
-    bottom_left_center = corners_left[1]
-    corners_center = [bottom_left_center, bottom_right_center, top_right_center, top_left_center]
-
     # top left of the full part is the top left of the left part
     top_left_full = corners_left[3]
     # top right of the full part is the top right of the right part
@@ -114,7 +100,7 @@ def find_corners_center(corners_left, corners_right):
     # bottom left of the full part is the bottom left of the left part
     bottom_left_full = corners_left[0]
     corners_full = [bottom_left_full, bottom_right_full, top_right_full, top_left_full]
-    return corners_center, corners_full
+    return corners_full
 
 
 def line_segmentation(answer_image, save_image=False, image_path="lines/", image_name="scan"):
@@ -122,44 +108,54 @@ def line_segmentation(answer_image, save_image=False, image_path="lines/", image
     # Than take the points together and find the lines.
     # processed = pre_process_image(answer_image, False)
     height, width, _ = answer_image.shape
-    # We choose 800 because that will definitely have all the points within the image
+    # We choose 1500 because that will definitely have all the points within the image
     # and the posibility of having a similar looking area is minimized.
-    # TODO Make the (width-700) a bit more nicer (if you change it in 1 place you might forget it here)
-    # TODO Also make the 800 variable a bit nicer.
-    left_side = answer_image[0:height, 0:800]
-    right_side = answer_image[0:height, (width-700):width]
+    # TODO Make the (width-1500) a bit more nicer (if you change it in 1 place you might forget it here)
+    offset_range = 600
+    left_side = answer_image[0:height, 0:offset_range]
+    right_side = answer_image[0:height, (width-offset_range):width]
+    # show_image(right_side)
 
     left_side_img = left_side.copy()
+
+    # We draw a fake line over the image, this is so we can find the corners by finding areas with a certain size
+    cv2.line(left_side_img, (offset_range-10, 0), (offset_range-10, height), (0, 0, 0), 10)
+
     left_side_processed = pre_process_image(left_side_img, False)
     contours_left_side, _ = cv2.findContours(left_side_processed, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     cv2.drawContours(left_side_img, contours_left_side, -1, (0, 255, 0), thickness=5)
-    # show_image(left_side_img)
 
+    # show_image(left_side_img)
     # The blocks will have a specific area which we will look for.
     left_block_contours = []
     for c in contours_left_side:
         area = cv2.contourArea(c)
-        if 80000 < area < 90000:
+        if 50000 < area < 100000:
             left_block_contours.append(c)
 
     cv2.drawContours(left_side_img, left_block_contours, -1, (255, 0, 0), thickness=10)
     # show_image(left_side_img)
 
+    # cv2.imwrite("left.png", left_side_img)
     right_side_img = right_side.copy()
+
+    # We draw a fake line over the image, this is so we can find the corners by finding areas with a certain size
+    cv2.line(right_side_img, (10, 0), (10, height), (0, 0, 0), 10)
+
     right_side_processed = pre_process_image(right_side_img, False)
     contours_right_side, _ = cv2.findContours(right_side_processed, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     cv2.drawContours(right_side_img, contours_right_side, -1, (0, 255, 0), thickness=5)
 
-    # show_image(right_side_img)
 
     right_block_contours = []
     for c in contours_right_side:
         area = cv2.contourArea(c)
-        if 50000 < area < 60000:
+        if 5000 < area < 50000:
             right_block_contours.append(c)
 
     cv2.drawContours(right_side_img, right_block_contours, -1, (255, 0, 0), thickness=10)
     # show_image(right_side_img)
+    # cv2.imwrite("right.png", right_side_img)
 
     # We assume that the answer template had the correct format so we expect that the left and right side both found
     # and equal amount of results. If this is not the case we return nothing and the program fails for this sheet.
@@ -171,39 +167,25 @@ def line_segmentation(answer_image, save_image=False, image_path="lines/", image
     lines = []
     for x in range(0, len(left_block_contours)):
         corners_left = find_corners_contour(left_block_contours[x])
-        corners_right = find_corners_contour(right_block_contours[x], width, True)
+        corners_right = find_corners_contour(right_block_contours[x], width - offset_range, True)
         # We will use the original image to crop from.
-        # Left block
-        cropped_left = crop_and_warp(answer_image, corners_left)
 
-        # Right block
-        cropped_right = crop_and_warp(answer_image, corners_right)
-
-        corners_center, corners_full = find_corners_center(corners_left, corners_right)
-        cropped_center = crop_and_warp(answer_image, corners_center)
+        corners_full = find_corners_center(corners_left, corners_right)
         cropped_full = crop_and_warp(answer_image, corners_full)
+        # show_image(cropped_full)
 
         # We also pass the line index along wiht this collection of lines. This is so that for the word recognition
         # part we can easily identify which line it is.
-        finished_line = [cropped_center, cropped_left, cropped_right, cropped_full, x]
+        finished_line = [cropped_full, x]
         lines.append(finished_line)
         if save_image:
-            path = image_path + image_name + "/line_" + str(x)
+            path = image_path + image_name
             if not os.path.exists(path):
                 os.makedirs(path)
             # save (or show) the image if the folder is empty (for tests)
             # show_image(finished_line[0])
-            # show_image(finished_line[1])
-            # show_image(finished_line[2])
-            # show_image(finished_line[3])
-            cv2.imwrite(path + "/center_" + str(x) + ".png", finished_line[0])
-            cv2.imwrite(path + "/left_" + str(x) + ".png", finished_line[1])
-            cv2.imwrite(path + "/right_" + str(x) + ".png", finished_line[2])
-            cv2.imwrite(path + "/full_" + str(x) + ".png", finished_line[3])
+            cv2.imwrite(path + "/line_" + str(x) + ".png", finished_line[0])
 
-            if x == 0:
-                # We do this for test purposes
-                write_blob(x, path + "/center_" + str(x) + ".png", 'png')
     print('done all ' + str(len(left_block_contours)) + ' lines')
     return lines
 
