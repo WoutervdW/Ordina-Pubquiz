@@ -110,8 +110,8 @@ def line_segmentation(answer_image, save_image=False, image_path="lines/", image
     height, width, _ = answer_image.shape
     # We choose 1500 because that will definitely have all the points within the image
     # and the posibility of having a similar looking area is minimized.
-    # TODO Make the (width-1500) a bit more nicer (if you change it in 1 place you might forget it here)
-    offset_range = 600
+    # TODO Make the (width-900) a bit more nicer (if you change it in 1 place you might forget it here)
+    offset_range = 900
     left_side = answer_image[0:height, 0:offset_range]
     right_side = answer_image[0:height, (width-offset_range):width]
     # show_image(right_side)
@@ -130,7 +130,8 @@ def line_segmentation(answer_image, save_image=False, image_path="lines/", image
     left_block_contours = []
     for c in contours_left_side:
         area = cv2.contourArea(c)
-        if 50000 < area < 100000:
+        # Area is about 100000 up to 1400000
+        if 80000 < area < 190000:
             left_block_contours.append(c)
 
     cv2.drawContours(left_side_img, left_block_contours, -1, (255, 0, 0), thickness=10)
@@ -150,7 +151,8 @@ def line_segmentation(answer_image, save_image=False, image_path="lines/", image
     right_block_contours = []
     for c in contours_right_side:
         area = cv2.contourArea(c)
-        if 5000 < area < 50000:
+        # Area is about 50000 up to 80000
+        if 30000 < area < 130000:
             right_block_contours.append(c)
 
     cv2.drawContours(right_side_img, right_block_contours, -1, (255, 0, 0), thickness=10)
