@@ -33,7 +33,7 @@ th {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: red;
   -webkit-transition: .2s;
   transition: .2s;
 }
@@ -51,7 +51,7 @@ th {
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: green;
 }
 
 input:focus + .slider {

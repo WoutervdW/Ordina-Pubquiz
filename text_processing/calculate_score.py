@@ -9,24 +9,23 @@ import pickle
 def get_score(question):
     """
     Calculate the score for the given question
-    :param question: object of type Question
+    :param questions: list with objects of type Question
     :return: score based on No of correct answers
     """
     score = 0
 
     if question.category == Category.STANDARD:  # 1 answer, 1 point
-        answer = question.answers[0]
-        correct_answers = question.correct_answer_lists[0]
-        # Grant 1 point if the answer is correct
-        if check_correct(answer, correct_answers, question.numerical):
-            score += 1
+        for answer, correct_answers in zip(question.answers, question.correct_answer_lists):
+            # Grant 1 point if the answer is correct
+            if check_correct(answer, correct_answers, question.numerical):
+                score += 1
 
-    elif question.category == Category.MUSIC:
-        artist1 = question.answers[0]
-        artist2 = question.answers[1]
+    elif question.category == Category.MUSIC:  # multiple answers, 2 points
+        # artist1 = question.answers[0]
+        # artist2 = question.answers[1]
         # Create one list with all correct artists
         correct_artists = []
-        for correct_artist in range(len(question.correct_answer_lists)-1):
+        for correct_artist in question.correct_answerlists[: -1]:
             correct_artists += correct_artist  # question.correct_answer_lists[0] + question.correct_answer_lists[1]
 
         song_title = question.answers[-1]
@@ -63,8 +62,11 @@ def read_correct_answers_and_categories():
 
 if __name__ == "__main__":
     # given_answers contains, for every question, a list of strings (answers)
-    with open("data\\given_answers.pickle", "rb") as f:
-        given_answers = pickle.load(f)
+    with open("data\\given_answers.pickle", "rb") as f1:
+        given_answers = pickle.load(f1)
+
+    # with open("data\\categories.pickle", "wb") as f1:
+    #   pickle.dump(categories, f1)
 
     all_correct_answers, categories = read_correct_answers_and_categories()
 
@@ -73,4 +75,7 @@ if __name__ == "__main__":
         question = Question(index, categories[index], all_correct_answers[index], given_answers[index])
         questions.append(question)
 
-    print(get_score(questions))
+    score = 0
+    for question in questions:
+        score += get_score(question)
+    print(score)

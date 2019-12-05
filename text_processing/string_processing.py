@@ -13,8 +13,8 @@ from text_processing.question_categories import Category
 def check_numerical_value(answer, correct_answer):
     """
 
-    :param answer: one string containing
-    :param correct_answer:
+    :param answer: one string containing given answer
+    :param correct_answer: one string containing correct answer
     :return:
     """
     # Use regex to get all the numbers and compare those from the given answer to those each of the correct answers
@@ -35,7 +35,7 @@ def check_numerical_value(answer, correct_answer):
     # Compare the lists of numbers for any differences in the number of elements
     difference = list((Counter(correct_answer) - Counter(answer)).elements())
     if len(difference) == 0:
-
+        pass
     # DEPRECATED
     for answer_word in answer.split():  # For every word in the given answer
         try:
@@ -57,21 +57,23 @@ def check_string(answer, correct_answer):
     return fuzz.WRatio(answer, correct_answer) > 80
 
 
-def check_correct(answer, correct_answers, category):
+def check_correct(answer, correct_answers, numerical):
     """
     Check whether this answer is correct.
     :param answer: string representing the answer.
     :param correct_answers: list of possible correct answers.
-    :param category: category of the question
-    param numerical: boolean, whether the answer should be a number.
+    :param numerical: boolean, whether the answer should be a number.
     :return: true if the answer is (close enough to) correct, false otherwise.
     """
+
+    # Divide string into numbers (=every substring that can be converted to a number) and strings, and compair them
+    # pairwise BUT need to consider the entire string as well
 
     for correct_answer in correct_answers:
         # number_correct has to be True if the number exists and is correct, False if the number exists but isn't
         # correct and None if no number exists
         number_correct = None
-        if category != Category.MUSIC:
+        if numerical:
             number_correct = check_numerical_value(answer, correct_answer)  # Number-based comparison
 
         if number_correct is None:
