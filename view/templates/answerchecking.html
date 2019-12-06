@@ -14,7 +14,8 @@
                 <tr>
                     <th scope = "col" ng-click = "sortBy('team_id')">Team</th>
                     <th scope = "col" ng-click = "sortBy('question_id')">Vraag</th>
-                    <th scope = "col" ng-click = "sortBy('answer_given')" >Antwoord</th>
+                    <th scope = "col" ng-click = "sortBy('question_id')">Correct Antwoord</th>
+                    <th scope = "col" ng-click = "sortBy('answer_given')" >Gegeven Antwoord</th>
                     <th scope = "col" ng-click = "sortBy('correct')">Correct</th>
                     <th scope = "col" ng-click = "sortBy('answer_image')">Afbeelding</th>
                     <th scope = "col" ng-click = "sortBy('person_id')">Laatst nagekeken door</th>
@@ -23,8 +24,9 @@
             </thead>
             <tbody>
                 <tr ng-repeat="answer in answers | orderBy:propertyName:reverse">
-                    <td>//answer.team_id//</td>
-                    <td>//answer.question_id//</td>
+                    <td>//getTeamName(answer.team_id)//</td>
+                    <td>//getQuestionName(answer.question_id)//</td>
+                    <td>//getCorrectAnswer(answer.question_id)//</td>
                     <td>//answer.answer_given//</td>
                     <td><label class="switch"><input type="checkbox" ng-model="answer.correct" ng-change = "updateAnswerCheck(answer)"><span class="slider round"></span></label></td>
                     <td>//answer.answer_image//</td>

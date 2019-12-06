@@ -83,6 +83,7 @@ def add_question():
         person_id=newquestionperson_id, active=newquestionactive);
     db.session.add(q)
     db.session.commit()
+    return
 
 
 @view.route('/api/v1.0/updatequestion', methods=['POST'])
@@ -93,7 +94,7 @@ def update_question():
     q = Question.query.filter_by(id=id).first()
     q.active = questionactive
     db.session.commit()
-
+    return
 
 @view.route('/api/v1.0/updateanswer', methods=['POST'])
 def update_answer():
@@ -105,6 +106,7 @@ def update_answer():
     q.correct = answercorrect
     q.person_id = person_id
     db.session.commit()
+    return
 
 
 @view.route('/run_program')

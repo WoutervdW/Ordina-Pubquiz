@@ -8,15 +8,11 @@ class Team(db.Model):
     teamname = db.Column(db.String(255))
     score = db.Column(db.Integer)
 
-    def __init__(self, personname, email):
-        self.teamname = teamname
-        self.score = score
-
 
 class TeamSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('teamname', 'score')
+        fields = ('id', 'teamname', 'score')
 
 
 class Question(db.Model):
