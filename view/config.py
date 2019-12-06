@@ -20,6 +20,5 @@ class Config(object):
 
     ANSWERSHEET_PER_PAGE = 2
     ANSWERS_GIVEN_PER_PAGE = 20
-
-
+    WORDS_PER_PAGE = 20
 

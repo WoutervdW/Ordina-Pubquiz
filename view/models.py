@@ -31,7 +31,6 @@ class QuestionSchema(ma.Schema):
         fields = ('id', 'person_id', 'category_id', 'question', 'active')
 
 
-#question can have multiple subquestions, each subquestion has a subanswer
 class SubAnswer(db.Model):
     """ question can have multiple subquestions, each subquestion has a subanswer """
     __tablename__ = 'subanswer'
@@ -133,9 +132,19 @@ class CategorySchema(ma.Schema):
 
 
 class AnswerSheetQuestion(db.Model):
-    """ image of line of answersheet corresponding to a question """
+    """ answersheet corresponding to a question """
     __tablename__ = 'answersheetquestion'
     id = db.Column(db.Integer, primary_key=True)
     answersheet_id = db.Column(db.Integer, db.ForeignKey('answersheet.id'))
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'))
+
+
+class Word(db.Model):
+    """ A word object, corresponding to a line. """
+    __tablename__ = 'word'
+    id = db.Column(db.Integer, primary_key=True)
+    subanswergiven_id = db.Column(db.Integer, db.ForeignKey('subanswergiven.id'))
+    word_image = db.Column(db.LargeBinary)
+    image_width = db.Column(db.Integer)
+    image_height = db.Column(db.Integer)
 

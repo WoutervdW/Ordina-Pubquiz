@@ -34,7 +34,7 @@ def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res)
         # save word
         # We also have to take into account that we removed the bars on the side by slicing the image with '5'
         # We will add this to the new bounding box.
-        x_new = (x * multiply_factor) + 5
+        x_new = (x * multiply_factor) + (180 * multiply_factor)
         y_new = y * multiply_factor
         width_new = w * multiply_factor
         height_new = h * multiply_factor
@@ -93,6 +93,27 @@ def word_segmentation(line_image, kernel_size=25, sigma=11, theta=7, min_area=10
         curr_img = line_image[y:y + h, x:x + w]
         res.append((curr_box, curr_img))
 
+        # Save the word image to the database!
+        # convert the image to byte array so it can be saved in the database
+        answer = curr_img.tostring()
+        # create an Image object to store it in the database
+        print("save the word to the database with width %s and height %s" % (w, h))
+        # TODO fill in the other details as well! (not just the image)
+        new_answer = SubAnswerGiven(
+            answer_id=1,
+            answer_given="",
+            correct=False,
+            confidence=0.0,
+            answer_image=answer,
+            image_width=w,
+            image_height=h
+        )
+        # add the object to the database session
+        db.session.add(new_answer)
+        # commit the session so that the image is stored in the database
+        db.session.commit()
+
+
     # return list of words, sorted by x-coordinate
     return sorted(res, key=lambda entry: entry[0][0])
 
@@ -122,7 +143,8 @@ def prepare_image(img, height):
     h = img.shape[0]
     factor = height / h
     resized = cv2.resize(img, dsize=None, fx=factor, fy=factor)
-    without_bars = resized[:, 5:-5]
+    without_bars = resized[:, 180:]
+    # We will remove the left part, which always has the same size and is never needed
     return without_bars
 
 
