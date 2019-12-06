@@ -18,6 +18,18 @@ angular.module('module', [])
         }).then(function (response){
             $scope.questions = response.data;
         });
+        $http({
+            method: "GET",
+            url: "/api/v1.0/subanswers"
+        }).then(function (response){
+            $scope.subanswers = response.data;
+        });
+        $http({
+            method: "GET",
+            url: "/api/v1.0/variants"
+        }).then(function (response){
+            $scope.variants = response.data;
+        });
          $http({
             method: "GET",
             url: "/api/v1.0/categories"
@@ -35,6 +47,12 @@ angular.module('module', [])
             url: "/api/v1.0/answers"
         }).then(function (response){
             $scope.answers = response.data;
+        });
+        $http({
+            method: "GET",
+            url: "/api/v1.0/subanswersgiven"
+        }).then(function (response){
+            $scope.subanswersgiven = response.data;
         });
 
         $scope.sortBy = function sortBy(propertyName){
