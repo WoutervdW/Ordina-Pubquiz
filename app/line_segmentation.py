@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import operator
 import os
-from view.models import Answer
+from view.models import SubAnswerGiven
 from view import db
 
 
@@ -191,10 +191,8 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
 
         print("save line to database with width %s and height %s" % (line_width, line_height))
         # TODO fill in the other details as well! (not just the image)
-        new_answer = Answer(
-            team_id=1,
-            question_id=1,
-            person_id=1,
+        new_answer = SubAnswerGiven(
+            answer_id=1,
             answer_given="",
             correct=False,
             confidence=0.0,

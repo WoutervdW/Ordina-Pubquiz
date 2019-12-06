@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<script>
+
+</script>
+<body>
+{% extends "base.html" %}
+{% block content %}
+{% for answer in answers %}
+<div>
+    <img width=50% src="{{ url_for('load_answer', answer_given_id=answer.id) }}">
+</div>
+{% endfor %}
+{% if prev_url %}
+    <a href="{{ prev_url }}">Newer posts</a>
+    {% endif %}
+    {% if next_url %}
+    <a href="{{ next_url }}">Older posts</a>
+    {% endif %}
+{%endblock%}
+</body>
+</html>

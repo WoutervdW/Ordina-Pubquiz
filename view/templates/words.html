@@ -11,9 +11,9 @@
 <body>
 {% extends "base.html" %}
 {% block content %}
-{% for answer in answers %}
+{% for word in words %}
 <div>
-    <img width=50% src="{{ url_for('load_answer', answer_id=answer.id) }}">
+    <img width=50% src="{{ url_for('load_word', word_id=word.id) }}">
 </div>
 {% endfor %}
 {% if prev_url %}

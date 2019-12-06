@@ -44,7 +44,7 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
     output_folder = "out/"
     lines = line_segmentation(answer_sheet_image, save_image, output_folder, sheet_name)
     # We save the results to a file, which will be in the sheet subfolder with the sheet name.
-    f = open(output_folder + sheet_name + "/" + sheet_name + ".txt", "w")
+    # f = open(output_folder + sheet_name + "/" + sheet_name + ".txt", "w")
 
     # After the line segmentation is done we can find the separate words
     for line_image in lines:
@@ -64,11 +64,11 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         print('Segmented into %d words' % len(res))
         if save_image:
             save_word_image(output_folder, sheet_name, line_image, multiply_factor, res)
-
-        # We can now examine each word.
-        words = get_words_image(line_image, multiply_factor, res)
-        words_results = []
-        result_line = "line " + str(words[0][1]) + " predictions"
+        #
+        # # We can now examine each word.
+        # words = get_words_image(line_image, multiply_factor, res)
+        # words_results = []
+        # result_line = "line " + str(words[0][1]) + " predictions"
         # for word in words:
         #     # TODO add contrast to each word
         #     read_results = read_word_from_image(word[0], model)
@@ -80,7 +80,7 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
 
     # For now write the results to a file.
     # TODO connect this to the answer checker.
-    f.close()
+    # f.close()
 
 
 def run_program(pubquiz_answer_sheets, save_image=False):
