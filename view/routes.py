@@ -10,7 +10,7 @@ import app
 import cv2
 import numpy as np
 from view.models import Team, TeamSchema, Question, QuestionSchema, SubAnswer, SubAnswerSchema, Variant, VariantSchema, Category, CategorySchema, Answersheet, Person, \
- PersonSchema, Answer, AnswerSchema, SubAnswerGiven, SubAnswerGivenSchema
+ PersonSchema, Answer, AnswerSchema, SubAnswerGiven, SubAnswerGivenSchema, Word
 from werkzeug.utils import secure_filename
 from collections import OrderedDict
 
@@ -207,11 +207,11 @@ def answersheet_all():
     return render_template("answersheet.html", answersheets=answersheets.items, next_url=next_url, prev_url=prev_url)
 
 
-@view.route('/answer/given/nuke', methods=['GET'])
+@view.route('/answers/given/nuke', methods=['GET'])
 def nuke_all_answers_given():
     SubAnswerGiven.query.delete()
     db.session.commit()
-    db.engine.execute('alter sequence answer_id_seq RESTART with 1')
+    db.engine.execute('alter sequence subanswergiven_id_seq RESTART with 1')
     return 'ok'
 
 
@@ -251,7 +251,7 @@ def answer_all():
 
 @view.route('/words/nuke', methods=['GET'])
 def nuke_all_words():
-    SubAnswerGiven.query.delete()
+    Word.query.delete()
     db.session.commit()
     db.engine.execute('alter sequence word_id_seq RESTART with 1')
     return 'ok'
@@ -263,7 +263,7 @@ def load_word(word_id):
     word = Word.query.filter_by(id=word_id).first()
     if word is None:
         return "word with id " + str(word_id) + " does not exist in the database."
-    image_data = word.answer_image
+    image_data = word.word_image
     # I need to know the exact shape it had in order to load it from the database
     width = word.image_width
     height = word.image_height
@@ -277,16 +277,17 @@ def load_word(word_id):
 
 @view.route("/words/load", methods=['GET', 'POST'])
 def word_all():
-    # page = request.args.get('page', 1, type=int)
+    page = request.args.get('page', 1, type=int)
     word_list = Word.query.paginate(page, view.config['WORDS_PER_PAGE'], False)
+    print("load %s words" % len(word_list.items))
 
     next_url = None
-    # if answer_given_list.has_next:
-    #     next_url = url_for('answer_all', page=answer_given_list.next_num)
+    if word_list.has_next:
+        next_url = url_for('word_all', page=word_list.next_num)
 
     prev_url = None
-    # if answer_given_list.has_prev:
-    #     prev_url = url_for('answer_all', page=answer_given_list.prev_num)
+    if word_list.has_prev:
+        prev_url = url_for('word_all', page=word_list.prev_num)
 
-    return render_template("words.html", answers=word_list.items, next_url=next_url, prev_url=prev_url)
+    return render_template("words.html", words=word_list.items, next_url=next_url, prev_url=prev_url)
 
