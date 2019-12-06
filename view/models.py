@@ -25,12 +25,25 @@ class Question(db.Model):
     active = db.Column(db.Boolean)
 
 
+class QuestionSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('id', 'person_id', 'category_id', 'question', 'active')
+
+
+#question can have multiple subquestions, each subquestion has a subanswer
 class SubAnswer(db.Model):
     """ question can have multiple subquestions, each subquestion has a subanswer """
     __tablename__ = 'subanswer'
     id = db.Column(db.Integer, primary_key=True)
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'))
     variants = db.relationship('Variant')
+
+
+class SubAnswerSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('id', 'question_id')
 
 
 class Variant(db.Model):
@@ -42,10 +55,11 @@ class Variant(db.Model):
     isNumber = db.Column(db.Boolean)
 
 
-class QuestionSchema(ma.Schema):
+class VariantSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('id', 'person_id', 'category_id', 'question', 'correct_answer', 'active')
+        fields = ('id', 'subanswer_id', 'answer', 'isNumber')
+
 
 
 class Answer(db.Model):
@@ -55,12 +69,13 @@ class Answer(db.Model):
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable = False)
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable = False)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable = False)
+    subanswersgiven = db.relationship('SubAnswerGiven')
 
 
 class AnswerSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('id', 'team_id', 'question_id', 'person_id', 'answer_given', 'correct', 'answer_image', 'confidence')
+        fields = ('id', 'team_id', 'question_id', 'person_id', 'subanswersgiven')
 
 
 class SubAnswerGiven(db.Model):
@@ -74,6 +89,12 @@ class SubAnswerGiven(db.Model):
     answer_image = db.Column(db.LargeBinary)
     image_width = db.Column(db.Integer)
     image_height = db.Column(db.Integer)
+
+
+class SubAnswerGivenSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('id', 'answer_id', 'answer_given', 'correct', 'confidence', 'ansewr_image', 'image_width', 'image_height')
 
 
 class Person(db.Model):

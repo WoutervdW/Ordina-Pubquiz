@@ -9,8 +9,8 @@ import datetime
 import app
 import cv2
 import numpy as np
-from view.models import Team, TeamSchema, Question, QuestionSchema, Category, CategorySchema, Answersheet, Person, \
- PersonSchema, Answer, AnswerSchema
+from view.models import Team, TeamSchema, Question, QuestionSchema, SubAnswer, SubAnswerSchema, Variant, VariantSchema, Category, CategorySchema, Answersheet, Person, \
+ PersonSchema, Answer, AnswerSchema, SubAnswerGiven, SubAnswerGivenSchema
 from werkzeug.utils import secure_filename
 from collections import OrderedDict
 
@@ -47,6 +47,22 @@ def get_questions():
     return jsonify(result)
 
 
+@view.route('/api/v1.0/subanswers', methods=['GET'])
+def get_subanswers():
+    subanswers_schema = SubAnswerSchema(many=True)
+    allsubanswers = SubAnswer.query.all()
+    result = subanswers_schema.dump(allsubanswers)
+    return jsonify(result)
+
+
+@view.route('/api/v1.0/variants', methods=['GET'])
+def get_variants():
+    variant_schema = VariantSchema(many=True)
+    allvariants = Variant.query.all()
+    result = variant_schema.dump(allvariants)
+    return jsonify(result)
+
+
 @view.route('/api/v1.0/categories', methods=['GET'])
 def get_categories():
     categories_schema = CategorySchema(many=True)
@@ -68,6 +84,14 @@ def get_answers():
     answers_schema = AnswerSchema(many=True)
     allanswers = Answer.query.all()
     result = answers_schema.dump(allanswers)
+    return jsonify(result)
+
+
+@view.route('/api/v1.0/subanswersgiven', methods=['GET'])
+def get_subanswersgiven():
+    subanswersgiven_schema = SubAnswerGivenSchema(many=True)
+    allsubanswersgiven = SubAnswerGiven.query.all()
+    result = subanswersgiven_schema.dump(allsubanswersgiven)
     return jsonify(result)
 
 
@@ -95,6 +119,7 @@ def update_question():
     q.active = questionactive
     db.session.commit()
     return
+
 
 @view.route('/api/v1.0/updateanswer', methods=['POST'])
 def update_answer():
