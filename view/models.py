@@ -61,7 +61,6 @@ class VariantSchema(ma.Schema):
         fields = ('id', 'subanswer_id', 'answer', 'isNumber')
 
 
-
 class Answer(db.Model):
     """ answer given by team """
     __tablename__ = 'answer'
