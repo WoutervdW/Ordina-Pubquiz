@@ -94,6 +94,8 @@ angular.module('module', [])
             var q = $scope.questions.find(question => question.id == question_id);
             return q.correct_answer;
         }
+        $scope.correctAnswers = function(question){
+        return [{answer: "Antwoord A"}, {answer: "Antwoord B"}]}
 
         //todo: return person that is logged in
         $scope.getLoggedinPerson = function(){

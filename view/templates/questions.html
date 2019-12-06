@@ -21,9 +21,18 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="question in questions | orderBy:propertyName:reverse">
-                    <td>//question.question//</td>
-                    <td>//question.correct_answer//</td>
+                <tr ng-repeat ="question in questions | orderBy:propertyName:reverse" >
+                    <td> //question.question//</td>
+                    <td>
+                        <table class = "table table-borderless">
+                            <tbody>
+                                <tr ng-repeat = "variant in variants">
+                                    <td>A:</td>
+                                    <td>//variant.answer//</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
                     <td>//getCategoryName(question.category_id)//</td>
                     <td>//getPersonName(question.person_id)//</td>
                     <td><label class="switch"><input type="checkbox" ng-model="question.active" ng-change="updateQuestionActive(question)"><span class="slider round"></span></label></td>
@@ -42,6 +51,7 @@
                     <td><label class="switch"><input type="checkbox" ng-model = "newquestionactive"  ng-init="newquestionactive=true"><span class="slider round"></span></label></td>
                     <td><button class =  "btn btn-primary" ng-click = "addQuestion()">Voeg toe</button></td>
                 </tr>
+
             </tbody>
         </table>
     </div>

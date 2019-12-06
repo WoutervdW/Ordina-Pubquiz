@@ -10,6 +10,10 @@ th {
     cursor: pointer;
 }
 
+.table-borderless td, .table-borderless th {
+    border: 0;
+}
+
 /* The switch - the box around the slider */
 .switch {
   position: relative;
