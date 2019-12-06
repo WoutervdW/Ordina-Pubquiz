@@ -25,16 +25,16 @@ class Question(db.Model):
     active = db.Column(db.Boolean)
 
 
-#question can have multiple subquestions, each subquestion has a subanswer
 class SubAnswer(db.Model):
+    """ question can have multiple subquestions, each subquestion has a subanswer """
     __tablename__ = 'subanswer'
     id = db.Column(db.Integer, primary_key=True)
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'))
     variants = db.relationship('Variant')
 
 
-#for some questions, multiple answers (variants) are correct
 class Variant(db.Model):
+    """ for some questions, multiple answers (variants) are correct """
     __tablename__ = 'variant'
     id = db.Column(db.Integer, primary_key=True)
     subanswer_id = db.Column(db.Integer, db.ForeignKey('subanswer.id'))
@@ -47,8 +47,9 @@ class QuestionSchema(ma.Schema):
         # Fields to expose
         fields = ('id', 'person_id', 'category_id', 'question', 'correct_answer', 'active')
 
-#answer given by team
+
 class Answer(db.Model):
+    """ answer given by team """
     __tablename__ = 'answer'
     id = db.Column(db.Integer, primary_key=True)
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable = False)
@@ -62,8 +63,8 @@ class AnswerSchema(ma.Schema):
         fields = ('id', 'team_id', 'question_id', 'person_id', 'answer_given', 'correct', 'answer_image', 'confidence')
 
 
-#each answer can consist of multiple subanswers
 class SubAnswerGiven(db.Model):
+    """ each answer can consist of multiple subanswers """
     __tablename__ = 'subanswergiven'
     id = db.Column(db.Integer, primary_key=True)
     answer_id = db.Column(db.Integer, db.ForeignKey('answer.id'), nullable = False)
@@ -75,8 +76,8 @@ class SubAnswerGiven(db.Model):
     image_height = db.Column(db.Integer)
 
 
-#users
 class Person(db.Model):
+    """ users """
     __tablename__ = 'person'
     id = db.Column(db.Integer, primary_key=True)
     personname = db.Column(db.String(255))
@@ -88,16 +89,18 @@ class PersonSchema(ma.Schema):
         # Fields to expose
         fields = ('id', 'personname')
 
-#image of complete answersheet (handwritten)
+
 class Answersheet(db.Model):
+    """ image of complete answersheet (handwritten) """
     __tablename__ = 'answersheet'
     id = db.Column(db.Integer, primary_key=True)
     answersheet_image = db.Column(db.LargeBinary)
     image_width = db.Column(db.Integer)
     image_height = db.Column(db.Integer)
 
-#category of question
+
 class Category(db.Model):
+    """ category of question """
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
@@ -108,8 +111,9 @@ class CategorySchema(ma.Schema):
         # Fields to expose
         fields = ('id', 'name')
 
-#image of line of answersheet corresponding to a question
+
 class AnswerSheetQuestion(db.Model):
+    """ image of line of answersheet corresponding to a question """
     __tablename__ = 'answersheetquestion'
     id = db.Column(db.Integer, primary_key=True)
     answersheet_id = db.Column(db.Integer, db.ForeignKey('answersheet.id'))
