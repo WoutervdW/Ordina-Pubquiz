@@ -194,7 +194,7 @@ def answersheet_single(answersheet_id):
 def answersheet_all():
     # TODO With large number of answersheets saved in the database make a 'next', 'previous' button functionality.
     page = request.args.get('page', 1, type=int)
-    answersheets = Answersheet.query.paginate(page, view.config['POSTS_PER_PAGE'], False)
+    answersheets = Answersheet.query.paginate(page, view.config['ANSWERSHEET_PER_PAGE'], False)
 
     next_url = None
     if answersheets.has_next:
@@ -207,44 +207,43 @@ def answersheet_all():
     return render_template("answersheet.html", answersheets=answersheets.items, next_url=next_url, prev_url=prev_url)
 
 
-@view.route('/answer/nuke', methods=['GET'])
-def nuke_all_answers():
-    Answer.query.delete()
+@view.route('/answer/given/nuke', methods=['GET'])
+def nuke_all_answers_given():
+    SubAnswerGiven.query.delete()
     db.session.commit()
     db.engine.execute('alter sequence answer_id_seq RESTART with 1')
     return 'ok'
 
 
-@view.route("/load_answer/<int:answer_id>", methods=['GET', 'POST'])
-def load_answer(answer_id):
-    print("loading answer with id " + str(answer_id))
-    answer = Answer.query.filter_by(id=answer_id).first()
-    if answer is None:
-        return "answer with id " + str(answer_id) + " does not exist in the database."
-    image_data = answer.answer_image
+@view.route("/answers/given/load/<int:answer_given_id>", methods=['GET', 'POST'])
+def load_answer(answer_given_id):
+    print("loading given answer with id " + str(answer_given_id))
+    answer_given = SubAnswerGiven.query.filter_by(id=answer_given_id).first()
+    if answer_given is None:
+        return "answer with id " + str(answer_given_id) + " does not exist in the database."
+    image_data = answer_given.answer_image
     # I need to know the exact shape it had in order to load it from the database
-    width = answer.image_width
-    height = answer.image_height
-    np_answer = np.fromstring(image_data, np.uint8).reshape(width, height, 3)
+    width = answer_given.image_width
+    height = answer_given.image_height
+    np_answer_given = np.fromstring(image_data, np.uint8).reshape(width, height, 3)
 
-    ret, png = cv2.imencode('.png', np_answer)
+    ret, png = cv2.imencode('.png', np_answer_given)
     response = make_response(png.tobytes())
     response.headers['Content-Type'] = 'image/png'
     return response
 
 
-@view.route("/answer/load", methods=['GET', 'POST'])
+@view.route("/answers/given/load", methods=['GET', 'POST'])
 def answer_all():
-    # page = request.args.get('page', 1, type=int)
-    answer_list = Answer.query.paginate(1, 500, False)
-    print(len(answer_list.items))
+    page = request.args.get('page', 1, type=int)
+    answer_given_list = SubAnswerGiven.query.paginate(page, view.config['ANSWERS_GIVEN_PER_PAGE'], False)
 
     next_url = None
-    # if answer_list.has_next:
-    #     next_url = url_for('answers_all', page=answer_list.next_num)
-    #
-    prev_url = None
-    # if answer_list.has_prev:
-    #     prev_url = url_for('answers_all', page=answer_list.prev_num)
+    if answer_given_list.has_next:
+        next_url = url_for('answer_all', page=answer_given_list.next_num)
 
-    return render_template("answer.html", answers=answer_list.items, next_url=next_url, prev_url=prev_url)
+    prev_url = None
+    if answer_given_list.has_prev:
+        prev_url = url_for('answer_all', page=answer_given_list.prev_num)
+
+    return render_template("answer.html", answers=answer_given_list.items, next_url=next_url, prev_url=prev_url)
