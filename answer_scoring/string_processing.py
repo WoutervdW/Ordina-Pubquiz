@@ -1,7 +1,6 @@
 from fuzzywuzzy import fuzz, process
 import re
 from collections import Counter
-from text_processing.question_categories import Category
 
 
 # TODO: check string similarity using fuzzywuzzy (https://www.datacamp.com/community/tutorials/fuzzy-string-python)
