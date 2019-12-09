@@ -26,8 +26,8 @@
                     <td>
                         <table class = "table table-borderless">
                             <tbody>
-                                <tr ng-repeat = "subanswer in getSubAnswers(question.id)" ng-if = "subanswer">
-                                    <td ng-repeat = "variant in getVariants(subanswer.id)">//variant.answer//</td>
+                                <tr ng-repeat = "subanswer in question.subanswers" ng-if = "subanswer">
+                                    <td ng-repeat = "variant in subanswer">//variant.answer//</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -38,7 +38,16 @@
                 </tr>
                 <tr>
                     <td><input type = "text" class = "form-control" ng-model = "newquestion"></td>
-                    <td><input type = "text" class = "form-control" ng-model = "newquestioncorrect_answer"></td>
+                    <td style="white-space:nowrap;">
+                        <table class = "table table-borderless">
+                            <tbody>
+                                <tr ng-repeat="newsubanswer in newsubanswers">
+                                    <td><input type = "text" class = "form-control" ng-model = "newsubanswer.value" style="width: 80%; display: inline-block;"></td>
+                                    <td><button class = "btn btn-primary" ng-click="addField()" ng-if="$last">+</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
                     <td>
                         <div class="dropdown">
                             <select class="form-control" ng-model="newquestioncategory">
@@ -48,7 +57,11 @@
                     </td>
                     <td ng-model = "newquestionperson">//getLoggedinPerson().name//</td>
                     <td><label class="switch"><input type="checkbox" ng-model = "newquestionactive"  ng-init="newquestionactive=true"><span class="slider round"></span></label></td>
-                    <td><button class =  "btn btn-primary" ng-click = "addQuestion()">Voeg toe</button></td>
+                    <td><button class="btn btn-primary" ng-click = "addQuestion()">Voeg toe</button></td>
+                </tr>
+                <tr>
+                    <td></td>
+
                 </tr>
             </tbody>
         </table>
