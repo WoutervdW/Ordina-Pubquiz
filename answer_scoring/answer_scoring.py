@@ -12,35 +12,87 @@ def get_score(question):
     """
     score = 0
 
-    if question.category == Category.STANDARD:  # 1 answer, 1 point
-        for answer, correct_answers in zip(question.answers, question.correct_answer_lists):
-            # Grant 1 point if the answer is correct
-            if check_correct(answer, correct_answers, question.numerical):
-                score += 1
+    if question.category == Category.STANDARD:
+        score += score_standard(question)
 
-    elif question.category == Category.MUSIC:  # multiple answers, 2 points
-        # artist1 = question.answers[0]
-        # artist2 = question.answers[1]
-        # Create one list with all correct artists
-        correct_artists = []
-        for correct_artist in question.correct_answerlists[: -1]:
-            correct_artists += correct_artist  # question.correct_answer_lists[0] + question.correct_answer_lists[1]
-
-        song_title = question.answers[-1]
-        correct_song_titles = question.correct_answer_lists[-1]
-        # Grant a point if both artists are correct
-        if check_correct(artist1, correct_artists, question.numerical) and \
-                check_correct(artist2, correct_artists, question.numerical):
-            score += 1
-        # Grant a point if the song title is correct
-        if check_correct(song_title, correct_song_titles, question.numerical):
-            score += 1
+    elif question.category == Category.MUSIC:
+        score += score_music(question)
 
     elif question.category == Category.PHOTO:
-        # There can be 1 or two people in a picture
-        for answer, correct_answer in zip(question.answers, question.correct_answer_lists):
-            if check_correct(answer, correct_answer, question.numerical):
-                score += 1
+        score += score_photo(question)
+
+    return score
+
+
+def score(question):
+
+    score = 0
+
+    for answer, correct_answers in zip(question.answers, question.correct_answer_lists):
+        # Grant 1 point if the answer is correct
+        if check_correct(answer, correct_answers, question.numerical):
+            score += 1
+
+    return
+
+
+def score_standard(question):
+    """
+    Return number of points gained for a standard question
+    :param question: object of type Question
+    :return: score
+    """
+    #
+    score = 0
+    max_score = question.max_score
+    for answer, correct_answers in zip(question.answers, question.correct_answer_lists):
+        # Grant 1 point if the answer is correct
+        if check_correct(answer, correct_answers, question.numerical):
+            score += 1
+    return score if score < max_score else max_score
+
+
+def score_music(question):
+    """
+    Return number of points gained for a music question
+    :param question: object of type Question
+    :return:
+    """
+    # multiple answers, 2 points
+
+    # artist1 = question.answers[0]
+    # artist2 = question.answers[1]
+    # Create one list with all correct artists
+    score = 0
+    correct_artists = []
+    for correct_artist in question.correct_answerlists[: -1]:
+        correct_artists += correct_artist  # question.correct_answer_lists[0] + question.correct_answer_lists[1]
+
+    song_title = question.answers[-1]
+    correct_song_titles = question.correct_answer_lists[-1]
+    # Grant a point if both artists are correct
+    if check_correct(artist1, correct_artists, question.numerical) and \
+            check_correct(artist2, correct_artists, question.numerical):
+        score += 1
+    # Grant a point if the song title is correct
+    if check_correct(song_title, correct_song_titles, question.numerical):
+        score += 1
+
+    return score
+
+
+def score_photo(question):
+    """
+    Return number of points gained for a photo question
+    :param question: Object of type Question
+    :return:
+    """
+    # There can be 1 or two people in a picture
+    score = 0
+    for answer, correct_answer in zip(question.answers, question.correct_answer_lists):
+        if check_correct(answer, correct_answer, question.numerical):
+            score += 1
+
     return score
 
 

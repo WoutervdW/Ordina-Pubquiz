@@ -12,15 +12,16 @@ class Question:
     category = Category.STANDARD
     correct_answer_lists = None  # List of lists of correct answers
     answers = None  # List of given answers
+    max_score = 1
     numerical = False
+    # Property indicating if it is a numerical question
 
-    # Property indicating it is a numerical question
-
-    def __init__(self, index, category, correct_answer_lists, answers, numerical=False):
+    def __init__(self, index, category, correct_answer_lists, answers, max_score, numerical=False):
         self.index = index
         self.category = category
         self.correct_answer_lists = correct_answer_lists
         self.answers = answers
+        self.max_score = max_score
         self.numerical = numerical
 
     # Question can be checked by its own methods?
