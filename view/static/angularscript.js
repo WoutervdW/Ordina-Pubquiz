@@ -48,12 +48,12 @@ angular.module('module', [])
         }).then(function (response){
             $scope.answers = response.data;
         });
-        $http({
+       /* $http({
             method: "GET",
             url: "/api/v1.0/subanswersgiven"
         }).then(function (response){
             $scope.subanswersgiven = response.data;
-        });
+        });*/
 
         $scope.sortBy = function sortBy(propertyName){
             $scope.reverse = $scope.propertyName === propertyName ? !$scope.reverse : false;
@@ -67,6 +67,7 @@ angular.module('module', [])
             $scope.newquestioncorrect_answer = "";
         }
         $scope.updateQuestionActive = function(question){
+
             var data = {"id":question.id, "active":question.active}
             $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
         }
@@ -75,27 +76,70 @@ angular.module('module', [])
             $http.post("/api/v1.0/updateanswer", JSON.stringify(data))
         }
         $scope.getCategoryName = function(category_id){
-            var c = $scope.categories.find(c => c.id == category_id);
-            return c.name;
+            try{
+                var c = $scope.categories.find(c => c.id == category_id);
+                return c.name;
+            }
+            catch (error){
+                return "no category found for id"
+            }
         }
         $scope.getPersonName = function(person_id){
-            var p = $scope.persons.find(person => person.id == person_id);
-            return p.personname;
+            try{
+                var p = $scope.persons.find(person => person.id == person_id);
+                return p.personname;
+            }
+            catch (error){
+                return "no user found for id"
+            }
         }
         $scope.getTeamName = function(team_id){
-            var t = $scope.teams.find(team => team.id == team_id);
-            return t.teamname;
+            try{
+                var t = $scope.teams.find(team => team.id == team_id);
+                return t.teamname;
+            }
+            catch(error){
+                return "no teamname found for id"
+            }
         }
         $scope.getQuestionName = function(question_id){
-            var q = $scope.questions.find(question => question.id == question_id);
-            return q.question;
+            try{
+                var q = $scope.questions.find(question => question.id == question_id);
+                return q.question;
+                }
+            catch(error){
+                return "no question found for id"
+            }
         }
         $scope.getCorrectAnswer = function(question_id){
-            var q = $scope.questions.find(question => question.id == question_id);
-            return q.correct_answer;
+            try{
+                var q = $scope.questions.find(question => question.id == question_id);
+                return q.correct_answer;
+            }
+            catch (error){
+                return "no correct answer found";
+            }
         }
-        $scope.correctAnswers = function(question){
-        return [{answer: "Antwoord A"}, {answer: "Antwoord B"}]}
+        $scope.getSubAnswers = function (question_id){
+            try{
+                var s = $scope.subanswers.filter(subanswer => subanswer.question_id == question_id);
+                return s;
+            }
+            catch (error){
+                return [];
+            }
+        }
+
+        $scope.getVariants = function(subanswer_id){
+            try{
+                var v = $scope.variants.filter(variant => variant.subanswer_id == subanswer_id);
+                return v;
+            }
+            catch(error)
+            {
+                return [];
+            }
+        }
 
         //todo: return person that is logged in
         $scope.getLoggedinPerson = function(){

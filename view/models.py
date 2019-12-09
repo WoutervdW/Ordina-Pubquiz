@@ -66,14 +66,13 @@ class Answer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable = False)
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable = False)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable = False)
     subanswersgiven = db.relationship('SubAnswerGiven')
 
 
 class AnswerSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('id', 'team_id', 'question_id', 'person_id', 'subanswersgiven')
+        fields = ('id', 'team_id', 'question_id', 'person_id')
 
 
 class SubAnswerGiven(db.Model):
@@ -84,6 +83,7 @@ class SubAnswerGiven(db.Model):
     answer_given = db.Column(db.String(255))
     correct = db.Column(db.Boolean)
     confidence = db.Column(db.Float)
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable = False)
     answer_image = db.Column(db.LargeBinary)
     image_width = db.Column(db.Integer)
     image_height = db.Column(db.Integer)
@@ -92,7 +92,7 @@ class SubAnswerGiven(db.Model):
 class SubAnswerGivenSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('id', 'answer_id', 'answer_given', 'correct', 'confidence', 'ansewr_image', 'image_width', 'image_height')
+        fields = ('id', 'answer_id', 'answer_given', 'correct', 'confidence', 'answer_image', 'image_width', 'image_height')
 
 
 class Person(db.Model):
