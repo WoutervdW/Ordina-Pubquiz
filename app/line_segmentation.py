@@ -104,7 +104,7 @@ def find_corners_center(corners_left, corners_right):
     return corners_full
 
 
-def line_segmentation(answer_image_original, save_image=False, image_path="lines/", image_name="scan", db=None):
+def line_segmentation(answer_image_original, save_image=False, image_path="lines/", image_name="scan", db=None, answersheet_id=None):
     # New strategy. First find the points on the left side and then on the right side.
     # Than take the points together and find the lines.
     # processed = pre_process_image(answer_image_original, False)
@@ -175,10 +175,7 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
         corners_full = find_corners_center(corners_left, corners_right)
         cropped_full = crop_and_warp(answer_image_original, corners_full)
 
-        # We also pass the line index along wiht this collection of lines. This is so that for the word recognition
-        # part we can easily identify which line it is.
-        finished_line = [cropped_full, x]
-        lines.append(finished_line)
+
 
         # Save the line image to the database!
         # convert the image to byte array so it can be saved in the database
@@ -188,11 +185,13 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
         line_width = len(cropped_full)
         line_height = len(cropped_full[0])
 
+        finished_line = [cropped_full, x]
+
         if db is not None:
             print("save line to database with width %s and height %s" % (line_width, line_height))
             # TODO fill in the other details as well! (not just the image)
             new_line = Line(
-                answersheet_id=1,
+                answersheet_id=answersheet_id,
                 line_image=answer,
                 image_width=line_width,
                 image_height=line_height
@@ -201,6 +200,14 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
             db.session.add(new_line)
             # commit the session so that the image is stored in the database
             db.session.commit()
+
+            # We pass the line id along to link the words with the correct line.
+            finished_line.append(new_line.id)
+
+        # We also pass the line index along wiht this collection of lines. This is so that for the word recognition
+        # part we can easily identify which line it is.
+
+        lines.append(finished_line)
 
         if save_image:
             path = image_path + image_name
