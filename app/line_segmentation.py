@@ -192,7 +192,7 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
             print("save line to database with width %s and height %s" % (line_width, line_height))
             # TODO fill in the other details as well! (not just the image)
             new_line = Line(
-                subanswergiven_id=1,
+                answersheet_id=1,
                 line_image=answer,
                 image_width=line_width,
                 image_height=line_height

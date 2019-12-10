@@ -141,31 +141,12 @@ def run_program():
     return "program finished"
 
 
-@view.route('/answersheet/nuke', methods=['GET'])
+@view.route('/answersheets/nuke', methods=['GET'])
 def nuke_all_answersheets():
     Answersheet.query.delete()
     db.session.commit()
     db.engine.execute('alter sequence answersheet_id_seq RESTART with 1')
     return 'ok'
-
-
-@view.route("/answersheet/save", methods=['GET', 'POST'])
-def answersheet_save_all():
-    # The image of a scan
-    answer_images = app.save_answersheet()
-    for answer_image in answer_images:
-        # convert the image to byte array so it can be saved in the database
-        answer = answer_image.tostring()
-        # create an Image object to store it in the database
-        # shape = answer_image
-        width = len(answer_image)
-        height = len(answer_image[0])
-        new_answersheet = Answersheet(answersheet_image=answer, image_width=width, image_height=height)
-        # add the object to the database session
-        db.session.add(new_answersheet)
-        # commit the session so that the image is stored in the database
-        db.session.commit()
-    return "answersheets saved"
 
 
 @view.route("/load_answersheet/<int:question_id>", methods=['GET', 'POST'])
@@ -185,16 +166,11 @@ def load_answersheet(question_id):
     return response
 
 
-@view.route("/answersheet/load/<int:answersheet_id>", methods=['GET', 'POST'])
-def answersheet_single(answersheet_id):
-    return render_template("answersheet.html", answersheets=[answersheet_id])
-
-
-@view.route("/answersheet/load", methods=['GET', 'POST'])
+@view.route("/answersheets/load", methods=['GET', 'POST'])
 def answersheet_all():
     # TODO With large number of answersheets saved in the database make a 'next', 'previous' button functionality.
     page = request.args.get('page', 1, type=int)
-    answersheets = Answersheet.query.paginate(page, view.config['ANSWERSHEET_PER_PAGE'], False)
+    answersheets = Answersheet.query.paginate(page, view.config['ANSWERSHEETS_PER_PAGE'], False)
 
     next_url = None
     if answersheets.has_next:
@@ -221,7 +197,7 @@ def load_lines(line_id):
     line = Line.query.filter_by(id=line_id).first()
     if line is None:
         return "answer with id " + str(line_id) + " does not exist in the database."
-    image_data = line.answer_image
+    image_data = line.line_image
     # I need to know the exact shape it had in order to load it from the database
     width = line.image_width
     height = line.image_height
@@ -236,7 +212,7 @@ def load_lines(line_id):
 @view.route("/lines/load", methods=['GET', 'POST'])
 def lines_all():
     page = request.args.get('page', 1, type=int)
-    line_list = SubAnswerGiven.query.paginate(page, view.config['LINES_PER_PAGE'], False)
+    line_list = Line.query.paginate(page, view.config['LINES_PER_PAGE'], False)
 
     next_url = None
     if line_list.has_next:

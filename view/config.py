@@ -18,7 +18,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    ANSWERSHEET_PER_PAGE = 2
+    ANSWERSHEETS_PER_PAGE = 2
     LINES_PER_PAGE = 20
     WORDS_PER_PAGE = 20
 

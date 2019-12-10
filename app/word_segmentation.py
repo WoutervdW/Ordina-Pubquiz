@@ -57,7 +57,7 @@ def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res,
             print("save the word to the database with width %s and height %s" % (word_width, word_height))
 
             new_word = Word(
-                subanswergiven_id=1,
+                line_id=1,
                 word_image=word_image,
                 image_width=word_width,
                 image_height=word_height
