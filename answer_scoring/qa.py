@@ -10,18 +10,18 @@ class Category(Enum):
 class Question:
     ID = 0
     category = Category.STANDARD
-    correct_answer_lists = None  # List of lists of correct answers
-    answers = None  # List of given answers
-    numerical = False
+    correct_answer_lists = None  # List of lists of correct Answers
+    answers = None  # List of given Answers
+    max_score = 1
+    # numerical = False Property indicating if it is a numerical question
 
-    # Property indicating it is a numerical question
-
-    def __init__(self, index, category, correct_answer_lists, answers, numerical=False):
+    def __init__(self, index, category, correct_answer_lists, answers, max_score=1, numerical=False):
         self.index = index
         self.category = category
         self.correct_answer_lists = correct_answer_lists
         self.answers = answers
-        self.numerical = numerical
+        self.max_score = max_score
+        # self.numerical = numerical
 
     # Question can be checked by its own methods?
 

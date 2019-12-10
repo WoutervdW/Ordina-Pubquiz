@@ -48,22 +48,6 @@ def get_questions():
     return jsonify(result)
 
 
-#@view.route('/api/v1.0/subanswers', methods=['GET'])
-#def get_subanswers():
-#    subanswers_schema = SubAnswerSchema(many=True)
-#    allsubanswers = SubAnswer.query.all()
-#    result = subanswers_schema.dump(allsubanswers)
-#    return jsonify(result)
-
-
-#@view.route('/api/v1.0/variants', methods=['GET'])
-#def get_variants():
-#    variant_schema = VariantSchema(many=True)
-#    allvariants = Variant.query.all()
-#    result = variant_schema.dump(allvariants)
-#    return jsonify(result)
-
-
 @view.route('/api/v1.0/categories', methods=['GET'])
 def get_categories():
     categories_schema = CategorySchema(many=True)
@@ -98,24 +82,25 @@ def get_subanswersgiven():
 
 @view.route('/api/v1.0/newquestion', methods=['POST'])
 def add_question():
-    post = request.get_json();
+    post = request.get_json()
     newquestion = post.get('question')
     newsubanswers = post.get('subanswers')
-    subanswers = [];
-    variants = [];
 
-    variant = Variant(answer="antwoord");
-    variants.append(variant);
-   # for x in newquestioncorrect_answer:
-    suba = SubAnswer(variants=variants);
-    subanswers.append(suba);
-
+    print("lasdfljasdflkdsaflkfdsa")
+    subanswers = []
+    variants = []
+    for i in range(0, len(newsubanswers)):
+        for j in range(0, len(newsubanswers[i]['variants'])):
+            variant = Variant(answer=newsubanswers[i]['variants'][j]['answer'])
+            variants.append(variant);
+        subanswer = SubAnswer(variants=variants)
+        subanswers.append(subanswer)
+        variants = []
     newquestioncategory_id = post.get('category_id')
     newquestionperson_id = post.get('person_id')
     newquestionactive = post.get('active')
     q = Question(question=newquestion, category_id=newquestioncategory_id,
-        person_id=newquestionperson_id, active=newquestionactive, subanswers=subanswers);
-
+        person_id=newquestionperson_id, active=newquestionactive, subanswers=subanswers)
     db.session.add(q)
     db.session.commit()
     return
