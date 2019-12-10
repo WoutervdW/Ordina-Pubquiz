@@ -11,7 +11,7 @@
 <body>
 {% extends "base.html" %}
 {% block content %}
-{% for answer in answers %}
+{% for line in lines %}
 <div>
     <img width=50% src="{{ url_for('load_lines', line_id=answer.id) }}">
 </div>

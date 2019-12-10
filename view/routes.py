@@ -222,7 +222,7 @@ def lines_all():
     if line_list.has_prev:
         prev_url = url_for('lines_all', page=line_list.prev_num)
 
-    return render_template("lines.html", answers=line_list.items, next_url=next_url, prev_url=prev_url)
+    return render_template("lines.html", lines=line_list.items, next_url=next_url, prev_url=prev_url)
 
 
 @view.route('/uploader', methods=['GET', 'POST'])
@@ -240,6 +240,11 @@ def upload():
         x.start()
         return "answersheet is being processed"
 
+
+@view.route("/get_answersheets_lines/<int:answersheet_id>", methods=['GET', 'POST'])
+def get_answersheets_lines(answersheet_id):
+    print("open answersheet with id " + str(answersheet_id))
+    return render_template("lines.html", lines=[], next_url=None, prev_url=None)
 
 from view import route
 
