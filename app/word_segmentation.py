@@ -4,7 +4,6 @@ import cv2
 import numpy as np
 from app.line_segmentation import crop_and_warp
 from view.models import Word
-from view import db
 
 
 def get_words_image(line_image, multiply_factor, res):
@@ -25,7 +24,7 @@ def get_words_image(line_image, multiply_factor, res):
     return words
 
 
-def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res):
+def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, db=None):
     path = output_folder + sheet_name + "/line_" + str(line_image[1]) + "/words"
     if not os.path.exists(path):
         os.makedirs(path)
@@ -47,25 +46,26 @@ def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res)
         cv2.rectangle(line_image[0], (int(x_new), int(y_new)),
                       (int(x_new + width_new), int(y_new + height_new)), 0, 1)
 
-        # Save the word image to the database!
-        # convert the image to byte array so it can be saved in the database
-        word_image = cropped.tostring()
-        # create an Image object to store it in the database
-        # TODO fill in the other details as well! (not just the image)
-        word_width = len(cropped)
-        word_height = len(cropped[0])
-        print("save the word to the database with width %s and height %s" % (word_width, word_height))
+        if db is not None:
+            # Save the word image to the database!
+            # convert the image to byte array so it can be saved in the database
+            word_image = cropped.tostring()
+            # create an Image object to store it in the database
+            # TODO fill in the other details as well! (not just the image)
+            word_width = len(cropped)
+            word_height = len(cropped[0])
+            print("save the word to the database with width %s and height %s" % (word_width, word_height))
 
-        new_word = Word(
-            subanswergiven_id=1,
-            word_image=word_image,
-            image_width=word_width,
-            image_height=word_height
-        )
-        # add the object to the database session
-        db.session.add(new_word)
-        # commit the session so that the image is stored in the database
-        db.session.commit()
+            new_word = Word(
+                subanswergiven_id=1,
+                word_image=word_image,
+                image_width=word_width,
+                image_height=word_height
+            )
+            # add the object to the database session
+            db.session.add(new_word)
+            # commit the session so that the image is stored in the database
+            db.session.commit()
 
         # draw bounding box in summary image
         cv2.rectangle(line_image[0], (x, y), (x + w, y + h), 0, 1)

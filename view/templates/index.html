@@ -9,6 +9,27 @@
 
 </script>
 <body>
+
+<!--<form action = "http://localhost:5000/uploader" method = "POST"-->
+<!--    enctype = "multipart/form-data">-->
+<!--    <input type = "file" name = "file" />-->
+<!--    <input type = "submit"/>-->
+<!--</form>-->
+
+<form action="/uploader" method="POST" enctype="multipart/form-data">
+
+    <div class="form-group">
+        <label>Select pubquiz files</label>
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" name="answersheets" id="answersheets">
+            <label class="custom-file-label" for="answersheets">Select pubquiz files...</label>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Process pubquiz answer sheets</button>
+
+</form>
+
 {% extends "base.html" %}
 {% block content %}
 <div class = "container"  ng-app = "module" ng-controller = "controller">

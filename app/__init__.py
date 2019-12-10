@@ -15,7 +15,6 @@ from app.word_segmentation import word_segmentation, prepare_image, find_rect, s
 import os
 import cv2
 import argparse
-from view import db
 from view.models import Answersheet
 
 
@@ -38,11 +37,11 @@ def read_word_from_image(image_to_read, model):
     return results
 
 
-def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"):
+def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan", db=None):
     # gray = cv2.cvtColor(answer_sheet_image, cv2.COLOR_BGR2GRAY)
     # Now we have the answer sheet in image form and we can move on to the line segmentation
     output_folder = "out/"
-    lines = line_segmentation(answer_sheet_image, save_image, output_folder, sheet_name)
+    lines = line_segmentation(answer_sheet_image, save_image, output_folder, sheet_name, db)
     # We save the results to a file, which will be in the sheet subfolder with the sheet name.
     # f = open(output_folder + sheet_name + "/" + sheet_name + ".txt", "w")
 
@@ -63,7 +62,7 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         # iterate over all segmented words
         print('Segmented into %d words' % len(res))
         if save_image:
-            save_word_image(output_folder, sheet_name, line_image, multiply_factor, res)
+            save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, db)
         #
         # # We can now examine each word.
         # words = get_words_image(line_image, multiply_factor, res)
@@ -83,7 +82,7 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
     # f.close()
 
 
-def run_program(pubquiz_answer_sheets, save_image=False):
+def run_program(pubquiz_answer_sheets, save_image=False, db=None):
     print("De officiele Ordina pub-quiz antwoord vinder")
     model = Model(open('model/charList.txt').read())
 
@@ -98,21 +97,21 @@ def run_program(pubquiz_answer_sheets, save_image=False):
                 sheet_name = sheet_name[0:-4]
             sheet_name = sheet_name + "_" + str(p)
 
-            print("saving answersheet to the database")
-            # Save the image to the database!
-            # convert the image to byte array so it can be saved in the database
-            answer = pages[p].tostring()
-            # create an Image object to store it in the database
-            # shape = pages[p]
-            width = len(pages[p])
-            height = len(pages[p][0])
-            new_answersheet = Answersheet(answersheet_image=answer, image_width=width, image_height=height)
-            # add the object to the database session
-            db.session.add(new_answersheet)
-            # commit the session so that the image is stored in the database
-            db.session.commit()
+            if db is not None:
+                print("saving answersheet to the database")
+                # Save the image to the database!
+                # convert the image to byte array so it can be saved in the database
+                answer = pages[p].tostring()
+                # create an Image object to store it in the database
+                width = len(pages[p])
+                height = len(pages[p][0])
+                new_answersheet = Answersheet(answersheet_image=answer, image_width=width, image_height=height)
+                # add the object to the database session
+                db.session.add(new_answersheet)
+                # commit the session so that the image is stored in the database
+                db.session.commit()
 
-            process_sheet(pages[p], model, save_image, sheet_name)
+            process_sheet(pages[p], model, save_image, sheet_name, db)
 
 
 def save_answersheet():
