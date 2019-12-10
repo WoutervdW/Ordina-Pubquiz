@@ -9,9 +9,10 @@ import datetime
 import app
 import cv2
 import numpy as np
+
 from view.models import Team, TeamSchema, Question, QuestionSchema, SubAnswer, SubAnswerSchema, Variant, VariantSchema, Category, CategorySchema, Answersheet, Person, \
- PersonSchema, Answer, AnswerSchema, SubAnswerGiven, SubAnswerGivenSchema, Word
-from werkzeug.utils import secure_filename
+PersonSchema, Answer, AnswerSchema, SubAnswerGiven, SubAnswerGivenSchema, Word
+#from werkzeug.utils import secure_filename
 from collections import OrderedDict
 import threading
 
@@ -48,20 +49,20 @@ def get_questions():
     return jsonify(result)
 
 
-@view.route('/api/v1.0/subanswers', methods=['GET'])
-def get_subanswers():
-    subanswers_schema = SubAnswerSchema(many=True)
-    allsubanswers = SubAnswer.query.all()
-    result = subanswers_schema.dump(allsubanswers)
-    return jsonify(result)
+#@view.route('/api/v1.0/subanswers', methods=['GET'])
+#def get_subanswers():
+#    subanswers_schema = SubAnswerSchema(many=True)
+#    allsubanswers = SubAnswer.query.all()
+#    result = subanswers_schema.dump(allsubanswers)
+#    return jsonify(result)
 
 
-@view.route('/api/v1.0/variants', methods=['GET'])
-def get_variants():
-    variant_schema = VariantSchema(many=True)
-    allvariants = Variant.query.all()
-    result = variant_schema.dump(allvariants)
-    return jsonify(result)
+#@view.route('/api/v1.0/variants', methods=['GET'])
+#def get_variants():
+#    variant_schema = VariantSchema(many=True)
+#    allvariants = Variant.query.all()
+#    result = variant_schema.dump(allvariants)
+#    return jsonify(result)
 
 
 @view.route('/api/v1.0/categories', methods=['GET'])
@@ -100,12 +101,22 @@ def get_subanswersgiven():
 def add_question():
     post = request.get_json();
     newquestion = post.get('question')
-    newquestioncorrect_answer = post.get('correct_answer')
+    newsubanswers = post.get('subanswers')
+    subanswers = [];
+    variants = [];
+
+    variant = Variant(answer="antwoord");
+    variants.append(variant);
+   # for x in newquestioncorrect_answer:
+    suba = SubAnswer(variants=variants);
+    subanswers.append(suba);
+
     newquestioncategory_id = post.get('category_id')
     newquestionperson_id = post.get('person_id')
     newquestionactive = post.get('active')
-    q = Question(question=newquestion, correct_answer=newquestioncorrect_answer, category_id=newquestioncategory_id,
-        person_id=newquestionperson_id, active=newquestionactive);
+    q = Question(question=newquestion, category_id=newquestioncategory_id,
+        person_id=newquestionperson_id, active=newquestionactive, subanswers=subanswers);
+
     db.session.add(q)
     db.session.commit()
     return
