@@ -9,10 +9,9 @@ import datetime
 import app
 import cv2
 import numpy as np
-
 from view.models import Team, TeamSchema, Question, QuestionSchema, SubAnswer, SubAnswerSchema, Variant, VariantSchema, Category, CategorySchema, Answersheet, Person, \
 PersonSchema, Answer, AnswerSchema, SubAnswerGiven, SubAnswerGivenSchema, Word
-#from werkzeug.utils import secure_filename
+from werkzeug.utils import secure_filename
 from collections import OrderedDict
 import threading
 
