@@ -3,7 +3,6 @@ import cv2
 import operator
 import os
 from view.models import SubAnswerGiven
-from view import db
 
 
 def show_image(img):
@@ -105,7 +104,7 @@ def find_corners_center(corners_left, corners_right):
     return corners_full
 
 
-def line_segmentation(answer_image_original, save_image=False, image_path="lines/", image_name="scan"):
+def line_segmentation(answer_image_original, save_image=False, image_path="lines/", image_name="scan", db=None):
     # New strategy. First find the points on the left side and then on the right side.
     # Than take the points together and find the lines.
     # processed = pre_process_image(answer_image_original, False)
@@ -189,21 +188,22 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
         line_width = len(cropped_full)
         line_height = len(cropped_full[0])
 
-        print("save line to database with width %s and height %s" % (line_width, line_height))
-        # TODO fill in the other details as well! (not just the image)
-        new_answer = SubAnswerGiven(
-            answer_id=1,
-            answer_given="",
-            correct=False,
-            confidence=0.0,
-            answer_image=answer,
-            image_width=line_width,
-            image_height=line_height
-        )
-        # add the object to the database session
-        db.session.add(new_answer)
-        # commit the session so that the image is stored in the database
-        db.session.commit()
+        if db is not None:
+            print("save line to database with width %s and height %s" % (line_width, line_height))
+            # TODO fill in the other details as well! (not just the image)
+            new_answer = SubAnswerGiven(
+                answer_id=1,
+                answer_given="",
+                correct=False,
+                confidence=0.0,
+                answer_image=answer,
+                image_width=line_width,
+                image_height=line_height
+            )
+            # add the object to the database session
+            db.session.add(new_answer)
+            # commit the session so that the image is stored in the database
+            db.session.commit()
 
         if save_image:
             path = image_path + image_name

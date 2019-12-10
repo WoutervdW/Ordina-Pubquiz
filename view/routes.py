@@ -14,6 +14,7 @@ from view.models import Team, TeamSchema, Question, QuestionSchema, SubAnswer, S
 PersonSchema, Answer, AnswerSchema, SubAnswerGiven, SubAnswerGivenSchema, Word
 #from werkzeug.utils import secure_filename
 from collections import OrderedDict
+import threading
 
 
 @view.route('/')
@@ -148,7 +149,11 @@ def update_answer():
 @view.route('/run_program')
 def run_program():
     # We wil use this url shortcut to start the program
-    main.run_program()
+    # Set the next thread to happen
+    print("starting thread for program")
+    x = threading.Thread(target=main.run_program, args=(db,))
+    print("thread started")
+    x.start()
     return "program finished"
 
 
@@ -301,4 +306,20 @@ def word_all():
         prev_url = url_for('word_all', page=word_list.prev_num)
 
     return render_template("words.html", words=word_list.items, next_url=next_url, prev_url=prev_url)
+
+
+@view.route('/uploader', methods=['GET', 'POST'])
+def upload():
+
+    if request.method == 'POST':
+        print("saving file!")
+        f = request.files['answersheets']
+        # We wil use this url shortcut to start the program
+        # Set the next thread to happen
+        print("starting thread for program")
+        f.save(secure_filename(f.filename))
+        x = threading.Thread(target=main.run_program, args=(db, f.filename,))
+        print("thread started")
+        x.start()
+        return "answersheet is being processed"
 
