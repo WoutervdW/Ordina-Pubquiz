@@ -114,14 +114,11 @@ class SubAnswerGiven(db.Model):
     """ each answer can consist of multiple subanswers """
     __tablename__ = 'subanswergiven'
     id = db.Column(db.Integer, primary_key=True)
-    answer_id = db.Column(db.Integer, db.ForeignKey('answer.id'), nullable = False)
+    answer_id = db.Column(db.Integer, db.ForeignKey('answer.id'), nullable=False)
     answer_given = db.Column(db.String(255))
     correct = db.Column(db.Boolean)
     confidence = db.Column(db.Float)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable = False)
-    answer_image = db.Column(db.LargeBinary)
-    image_width = db.Column(db.Integer)
-    image_height = db.Column(db.Integer)
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
 
 
 class SubAnswerGivenSchema(ma.Schema):
@@ -148,11 +145,21 @@ class AnswerSheetQuestion(db.Model):
 
 
 class Word(db.Model):
-    """ A word object, corresponding to a line. """
+    """ A word object, corresponding to words in a line. """
     __tablename__ = 'word'
     id = db.Column(db.Integer, primary_key=True)
-    subanswergiven_id = db.Column(db.Integer, db.ForeignKey('subanswergiven.id'))
+    line_id = db.Column(db.Integer, db.ForeignKey('line.id'))
     word_image = db.Column(db.LargeBinary)
+    image_width = db.Column(db.Integer)
+    image_height = db.Column(db.Integer)
+
+
+class Line(db.Model):
+    """ A line object, corresponding to an answersheet line """
+    __tablename__ = 'line'
+    id = db.Column(db.Integer, primary_key=True)
+    answersheet_id = db.Column(db.Integer, db.ForeignKey('answersheet.id'))
+    line_image = db.Column(db.LargeBinary)
     image_width = db.Column(db.Integer)
     image_height = db.Column(db.Integer)
 

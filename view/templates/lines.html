@@ -13,7 +13,7 @@
 {% block content %}
 {% for answer in answers %}
 <div>
-    <img width=50% src="{{ url_for('load_answer', answer_given_id=answer.id) }}">
+    <img width=50% src="{{ url_for('load_lines', line_id=answer.id) }}">
 </div>
 {% endfor %}
 {% if prev_url %}

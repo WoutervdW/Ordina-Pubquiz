@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import operator
 import os
-from view.models import SubAnswerGiven
+from view.models import Line
 
 
 def show_image(img):
@@ -191,17 +191,14 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
         if db is not None:
             print("save line to database with width %s and height %s" % (line_width, line_height))
             # TODO fill in the other details as well! (not just the image)
-            new_answer = SubAnswerGiven(
-                answer_id=1,
-                answer_given="",
-                correct=False,
-                confidence=0.0,
-                answer_image=answer,
+            new_line = Line(
+                subanswergiven_id=1,
+                line_image=answer,
                 image_width=line_width,
                 image_height=line_height
             )
             # add the object to the database session
-            db.session.add(new_answer)
+            db.session.add(new_line)
             # commit the session so that the image is stored in the database
             db.session.commit()
 

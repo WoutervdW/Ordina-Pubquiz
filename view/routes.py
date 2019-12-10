@@ -10,7 +10,7 @@ import app
 import cv2
 import numpy as np
 from view.models import Team, TeamSchema, Question, QuestionSchema, SubAnswer, SubAnswerSchema, Variant, VariantSchema, Category, CategorySchema, Answersheet, Person, \
-PersonSchema, Answer, AnswerSchema, SubAnswerGiven, SubAnswerGivenSchema, Word
+PersonSchema, Answer, AnswerSchema, SubAnswerGiven, SubAnswerGivenSchema, Word, Line
 from werkzeug.utils import secure_filename
 from collections import OrderedDict
 import threading
@@ -207,46 +207,46 @@ def answersheet_all():
     return render_template("answersheet.html", answersheets=answersheets.items, next_url=next_url, prev_url=prev_url)
 
 
-@view.route('/answers/given/nuke', methods=['GET'])
-def nuke_all_answers_given():
-    SubAnswerGiven.query.delete()
+@view.route('/lines/nuke', methods=['GET'])
+def nuke_all_lines():
+    Line.query.delete()
     db.session.commit()
-    db.engine.execute('alter sequence subanswergiven_id_seq RESTART with 1')
+    db.engine.execute('alter sequence line_id_seq RESTART with 1')
     return 'ok'
 
 
-@view.route("/answers/given/load/<int:answer_given_id>", methods=['GET', 'POST'])
-def load_answer(answer_given_id):
-    print("loading given answer with id " + str(answer_given_id))
-    answer_given = SubAnswerGiven.query.filter_by(id=answer_given_id).first()
-    if answer_given is None:
-        return "answer with id " + str(answer_given_id) + " does not exist in the database."
-    image_data = answer_given.answer_image
+@view.route("/lines/load/<int:line_id>", methods=['GET', 'POST'])
+def load_lines(line_id):
+    print("loading given line with id " + str(line_id))
+    line = Line.query.filter_by(id=line_id).first()
+    if line is None:
+        return "answer with id " + str(line_id) + " does not exist in the database."
+    image_data = line.answer_image
     # I need to know the exact shape it had in order to load it from the database
-    width = answer_given.image_width
-    height = answer_given.image_height
-    np_answer_given = np.fromstring(image_data, np.uint8).reshape(width, height, 3)
+    width = line.image_width
+    height = line.image_height
+    np_line = np.fromstring(image_data, np.uint8).reshape(width, height, 3)
 
-    ret, png = cv2.imencode('.png', np_answer_given)
+    ret, png = cv2.imencode('.png', np_line)
     response = make_response(png.tobytes())
     response.headers['Content-Type'] = 'image/png'
     return response
 
 
-@view.route("/answers/given/load", methods=['GET', 'POST'])
-def answer_all():
+@view.route("/lines/load", methods=['GET', 'POST'])
+def lines_all():
     page = request.args.get('page', 1, type=int)
-    answer_given_list = SubAnswerGiven.query.paginate(page, view.config['ANSWERS_GIVEN_PER_PAGE'], False)
+    line_list = SubAnswerGiven.query.paginate(page, view.config['LINES_PER_PAGE'], False)
 
     next_url = None
-    if answer_given_list.has_next:
-        next_url = url_for('answer_all', page=answer_given_list.next_num)
+    if line_list.has_next:
+        next_url = url_for('lines_all', page=line_list.next_num)
 
     prev_url = None
-    if answer_given_list.has_prev:
-        prev_url = url_for('answer_all', page=answer_given_list.prev_num)
+    if line_list.has_prev:
+        prev_url = url_for('lines_all', page=line_list.prev_num)
 
-    return render_template("answers_given.html", answers=answer_given_list.items, next_url=next_url, prev_url=prev_url)
+    return render_template("lines.html", answers=line_list.items, next_url=next_url, prev_url=prev_url)
 
 
 @view.route('/words/nuke', methods=['GET'])
