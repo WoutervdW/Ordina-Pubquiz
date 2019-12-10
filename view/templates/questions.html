@@ -27,7 +27,7 @@
                         <table class = "table table-borderless">
                             <tbody>
                                 <tr ng-repeat = "subanswer in question.subanswers" ng-if = "subanswer">
-                                    <td ng-repeat = "variant in subanswer">//variant.answer//</td>
+                                    <td ng-repeat = "variant in subanswer.variants">//variant.answer//</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -55,7 +55,7 @@
                             </select>
                         </div>
                     </td>
-                    <td ng-model = "newquestionperson">//getLoggedinPerson().name//</td>
+                    <td ng-model = "newquestionperson">//getLoggedinPerson().personname//</td>
                     <td><label class="switch"><input type="checkbox" ng-model = "newquestionactive"  ng-init="newquestionactive=true"><span class="slider round"></span></label></td>
                     <td><button class="btn btn-primary" ng-click = "addQuestion()">Voeg toe</button></td>
                 </tr>
@@ -67,7 +67,7 @@
         </table>
     </div>
 </div>
-
+<div id = "bottom" name = "bottom"></div>
 {%endblock%}
 
 

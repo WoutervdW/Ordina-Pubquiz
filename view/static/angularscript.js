@@ -1,11 +1,14 @@
 // define angular interpolationtags as {a a}
-angular.module('module', [])
+angular.module('module', ['ngRoute'])
     .config(function($interpolateProvider) {
         $interpolateProvider.startSymbol('//');
         $interpolateProvider.endSymbol('//');
     })
+   // .config(['$locationProvider', function($locationProvider) {
+   //     $locationProvider.html5Mode({enabled: true, requireBase:false});
+   // }])
     //controller
-    .controller('controller', function($scope, $http){
+    .controller('controller', function($scope, $http, $location, $window){
         $http({
             method: "GET",
             url: "/api/v1.0/teams"
@@ -17,22 +20,7 @@ angular.module('module', [])
             url: "/api/v1.0/questions"
         }).then(function (response){
             $scope.questions = response.data;
-          //  document.write(JSON.stringify($scope.questions[3]));
         });
-       /* $http({
-            method: "GET",
-            url: "/api/v1.0/subanswers"
-        }).then(function (response){
-            $scope.subanswers = response.data;
-        });
-        */
-      /*  $http({
-            method: "GET",
-            url: "/api/v1.0/variants"
-        }).then(function (response){
-            $scope.variants = response.data;
-        });
-        */
          $http({
             method: "GET",
             url: "/api/v1.0/categories"
@@ -51,49 +39,47 @@ angular.module('module', [])
         }).then(function (response){
             $scope.answers = response.data;
         });
-       /* $http({
-            method: "GET",
-            url: "/api/v1.0/subanswersgiven"
-        }).then(function (response){
-            $scope.subanswersgiven = response.data;
-        });*/
-       $scope.newsubanswers = [{}];
-       $scope.addField=function(){
+
+      $scope.newsubanswers = [{}];
+      $scope.addField=function(){
             $scope.newsubanswers.push({})
-       }
-       $scope.sortBy = function sortBy(propertyName){
+      }
+      $scope.sortBy = function sortBy(propertyName){
             $scope.reverse = $scope.propertyName === propertyName ? !$scope.reverse : false;
             $scope.propertyName = propertyName;
-       }
-       $scope.addQuestion = function(category_id){
+      }
+      $scope.addQuestion = function(category_id){
             var newvariants = [];
+            var subanswers = [];
             for (i = 0; i < $scope.newsubanswers.length; i++){
                 subanswer = $scope.newsubanswers[i].value;
                 variants = subanswer.split('/');
-                newvariants.push(variants);
+                for (j = 0; j < variants.length; j++){
+                    newvariants.push({"answer": variants[j]});
+                }
+                subanswers.push({"variants" : newvariants});
+                newvariants = [];
             }
-            $scope.questions.variants = newvariants;
-            $scope.subanswers.push($scope.newsubanswers);
+           // document.write(JSON.stringify(subanswers[0].variants[0].answer));
             $scope.newsubanswers = [{}];
-            var data = {"question": $scope.newquestion, "subanswers": $scope.subanswers, "category_id": $scope.newquestioncategory, "person_id": $scope.getLoggedinPerson().id, "active":$scope.newquestionactive};
+            var data = {"question": $scope.newquestion, "subanswers": subanswers, "category_id": $scope.newquestioncategory, "person_id": $scope.getLoggedinPerson().id, "active":$scope.newquestionactive};
             $http.post("/api/v1.0/newquestion", JSON.stringify(data))
-            $scope.questions.push(data);
             $scope.newquestion = "";
-       }
-       $scope.updateQuestionActive = function(question){
+            //window.location.reload();
 
+      }
+      $scope.updateQuestionActive = function(question){
             var data = {"id":question.id, "active":question.active}
             $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
-       }
-       $scope.updateAnswerCheck = function(answer){
+      }
+      $scope.updateAnswerCheck = function(answer){
             var data = {"id": answer.id, "correct": answer.correct, "person_id":$scope.getLoggedinPerson().id}
             $http.post("/api/v1.0/updateanswer", JSON.stringify(data))
-       }
-       
+      }
+
         //todo: return person that is logged in
         $scope.getLoggedinPerson = function(){
-            return {id: "2", name:"admin"} ;
-        }
+            return {id: "2", personname:"admin"} ;
+      }
     });
-
 
