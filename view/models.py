@@ -1,6 +1,19 @@
 from view import db, ma
 import json
 
+class Person(db.Model):
+    """ users """
+    __tablename__ = 'person'
+    id = db.Column(db.Integer, primary_key=True)
+    personname = db.Column(db.String(255))
+    password = db.Column(db.String(255))
+
+
+class PersonSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('id', 'personname')
+
 
 class Team(db.Model):
     __tablename__ = 'team'
@@ -62,8 +75,9 @@ class Question(db.Model):
     __tablename__ = 'question'
     id = db.Column(db.Integer, primary_key=True)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+    createdby = db.relationship('Person')
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
-    category = db.relationship('Category')
+    questioncategory = db.relationship('Category')
     question = db.Column(db.String(255))
     subanswers = db.relationship('SubAnswer')
     active = db.Column(db.Boolean)
@@ -72,9 +86,10 @@ class Question(db.Model):
 class QuestionSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('id', 'person_id', 'category_id', 'question', 'active', 'subanswers', 'questioncategory')
+        fields = ('id', 'person_id', 'category_id', 'question', 'active', 'subanswers', 'questioncategory', 'createdby')
     subanswers = ma.Nested(SubAnswerSchema(many=True))
     questioncategory = ma.Nested(CategorySchema)
+    createdby = ma.Nested(PersonSchema)
 
 
 class Answer(db.Model):
@@ -82,6 +97,7 @@ class Answer(db.Model):
     __tablename__ = 'answer'
     id = db.Column(db.Integer, primary_key=True)
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable = False)
+    team = db.relationship('Team')
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable = False)
     question = db.relationship('Question')
     subanswersgiven = db.relationship('SubAnswerGiven')
@@ -90,8 +106,9 @@ class Answer(db.Model):
 class AnswerSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('id', 'team_id', 'question_id', 'person_id', 'question')
+        fields = ('id', 'team_id', 'question_id', 'person_id', 'question', 'team')
     question = ma.Nested(QuestionSchema())
+    team = ma.Nested(TeamSchema())
 
 class SubAnswerGiven(db.Model):
     """ each answer can consist of multiple subanswers """
@@ -111,20 +128,6 @@ class SubAnswerGivenSchema(ma.Schema):
     class Meta:
         # Fields to expose
         fields = ('id', 'answer_id', 'answer_given', 'correct', 'confidence', 'answer_image', 'image_width', 'image_height')
-
-
-class Person(db.Model):
-    """ users """
-    __tablename__ = 'person'
-    id = db.Column(db.Integer, primary_key=True)
-    personname = db.Column(db.String(255))
-    password = db.Column(db.String(255))
-
-
-class PersonSchema(ma.Schema):
-    class Meta:
-        # Fields to expose
-        fields = ('id', 'personname')
 
 
 class Answersheet(db.Model):

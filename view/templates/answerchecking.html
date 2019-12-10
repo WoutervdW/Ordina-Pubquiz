@@ -25,13 +25,13 @@
             </thead>
             <tbody>
                 <tr ng-repeat="answer in answers | orderBy:propertyName:reverse">
-                    <td>//getTeamName(answer.team_id)//</td>
-                    <td>//getQuestionName(answer.question_id)//</td>
-                    <td>//getCorrectAnswer(answer.question_id)//</td>
+                    <td>//answer.team.teamname//</td>
+                    <td>//answer.question.question//</td>
+                    <td>//answer.question.subanswers//</td>
                     <td>//answer.answer_given//</td>
                     <td><label class="switch"><input type="checkbox" ng-model="answer.correct" ng-change = "updateAnswerCheck(answer)"><span class="slider round"></span></label></td>
                     <td>//answer.answer_image//</td>
-                    <td>//getPersonName(answer.person_id)//</td>
+                    <td>//answer.subanswersgiven.person_id//</td>
                     <td>//answer.confidence//</td>
                 </tr>
             </tbody>

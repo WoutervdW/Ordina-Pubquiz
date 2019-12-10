@@ -89,72 +89,7 @@ angular.module('module', [])
             var data = {"id": answer.id, "correct": answer.correct, "person_id":$scope.getLoggedinPerson().id}
             $http.post("/api/v1.0/updateanswer", JSON.stringify(data))
        }
-       $scope.getCategoryName = function(category_id){
-            try{
-                var c = $scope.categories.find(c => c.id == category_id);
-                return c.name;
-            }
-            catch (error){
-                return "no category found for id"
-            }
-       }
-       $scope.getPersonName = function(person_id){
-            try{
-                var p = $scope.persons.find(person => person.id == person_id);
-                return p.personname;
-            }
-            catch (error){
-                return "no user found for id"
-            }
-        }
-        $scope.getTeamName = function(team_id){
-            try{
-                var t = $scope.teams.find(team => team.id == team_id);
-                return t.teamname;
-            }
-            catch(error){
-                return "no teamname found for id"
-            }
-        }
-       $scope.getQuestionName = function(question_id){
-            try{
-                var q = $scope.questions.find(question => question.id == question_id);
-                return q.question;
-                }
-            catch(error){
-                return "no question found for id"
-            }
-       }
-       $scope.getCorrectAnswer = function(question_id){
-            try{
-                var q = $scope.questions.find(question => question.id == question_id);
-                return q.correct_answer;
-            }
-            catch (error){
-                return "no correct answer found";
-            }
-       }
-       $scope.getSubAnswers = function (question_id){
-            try{
-                var s = $scope.subanswers.filter(subanswer => subanswer.question_id == question_id);
-                return s;
-            }
-            catch (error){
-                return [];
-            }
-       }
-
-       $scope.getVariants = function(subanswer_id){
-            try{
-                var v = $scope.variants.filter(variant => variant.subanswer_id == subanswer_id);
-                return v;
-            }
-            catch(error)
-            {
-                return [];
-            }
-       }
-
+       
         //todo: return person that is logged in
         $scope.getLoggedinPerson = function(){
             return {id: "2", name:"admin"} ;
