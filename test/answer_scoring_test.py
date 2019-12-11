@@ -1,6 +1,7 @@
 import unittest
 from text_processing.calculate_score import get_score
 
+# TODO: Update with changes in answer scoring and string processing
 
 class AnswerScoringTest(unittest.TestCase):
     correct_answers = [
