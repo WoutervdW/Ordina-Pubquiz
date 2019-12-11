@@ -24,37 +24,23 @@
                 </tr>
             </thead>
             <tbody>
-            //subanswers//
                 <tr ng-repeat="subanswergiven in subanswers | orderBy:propertyName:reverse">
-                    <td>//subanswergiven.team.teamname//</td>
-                    <td>//subanswergiven.question.question//</td>
+                    <td>//subanswergiven.answered_by.teamname//</td>
+                    <td>//subanswergiven.corr_question.question//</td>
                      <td>
                         <table>
                             <tbody>
-                                <tr ng-repeat = "subanswer in answer.question.subanswers" ng-repeat="subanswergiven in answer">
-                                    <td ng-repeat = "variant in subanswer.variants">//variant.answer//</td>
+                                <tr>
+                                    <td ng-repeat = "variant in subanswergiven.corr_answer.variants">//variant.answer//</td>
                                 </tr>
                             </tbody>
                         </table>
                      </td>
-                     <td colspan = '1'>
-                        <table>
-                            <tbody>
-                                <tr ng-repeat = "subanswergiven in answer.subanswersgiven">
-                                    <td>//subanswergiven.answer_given//</td>
-                                    <td><label class="switch"><input type="checkbox" ng-model="subanswergiven.correct" ng-change = "updateAnswerCheck(subanswer)"><span class="slider round"></span></label></td>
-                                    <td>//subanswergiven.answer_image//</td>
-                                    <td>//subanswergiven.checkedby.personname//</td>
-                                    <td>//subanswergiven.confidence//</td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                     </td>
-                </tr>
-
-
-
+                     <td>//subanswergiven.answer_given//</td>
+                     <td><label class="switch"><input type="checkbox" ng-model="subanswergiven.correct" ng-change=""><span class="slider round"></span></label></td>
+                     <td>//subanswergiven.image//</td>
+                     <td>//subanswergiven.checkedby.personname//</td>
+                     <td>//subanswergiven.confidence//</td>
                 </tr>
             </tbody>
         </table>

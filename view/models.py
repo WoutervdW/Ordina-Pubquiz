@@ -115,9 +115,10 @@ class SubAnswerGiven(db.Model):
 class SubAnswerGivenSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('id', 'question', 'team', 'answer_given', 'correct', 'person_id', 'checkedby', 'confidence', 'answer_image', 'image_width', 'image_height')
+        fields = ('id', 'question', 'answered_by', 'corr_question', 'corr_answer', 'answer_given', 'correct', 'person_id', 'checkedby', 'confidence', 'answer_image', 'image_width', 'image_height')
     checkedby = ma.Nested(PersonSchema)
     corr_question = ma.Nested(QuestionSchema)
+    corr_answer = ma.Nested(SubAnswerSchema)
     answered_by = ma.Nested(TeamSchema)
 
 
