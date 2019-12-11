@@ -10,7 +10,7 @@ import app
 import cv2
 import numpy as np
 from view.models import Team, TeamSchema, Question, QuestionSchema, SubAnswer, SubAnswerSchema, Variant, VariantSchema, Category, CategorySchema, Answersheet, Person, \
-PersonSchema, Answer, AnswerSchema, SubAnswerGiven, SubAnswerGivenSchema, Word, Line
+PersonSchema, SubAnswerGiven, SubAnswerGivenSchema, Word
 from werkzeug.utils import secure_filename
 from collections import OrderedDict
 import threading
@@ -64,19 +64,11 @@ def get_persons():
     return jsonify(result)
 
 
-@view.route('/api/v1.0/answers', methods=['GET'])
+@view.route('/api/v1.0/subanswers', methods=['GET'])
 def get_answers():
-    answers_schema = AnswerSchema(many=True)
-    allanswers = Answer.query.all()
+    answers_schema = SubAnswerGivenSchema(many=True)
+    allanswers = SubAnswerGiven.query.all()
     result = answers_schema.dump(allanswers)
-    return jsonify(result)
-
-
-@view.route('/api/v1.0/subanswersgiven', methods=['GET'])
-def get_subanswersgiven():
-    subanswersgiven_schema = SubAnswerGivenSchema(many=True)
-    allsubanswersgiven = SubAnswerGiven.query.all()
-    result = subanswersgiven_schema.dump(allsubanswersgiven)
     return jsonify(result)
 
 
@@ -85,8 +77,6 @@ def add_question():
     post = request.get_json()
     newquestion = post.get('question')
     newsubanswers = post.get('subanswers')
-
-    print("lasdfljasdflkdsaflkfdsa")
     subanswers = []
     variants = []
     for i in range(0, len(newsubanswers)):
@@ -222,7 +212,7 @@ def lines_all():
     if line_list.has_prev:
         prev_url = url_for('lines_all', page=line_list.prev_num)
 
-    return render_template("lines.html", answers=line_list.items, next_url=next_url, prev_url=prev_url)
+    return render_template("lines.html", lines=line_list.items, next_url=next_url, prev_url=prev_url)
 
 
 @view.route('/uploader', methods=['GET', 'POST'])
@@ -240,6 +230,11 @@ def upload():
         x.start()
         return "answersheet is being processed"
 
+
+@view.route("/get_answersheets_lines/<int:answersheet_id>", methods=['GET', 'POST'])
+def get_answersheets_lines(answersheet_id):
+    print("open answersheet with id " + str(answersheet_id))
+    return render_template("lines.html", lines=[], next_url=None, prev_url=None)
 
 from view import route
 
