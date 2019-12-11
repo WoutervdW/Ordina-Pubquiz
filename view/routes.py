@@ -103,7 +103,7 @@ def update_question():
     questionactive = post.get('active')
     q = Question.query.filter_by(id=id).first()
     q.active = questionactive
-    db.session.commit()
+    q.session.commit()
     return
 
 
@@ -113,9 +113,9 @@ def update_answer():
     id = post.get('id')
     answercorrect = post.get('correct')
     person_id = post.get('person_id')
-    q = Answer.query.filter_by(id=id).first()
-    q.correct = answercorrect
-    q.person_id = person_id
+    sa = SubAnswerGiven.query.filter_by(id=id).first()
+    sa.correct = answercorrect
+    sa.person_id = person_id
     db.session.commit()
     return
 
