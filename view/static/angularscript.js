@@ -35,9 +35,9 @@ angular.module('module', ['ngRoute'])
         });
         $http({
             method: "GET",
-            url: "/api/v1.0/answers"
+            url: "/api/v1.0/subanswers"
         }).then(function (response){
-            $scope.answers = response.data;
+            $scope.subanswers = response.data;
         });
 
       $scope.newsubanswers = [{}];

@@ -92,33 +92,21 @@ class QuestionSchema(ma.Schema):
     createdby = ma.Nested(PersonSchema)
 
 
-class Answer(db.Model):
-    """ answer given by team """
-    __tablename__ = 'answer'
-    id = db.Column(db.Integer, primary_key=True)
-    team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable = False)
-    team = db.relationship('Team')
-    question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable = False)
-    question = db.relationship('Question')
-    subanswersgiven = db.relationship('SubAnswerGiven')
-
-
-class AnswerSchema(ma.Schema):
-    class Meta:
-        # Fields to expose
-        fields = ('id', 'team_id', 'question_id', 'person_id', 'question', 'team')
-    question = ma.Nested(QuestionSchema())
-    team = ma.Nested(TeamSchema())
-
 class SubAnswerGiven(db.Model):
-    """ each answer can consist of multiple subanswers """
+    """  """
     __tablename__ = 'subanswergiven'
     id = db.Column(db.Integer, primary_key=True)
-    answer_id = db.Column(db.Integer, db.ForeignKey('answer.id'), nullable = False)
+    question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable = False)
+    corr_question = db.relationship('Question')
+    team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable = False)
+    answered_by = db.relationship('Team')
+    corr_answer_id = db.Column(db.Integer, db.ForeignKey('subanswer.id'), nullable=False)
+    corr_answer = db.relationship('SubAnswer')
     answer_given = db.Column(db.String(255))
     correct = db.Column(db.Boolean)
     confidence = db.Column(db.Float)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable = False)
+    checkedby = db.relationship('Person')
     answer_image = db.Column(db.LargeBinary)
     image_width = db.Column(db.Integer)
     image_height = db.Column(db.Integer)
@@ -127,7 +115,10 @@ class SubAnswerGiven(db.Model):
 class SubAnswerGivenSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('id', 'answer_id', 'answer_given', 'correct', 'confidence', 'answer_image', 'image_width', 'image_height')
+        fields = ('id', 'question', 'team', 'answer_given', 'correct', 'person_id', 'checkedby', 'confidence', 'answer_image', 'image_width', 'image_height')
+    checkedby = ma.Nested(PersonSchema)
+    corr_question = ma.Nested(QuestionSchema)
+    answered_by = ma.Nested(TeamSchema)
 
 
 class Answersheet(db.Model):
