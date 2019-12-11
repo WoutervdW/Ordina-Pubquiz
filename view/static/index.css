@@ -6,13 +6,21 @@
 th {
     background-color: #F07D00;
     color: white;
-    border-collapse:collapse;
     cursor: pointer;
 }
 
-.table-borderless td, .table-borderless th {
-    border: 0;
+.table-borderless {
+     margin:0 !important;
 }
+
+
+.table-borderless td, .table-borderless th {
+    border: 0 !important;
+    padding: 0 !important;
+
+}
+
+
 
 /* The switch - the box around the slider */
 .switch {
