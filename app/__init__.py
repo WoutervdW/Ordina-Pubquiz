@@ -37,11 +37,11 @@ def read_word_from_image(image_to_read, model):
     return results
 
 
-def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan", db=None):
+def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan", db=None, answersheet_id=None):
     # gray = cv2.cvtColor(answer_sheet_image, cv2.COLOR_BGR2GRAY)
     # Now we have the answer sheet in image form and we can move on to the line segmentation
     output_folder = "out/"
-    lines = line_segmentation(answer_sheet_image, save_image, output_folder, sheet_name, db)
+    lines = line_segmentation(answer_sheet_image, save_image, output_folder, sheet_name, db, answersheet_id)
     # We save the results to a file, which will be in the sheet subfolder with the sheet name.
     # f = open(output_folder + sheet_name + "/" + sheet_name + ".txt", "w")
 
@@ -97,6 +97,7 @@ def run_program(pubquiz_answer_sheets, save_image=False, db=None):
                 sheet_name = sheet_name[0:-4]
             sheet_name = sheet_name + "_" + str(p)
 
+            answersheet_id = 0
             if db is not None:
                 print("saving answersheet to the database")
                 # Save the image to the database!
@@ -110,8 +111,9 @@ def run_program(pubquiz_answer_sheets, save_image=False, db=None):
                 db.session.add(new_answersheet)
                 # commit the session so that the image is stored in the database
                 db.session.commit()
+                answersheet_id = new_answersheet.id
 
-            process_sheet(pages[p], model, save_image, sheet_name, db)
+            process_sheet(pages[p], model, save_image, sheet_name, db, answersheet_id)
 
 
 def save_answersheet():
