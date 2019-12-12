@@ -50,9 +50,9 @@
                     </td>
                     <td>
                             <label>
-                            <input class = "form-control" list = "categories"></label>
-                            <datalist ng-model="newquestioncategory" id="categories">
-                                <option ng-repeat = "category in categories">//category.name//</option>
+                            <input class = "form-control" list = "categories" ng-model = "newquestioncategory"></label>
+                            <datalist id="categories">
+                                <option ng-repeat = "category in categories" ng-value="category.name">//category.name//</option>
                             </datalist>
 
                     </td>

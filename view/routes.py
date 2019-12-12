@@ -95,10 +95,11 @@ def add_question():
         subanswer = SubAnswer(variants=variants)
         subanswers.append(subanswer)
         variants = []
-    newquestioncategory_id = post.get('category_id')
+    newquestioncategory = post.get('category')
+    category = Category(name=newquestioncategory);
     newquestionperson_id = post.get('person_id')
     newquestionactive = post.get('active')
-    q = Question(question=newquestion, category_id=newquestioncategory_id,
+    q = Question(question=newquestion, questioncategory=category,
         person_id=newquestionperson_id, active=newquestionactive, subanswers=subanswers)
     db.session.add(q)
     db.session.commit()
