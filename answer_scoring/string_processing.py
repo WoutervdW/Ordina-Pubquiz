@@ -9,12 +9,40 @@ from collections import Counter
 # TODO: get the Question from calculate_score to string comparison for the category to parse the string correctly
 #  (numbers in songs should be parsed as strings, in other answers they should probably be parsed as integers)
 
+
+def check_correct(answer, correct_answers):
+    # Get all the numbers from the answer string and append them to each other.
+    # Convert this to a number
+    # These must be the same as those in the correct answer
+
+    # number_correct has to be True if the number exists and is correct, False if the number exists but isn't
+    # correct and None if no number exists
+    number_correct = None
+    for correct_answer in correct_answers:
+        number_correct = check_numerical_value(answer, correct_answer)  # Number-based comparison
+        if number_correct is None:
+            # No number, give correctness based on string-based comparison
+            if check_string(answer, correct_answer):
+                return True
+        else:
+            if number_correct:
+                # Number correct, see if the rest of the string is also correct. Combine the correctness of the
+                # string and number parts
+                return True
+
+    return False
+
+    # compare the entire string as well
+    # Combine these two measures
+    pass
+
+
 def check_numerical_value(answer, correct_answer):
     """
 
-    :param answer: one string containing given answer
-    :param correct_answer: one string containing correct answer
-    :return:
+    :param answer: one string containing the given answer
+    :param correct_answer: one string containing a correct answer
+    :return: True if similar, False otherwise
     """
     # Use regex to get all the numbers and compare those from the given answer to those each of the correct answers
     # for 100% similarity
@@ -23,13 +51,14 @@ def check_numerical_value(answer, correct_answer):
     # is similar enough, return True
 
     answer_values = re.findall(r'\d+', answer)  # Find all numbers in the answer
-    answer_value = int(''.join(map(str, answer_values)))  # concatenate all numbers in the answer
-
     correct_answer_values = re.findall(r'\d+', correct_answer)  # Find all numbers in the correct answer
 
-    if len(correct_answer_values) == 0:
-        # No numbers in correct answer
+    if len(answer_values) == 0 or len(correct_answer_values) == 0:
+        # No numbers in answer or correct answer
         return None
+
+    answer_value = int(''.join(map(str, answer_values)))  # concatenate all numbers in the answer
+    correct_answer_value = int(''.join(map(str, correct_answer_values)))  # concatenate all numbers in the answer
 
     # Compare the lists of numbers for any differences in the number of elements
     difference = list((Counter(correct_answer) - Counter(answer)).elements())

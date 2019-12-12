@@ -11,16 +11,16 @@
 <body>
 {% extends "base.html" %}
 {% block content %}
-{% for line in lines %}
-<div>
-    <img width=50% src="{{ url_for('load_lines', line_id=answer.id) }}">
-</div>
-{% endfor %}
-{% if prev_url %}
-    <a href="{{ prev_url }}">Newer posts</a>
+    {% for line in lines %}
+    <div>
+        <img width=50% src="{{ url_for('load_lines', line_id=line.id) }}">
+    </div>
+    {% endfor %}
+    {% if prev_url %}
+        <a href="{{ prev_url }}">Newer posts</a>
     {% endif %}
     {% if next_url %}
-    <a href="{{ next_url }}">Older posts</a>
+        <a href="{{ next_url }}">Older posts</a>
     {% endif %}
 {%endblock%}
 </body>
