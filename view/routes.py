@@ -62,8 +62,8 @@ def get_categories():
 @view.route('/api/v1.0/persons', methods=['GET'])
 def get_persons():
     persons_schema = PersonSchema(many=True)
-    answers = Person.query.all()
-    result = persons_schema.dump(answers)
+    people = Person.query.all()
+    result = persons_schema.dump(people)
     return jsonify(result)
 
 
@@ -121,17 +121,6 @@ def update_answer():
     sa.person_id = person_id
     db.session.commit()
     return
-
-
-@view.route('/run_program')
-def run_program():
-    # We wil use this url shortcut to start the program
-    # Set the next thread to happen
-    print("starting thread for program")
-    x = threading.Thread(target=main.run_program, args=(db,))
-    print("thread started")
-    x.start()
-    return "program finished"
 
 
 @view.route('/uploader', methods=['GET', 'POST'])
