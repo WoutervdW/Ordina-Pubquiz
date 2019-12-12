@@ -15,6 +15,7 @@ PersonSchema, SubAnswerGiven, SubAnswerGivenSchema, Word
 from werkzeug.utils import secure_filename
 from collections import OrderedDict
 import threading
+from view import route
 
 
 @view.route('/')
@@ -67,8 +68,8 @@ def get_categories():
 @view.route('/api/v1.0/persons', methods=['GET'])
 def get_persons():
     persons_schema = PersonSchema(many=True)
-    answers = Person.query.all()
-    result = persons_schema.dump(answers)
+    people = Person.query.all()
+    result = persons_schema.dump(people)
     return jsonify(result)
 
 
@@ -128,17 +129,6 @@ def update_answer():
     return
 
 
-@view.route('/run_program')
-def run_program():
-    # We wil use this url shortcut to start the program
-    # Set the next thread to happen
-    print("starting thread for program")
-    x = threading.Thread(target=main.run_program, args=(db,))
-    print("thread started")
-    x.start()
-    return "program finished"
-
-
 @view.route('/uploader', methods=['GET', 'POST'])
 def upload():
 
@@ -153,12 +143,4 @@ def upload():
         print("thread started")
         x.start()
         return "answersheet is being processed"
-
-
-@view.route("/get_answersheets_lines/<int:answersheet_id>", methods=['GET', 'POST'])
-def get_answersheets_lines(answersheet_id):
-    print("open answersheet with id " + str(answersheet_id))
-    return render_template("lines.html", lines=[], next_url=None, prev_url=None)
-
-from view import route
 

@@ -50,3 +50,10 @@ def word_all():
 
     return render_template("words.html", words=word_list.items, next_url=next_url, prev_url=prev_url)
 
+
+@view.route("/get_line_words/<int:line_id>", methods=['GET', 'POST'])
+def get_line_words(line_id):
+    print("open line with id " + str(line_id))
+    words = Word.query.filter_by(line_id=line_id)
+    return render_template("words.html", words=words, next_url=None, prev_url=None)
+

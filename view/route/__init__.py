@@ -5,6 +5,7 @@ from view.route.word_routes import nuke_all_words
 from view.route.line_routes import lines_all
 from view.route.line_routes import load_lines
 from view.route.line_routes import nuke_all_lines
+from view.route.line_routes import get_answersheets_lines
 
 from view.route.answersheet_routes import answersheet_all
 from view.route.answersheet_routes import load_answersheet

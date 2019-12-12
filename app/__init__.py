@@ -16,6 +16,7 @@ import os
 import cv2
 import argparse
 from view.models import Answersheet
+from view.config import InputConfig
 
 
 def infer(_model, word_image):
@@ -100,6 +101,7 @@ def run_program(pubquiz_answer_sheets, save_image=False, db=None):
             answersheet_id = 0
             if db is not None:
                 print("saving answersheet to the database")
+                print(InputConfig.page_1_line_number)
                 # Save the image to the database!
                 # convert the image to byte array so it can be saved in the database
                 answer = pages[p].tostring()
