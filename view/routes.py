@@ -35,10 +35,15 @@ def answers():
 
 @view.route('/api/v1.0/teams', methods=['GET'])
 def get_teams():
-    teams_schema = TeamSchema(many=True)
-    scores = db.session.query(func.count(SubAnswerGiven.id).label('score')).group_by(SubAnswerGiven.team_id).filter(SubAnswerGiven.correct).all()
+    scores = db.session.query(SubAnswerGiven.team_id, func.count(SubAnswerGiven.id).label('score')).group_by(SubAnswerGiven.team_id).filter(SubAnswerGiven.correct).all()
     teams = Team.query.all()
-    print (scores[0].scalar())
+    teams_schema = TeamSchema(many=True)
+    for team in teams:
+        team.score = 0
+        for i in range(0, len(scores)):
+            teamid = scores[i][0]
+            if team.id == teamid:
+                team.score = scores[i][1]
     result = teams_schema.dump(teams)
     return jsonify(result)
 

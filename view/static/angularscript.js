@@ -4,9 +4,6 @@ angular.module('module', ['ngRoute'])
         $interpolateProvider.startSymbol('//');
         $interpolateProvider.endSymbol('//');
     })
-   // .config(['$locationProvider', function($locationProvider) {
-   //     $locationProvider.html5Mode({enabled: true, requireBase:false});
-   // }])
     //controller
     .controller('controller', function($scope, $http, $location, $window){
         $http({
@@ -60,12 +57,11 @@ angular.module('module', ['ngRoute'])
                 subanswers.push({"variants" : newvariants});
                 newvariants = [];
             }
-           // document.write(JSON.stringify(subanswers[0].variants[0].answer));
             $scope.newsubanswers = [{}];
             var data = {"question": $scope.newquestion, "subanswers": subanswers, "category_id": $scope.newquestioncategory, "person_id": $scope.getLoggedinPerson().id, "active":$scope.newquestionactive};
             $http.post("/api/v1.0/newquestion", JSON.stringify(data))
             $scope.newquestion = "";
-            //window.location.reload();
+            window.location.reload();
 
       }
       $scope.updateQuestionActive = function(question){
