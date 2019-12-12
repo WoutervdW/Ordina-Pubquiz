@@ -15,6 +15,7 @@ PersonSchema, SubAnswerGiven, SubAnswerGivenSchema, Word
 from werkzeug.utils import secure_filename
 from collections import OrderedDict
 import threading
+from view import route
 
 
 @view.route('/')
@@ -137,12 +138,4 @@ def upload():
         print("thread started")
         x.start()
         return "answersheet is being processed"
-
-
-@view.route("/get_answersheets_lines/<int:answersheet_id>", methods=['GET', 'POST'])
-def get_answersheets_lines(answersheet_id):
-    print("open answersheet with id " + str(answersheet_id))
-    return render_template("lines.html", lines=[], next_url=None, prev_url=None)
-
-from view import route
 

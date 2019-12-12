@@ -49,3 +49,10 @@ def lines_all():
 
     return render_template("lines.html", lines=line_list.items, next_url=next_url, prev_url=prev_url)
 
+
+@view.route("/get_answersheets_lines/<int:answersheet_id>", methods=['GET', 'POST'])
+def get_answersheets_lines(answersheet_id):
+    print("open answersheet with id " + str(answersheet_id))
+    lines = Line.query.filter_by(answersheet_id=answersheet_id)
+    return render_template("lines.html", lines=lines, next_url=None, prev_url=None)
+

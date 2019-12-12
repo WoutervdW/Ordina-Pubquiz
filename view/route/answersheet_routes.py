@@ -1,5 +1,6 @@
 from view import view, db
 from view.models import Answersheet
+from view.models import Line
 from flask import request
 from flask import make_response
 from flask import render_template
