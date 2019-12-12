@@ -1,6 +1,7 @@
 from view import view, db
 from flask import Flask, jsonify, render_template, abort, request, redirect, url_for, flash, make_response
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func, distinct
 import main
 import json
 import random
@@ -35,7 +36,9 @@ def answers():
 @view.route('/api/v1.0/teams', methods=['GET'])
 def get_teams():
     teams_schema = TeamSchema(many=True)
+    scores = db.session.query(func.count(SubAnswerGiven.id).label('score')).group_by(SubAnswerGiven.team_id).filter(SubAnswerGiven.correct).all()
     teams = Team.query.all()
+    print (scores[0].scalar())
     result = teams_schema.dump(teams)
     return jsonify(result)
 
