@@ -49,11 +49,12 @@
                         </table>
                     </td>
                     <td>
-                        <div class="dropdown">
-                            <select class="form-control" ng-model="newquestioncategory">
-                                <option ng-repeat = "category in categories" value="//category.id//">//category.name//</option>
-                            </select>
-                        </div>
+                            <label>
+                            <input class = "form-control" list = "categories"></label>
+                            <datalist ng-model="newquestioncategory" id="categories">
+                                <option ng-repeat = "category in categories">//category.name//</option>
+                            </datalist>
+
                     </td>
                     <td ng-model = "newquestionperson">//getLoggedinPerson().personname//</td>
                     <td><label class="switch"><input type="checkbox" ng-model = "newquestionactive"  ng-init="newquestionactive=true"><span class="slider round"></span></label></td>
