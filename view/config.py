@@ -23,9 +23,40 @@ class Config(object):
     WORDS_PER_PAGE = 20
 
 
-class InputConfig():
+class InputConfig:
     # For now we will define each answersheet by hand. This should be done in the front end.
-    pages = 7
-    page_1 = ""
+    page_count = 7
+    page_1_line_number = 28
+    page_1_team = "De ijsvogels"
+    page_1_lines = []
+    page_1_lines.append("team naam: De ijsvogels")
+    page_1_lines.append("Ronde 5")
+    page_1_lines.append("Ronde 5: Muziek")
+    page_1_lines.append(41)
+    page_1_lines.append(41)
+    page_1_lines.append(42)
+    page_1_lines.append(42)
+    page_1_lines.append(43)
+    page_1_lines.append(43)
+    page_1_lines.append(44)
+    page_1_lines.append(44)
+    page_1_lines.append(45)
+    page_1_lines.append(45)
+    page_1_lines.append(46)
+    page_1_lines.append(47)
+    page_1_lines.append(48)
+    page_1_lines.append(49)
+    page_1_lines.append(50)
+    page_1_lines.append("Ronde 6: Topografische slang")
+    page_1_lines.append(51)
+    page_1_lines.append(52)
+    page_1_lines.append(53)
+    page_1_lines.append(54)
+    page_1_lines.append(55)
+    page_1_lines.append(56)
+    page_1_lines.append(57)
+    page_1_lines.append(58)
+    page_1_lines.append(59)
+    page_1_lines.append(60)
 
 

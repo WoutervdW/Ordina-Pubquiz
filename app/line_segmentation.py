@@ -167,7 +167,8 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
         return None
 
     lines = []
-    for x in range(0, len(left_block_contours)):
+    # We traverse the lines backwards because the contours are stored from the bottom up
+    for x in range(len(left_block_contours)-1, -1, -1):
         corners_left = find_corners_contour(left_block_contours[x])
         corners_right = find_corners_contour(right_block_contours[x], width - offset_range, True)
         # We will use the original image to crop from.

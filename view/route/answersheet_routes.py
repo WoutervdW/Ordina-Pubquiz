@@ -1,6 +1,7 @@
 from view import view, db
 from view.models import Answersheet
 from view.models import Line
+from view.models import Word
 from flask import request
 from flask import make_response
 from flask import render_template
@@ -49,4 +50,20 @@ def answersheet_all():
         prev_url = url_for('answersheet_all', page=answersheets.prev_num)
 
     return render_template("answersheet.html", answersheets=answersheets.items, next_url=next_url, prev_url=prev_url)
+
+
+@view.route('/nuke/all', methods=['GET'])
+def nuke_all():
+    Word.query.delete()
+    db.session.commit()
+    db.engine.execute('alter sequence word_id_seq RESTART with 1')
+
+    Line.query.delete()
+    db.session.commit()
+    db.engine.execute('alter sequence line_id_seq RESTART with 1')
+
+    Answersheet.query.delete()
+    db.session.commit()
+    db.engine.execute('alter sequence answersheet_id_seq RESTART with 1')
+    return 'database images cleared'
 
