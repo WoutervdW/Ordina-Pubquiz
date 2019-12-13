@@ -34,6 +34,11 @@ def answers():
     return render_template('answerchecking.html')
 
 
+@view.route('/uploadsheets')
+def uploadsheets():
+        return render_template('uploadsheets.html')
+
+
 @view.route('/api/v1.0/teams', methods=['GET'])
 def get_teams():
     scores = db.session.query(SubAnswerGiven.team_id, func.count(SubAnswerGiven.id).label('score')).group_by(SubAnswerGiven.team_id).filter(SubAnswerGiven.correct).all()

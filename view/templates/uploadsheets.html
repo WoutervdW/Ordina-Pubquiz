@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Uploaden antwoordvellen</title>
+</head>
+<body>
+
+{% extends "base.html" %}
+{% block content %}
+<!-- TODO make it nicer and show which file is included and maybe forward to a better page (index again?) -->
+<div class = "container"  ng-app = "module" ng-controller = "controller">
+    <form action="/uploader" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Select pubquiz files</label>
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" name="answersheets" id="answersheets">
+                <label class="custom-file-label" for="answersheets">Select pubquiz files...</label>
+            </div>
+        </div>
+    </form>
+</div>
+    <button type="submit" class="btn btn-primary">Process pubquiz answer sheets</button>
+
+</form>
+{% endblock %}
+</body>
+</html>

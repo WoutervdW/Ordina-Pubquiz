@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Ordina Pubquiz</title>
- <!--   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script> -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="//code.angularjs.org/1.7.9/angular.min.js"></script>
    <script src="//code.angularjs.org/1.7.9/angular-route.js"></script>
     <script src="{{ url_for('static', filename='angularscript.js') }}"></script>
@@ -14,26 +14,15 @@
 </head>
 <body>
 {% extends 'bootstrap/base.html' %}
-
 {% block navbar %}
 <nav class = "navbar navbar-default">
-    <img src = "https://media.licdn.com/dms/image/C4D0BAQEZR2QUmw8_Vg/company-logo_200_200/0?e=2159024400&v=beta&t=uU48wCz7Qso5iA-dQFfeB4yUV7xjIlDd-x68GeKoYOo" alt = "log">
+    <a href = "/index">Home</a>
+    <a href = "/uploadsheets">Upload antwoordvellen</a>
+    <a href = "/questions">Quizvragen</a>
+    <a href = "/answerchecking">Nakijken</a>
 </nav>
 {% endblock %}
-{% block content %}
-    <div class="container">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-info" role="alert">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-        {% endwith %}
 
-        {# application content needs to be provided in the app_content block #}
-        {% block app_content %}{% endblock %}
-    </div>
-{% endblock %}
 
 </body>
 </html>
