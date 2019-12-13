@@ -72,6 +72,9 @@ angular.module('module', ['ngRoute'])
             var data = {"id": answer.id, "correct": answer.correct, "person_id":$scope.getLoggedinPerson().id}
             $http.post("/api/v1.0/updateanswer", JSON.stringify(data))
       }
+      $scope.reset = function(){
+            $http.post("/api/v1.0/reset")
+      }
 
         //todo: return person that is logged in
         $scope.getLoggedinPerson = function(){

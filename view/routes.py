@@ -117,7 +117,7 @@ def update_question():
     questionactive = post.get('active')
     q = Question.query.filter_by(id=id).first()
     q.active = questionactive
-    q.session.commit()
+    db.session.commit()
     return
 
 
@@ -130,6 +130,13 @@ def update_answer():
     sa = SubAnswerGiven.query.filter_by(id=id).first()
     sa.correct = answercorrect
     sa.person_id = person_id
+    db.session.commit()
+    return
+
+
+@view.route('/api/v1.0/reset', methods=['POST'])
+def reset():
+    SubAnswerGiven.query.delete()
     db.session.commit()
     return
 
