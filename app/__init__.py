@@ -57,14 +57,16 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         original_height = line.shape[0]
         resized_height = 50
         multiply_factor = original_height / resized_height
-        line = prepare_image(line, resized_height)
+        # After the resizing, the size of the number box will always be around this value.
+        number_box_size = 62
+        line = prepare_image(line, resized_height, number_box_size)
         # TODO test out the theta and min_area parameter changes if the results are not good.
         res = word_segmentation(line, kernel_size=25, sigma=11, theta=5, min_area=150)
 
         # iterate over all segmented words
         print('Segmented into %d words' % len(res))
         if save_image:
-            save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, db)
+            save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, db, number_box_size)
         #
         # # We can now examine each word.
         # words = get_words_image(line_image, multiply_factor, res)
