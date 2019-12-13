@@ -39,6 +39,11 @@ def uploadsheets():
     return render_template('uploadsheets.html')
 
 
+@view.route('/revealwinner')
+def reveal():
+    return render_template('revealwinner.html')
+
+
 @view.route('/api/v1.0/teams', methods=['GET'])
 def get_teams():
     scores = db.session.query(SubAnswerGiven.team_id, func.count(SubAnswerGiven.id).label('score')).group_by(SubAnswerGiven.team_id).filter(SubAnswerGiven.correct).all()
@@ -158,9 +163,18 @@ def reset():
     return
 
 
+@view.route('/api/v1.0/newteam', methods=['POST'])
+def addteam():
+    post = request.get_json()
+    teamname = post.get('teamname')
+    team = Team(teamname=teamname)
+    db.session.add(team)
+    db.session.commit()
+    return
+
+
 @view.route('/uploader', methods=['GET', 'POST'])
 def upload():
-
     if request.method == 'POST':
         print("saving file!")
         f = request.files['answersheets']
