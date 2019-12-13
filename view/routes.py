@@ -96,7 +96,11 @@ def add_question():
         subanswers.append(subanswer)
         variants = []
     newquestioncategory = post.get('category')
-    category = Category(name=newquestioncategory);
+    category = Category.query.filter(Category.name == newquestioncategory).first()
+    print(category)
+    if category is None:
+        category = Category(name=newquestioncategory)
+
     newquestionperson_id = post.get('person_id')
     newquestionactive = post.get('active')
     q = Question(question=newquestion, questioncategory=category,
