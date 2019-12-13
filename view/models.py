@@ -93,23 +93,21 @@ class QuestionSchema(ma.Schema):
 
 
 class SubAnswerGiven(db.Model):
-    """  """
+    """ A answer can consist of multiple lines, this indicates a single line of an answer. """
     __tablename__ = 'subanswergiven'
     id = db.Column(db.Integer, primary_key=True)
-    question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable = False)
+    question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable=False)
     corr_question = db.relationship('Question')
-    team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable = False)
+    team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
     answered_by = db.relationship('Team')
     corr_answer_id = db.Column(db.Integer, db.ForeignKey('subanswer.id'), nullable=False)
     corr_answer = db.relationship('SubAnswer')
     answer_given = db.Column(db.String(255))
     correct = db.Column(db.Boolean)
     confidence = db.Column(db.Float)
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable = False)
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
     checkedby = db.relationship('Person')
-    answer_image = db.Column(db.LargeBinary)
-    image_width = db.Column(db.Integer)
-    image_height = db.Column(db.Integer)
+    line_id = db.Column(db.Integer, db.ForeignKey('line.id'), nullable=False)
 
 
 class SubAnswerGivenSchema(ma.Schema):
