@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inloggen</title>
+</head>
+<body>
+{% extends "base.html" %}
+{% block content %}
+<div class = "wrapper"  ng-app = "module" ng-controller = "controller">
+    <h2>Inloggen</h2>
+    <form action="" method="post" novalidate>
+        <p><label>Gebruikersnaam</label>
+        <input class = "form-control" ng-model = "username"></p>
+        <p><label>Wachtwoord</label>
+        <input type = "password" class = "form-control" ng-model = "password"></p>
+        <p><button class="btn btn-primary" ng-click = "login()">Login</button></p>
+    </form>
+</div>
+{%endblock%}
+</body>
+</html>

@@ -44,6 +44,11 @@ def reveal():
     return render_template('revealwinner.html')
 
 
+@view.route('/login')
+def login():
+    return render_template('login.html')
+
+
 @view.route('/api/v1.0/teams', methods=['GET'])
 def get_teams():
     scores = db.session.query(SubAnswerGiven.team_id, func.count(SubAnswerGiven.id).label('score')).group_by(SubAnswerGiven.team_id).filter(SubAnswerGiven.correct).all()

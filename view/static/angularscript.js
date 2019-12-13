@@ -84,6 +84,9 @@ angular.module('module', ['ngRoute'])
             $http.post("/api/v1.0/newteam", JSON.stringify(data))
             window.location.reload();
         }
+        $scope.login = function(){
+            var data
+        }
 
         //todo: return person that is logged in
         $scope.getLoggedinPerson = function(){
