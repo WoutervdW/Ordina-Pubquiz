@@ -22,7 +22,8 @@ def check_line(path, l, line_word_count, scan_file, configurations=None, save_im
     resized_height = 50
 
     line_analyse = line[0].copy()
-    line_analyse = prepare_image(line_analyse, resized_height)
+    number_box_size = 62
+    line_analyse = prepare_image(line_analyse, resized_height, number_box_size)
     res = word_segmentation(
         line_analyse,
         kernel_size=configurations[0],
@@ -33,7 +34,7 @@ def check_line(path, l, line_word_count, scan_file, configurations=None, save_im
     if save_image:
         output_folder = "test_files/word_files/"
         multiply_factor = original_height / resized_height
-        save_word_image(output_folder, scan_file, line, multiply_factor, res)
+        save_word_image(output_folder, scan_file, line, multiply_factor, res, number_box_size)
 
     # if len(res) != line_word_count:
     #     # The test failed, print what went wrong and return False for the test

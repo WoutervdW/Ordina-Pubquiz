@@ -24,7 +24,7 @@ def get_words_image(line_image, multiply_factor, res):
     return words
 
 
-def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, db=None):
+def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, db=None, number_box_size=60):
     path = output_folder + sheet_name + "/line_" + str(line_image[1]) + "/words"
     if not os.path.exists(path):
         os.makedirs(path)
@@ -33,9 +33,9 @@ def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res,
         (word_box, word_img) = w
         (x, y, w, h) = word_box
         # save word
-        # We also have to take into account that we removed the bars on the left side by removing 60
+        # We also have to take into account that we removed the bars on the left side by removing number_box_size
         # We will add this to the new bounding box.
-        x_new = (x * multiply_factor) + (60 * multiply_factor)
+        x_new = (x * multiply_factor) + (number_box_size * multiply_factor)
         y_new = y * multiply_factor
         width_new = w * multiply_factor
         height_new = h * multiply_factor
@@ -137,7 +137,7 @@ def show_image(img):
     cv2.destroyAllWindows()
 
 
-def prepare_image(img, height):
+def prepare_image(img, height, number_box_size):
     """convert given image to grayscale image (if needed) and resize to desired height"""
     assert img.ndim in (2, 3)
     if img.ndim == 3:
@@ -145,7 +145,7 @@ def prepare_image(img, height):
     h = img.shape[0]
     factor = height / h
     resized = cv2.resize(img, dsize=None, fx=factor, fy=factor)
-    without_bars = resized[:, 60:]
+    without_bars = resized[:, number_box_size:]
     # We will remove the left part, which always has the same size and is never needed
     return without_bars
 
