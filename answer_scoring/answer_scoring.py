@@ -1,5 +1,5 @@
 # TODO: way to set questions to be marked manually
-from answer_scoring.string_processing import check_correct
+from answer_scoring.answer_checker import check_correct
 from answer_scoring.qa import Category, Question, Answer
 import pickle
 
