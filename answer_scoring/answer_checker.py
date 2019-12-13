@@ -11,49 +11,67 @@ from collections import Counter
 
 
 def check_correct(answer, correct_answers):
-    # Get all the numbers from the answer string and append them to each other.
-    # Convert this to a number
-    # These must be the same as those in the correct answer
-
     # number_correct has to be True if the number exists and is correct, False if the number exists but isn't
     # correct and None if no number exists
-    number_correct = None
     for correct_answer in correct_answers:
-        number_correct = check_numerical_value(answer, correct_answer)  # Number-based comparison
+        number_correct = check_numerical_values(answer, correct_answer)  # Compare numbers in the answer
         if number_correct is None:
-            # No number, give correctness based on string-based comparison
+            # No number, check correctness based on string-based comparison
             if check_string(answer, correct_answer):
                 return True
         else:
             if number_correct:
-                # Number correct, see if the rest of the string is also correct. Combine the correctness of the
-                # string and number parts
+                # Number correct, see if the rest of the string is also correct.
+                # TODO: Combine the correctness of the string and number parts
                 return True
 
     return False
 
-    # compare the entire string as well
-    # Combine these two measures
-    pass
 
-
-def check_numerical_value(answer, correct_answer):
+def check_numerical_values(answer, correct_answer):
     """
+    Find all numbers in the answer
+    :param answer:
+    :param correct_answer:
+    :return:
+    """
+    all_digits_pattern = re.compile(r'\d+')  # get all individual numbers
+    answer_values = all_digits_pattern.findall(answer)  # Find all numbers in the answer
+    correct_answer_values = all_digits_pattern.findall(correct_answer)  # Find all numbers in the correct answer
 
+    if len(correct_answer_values) == 0:
+        return None
+    elif len(answer_values) != 0 and len(correct_answer_values) != 0:
+        answer_value = int(''.join(map(str, answer_values)))  # concatenate all numbers in the answer
+        correct_answer_value = int(''.join(map(str, correct_answer_values)))  # concatenate all numbers in the answer
+        if answer_value == correct_answer_value:
+            return True
+    else:
+        return False
+
+
+def check_numerical_values_old(answer, correct_answer, percentage_off=0):
+    """
+    Get all the numbers from the answer strings and append them to each other. Convert this to a number. These must be
+    the same in both the given and correct answer
     :param answer: one string containing the given answer
     :param correct_answer: one string containing a correct answer
+    :param percentage_off: percentage the answer can be off from the correct answer
     :return: True if similar, False otherwise
     """
+
     # Use regex to get all the numbers and compare those from the given answer to those each of the correct answers
     # for 100% similarity
 
-    # Compare substrings. If a substring is a number and it matches an answer exactly, and the rest of the string
-    # is similar enough, return True
+    all_digits_pattern = re.compile(r'\d+')  # get all individual numbers
+    answer_values = all_digits_pattern.findall(answer)  # Find all numbers in the answer
+    correct_answer_values = all_digits_pattern.findall(correct_answer)  # Find all numbers in the correct answer
 
-    answer_values = re.findall(r'\d+', answer)  # Find all numbers in the answer
-    correct_answer_values = re.findall(r'\d+', correct_answer)  # Find all numbers in the correct answer
+    all_chars_pattern = re.compile(r'\D+')  # Get all non-number characters
+    answer_chars = all_chars_pattern.findall(answer)
+    correct_answer_chars = all_chars_pattern.findall(correct_answer)
 
-    if len(answer_values) == 0 or len(correct_answer_values) == 0:
+    if len(answer_values) == 0 and len(correct_answer_values) == 0:
         # No numbers in answer or correct answer
         return None
 
@@ -64,6 +82,10 @@ def check_numerical_value(answer, correct_answer):
     difference = list((Counter(correct_answer) - Counter(answer)).elements())
     if len(difference) == 0:
         pass
+
+    # Compare substrings. If a substring is a number and it matches an answer exactly, and the rest of the string
+    # is similar enough, return True
+
     # DEPRECATED
     for answer_word in answer.split():  # For every word in the given answer
         try:
@@ -85,6 +107,11 @@ def check_string(answer, correct_answer):
     return fuzz.WRatio(answer, correct_answer) > 80
 
 
+def preprocess_string(answer):
+    answer = answer.lower()
+    return answer
+
+
 def check_correct(answer, correct_answers, numerical):
     """
     Check whether this answer is correct.
@@ -102,7 +129,7 @@ def check_correct(answer, correct_answers, numerical):
         # correct and None if no number exists
         number_correct = None
         if numerical:
-            number_correct = check_numerical_value(answer, correct_answer)  # Number-based comparison
+            number_correct = check_numerical_values(answer, correct_answer)  # Number-based comparison
 
         if number_correct is None:
             if check_string(answer, correct_answer):  # String-based comparison
@@ -122,11 +149,6 @@ def check_correct(answer, correct_answers, numerical):
 
     # If none of the correct answers were similar to correct answers, return False
     return False
-
-
-def preprocess_string(answer):
-    answer = answer.lower()
-    return answer
 
 
 def compare_strings(answer, correct_answer_list):

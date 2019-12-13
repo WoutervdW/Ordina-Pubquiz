@@ -35,6 +35,7 @@
                     <td>//question.questioncategory.name//</td>
                     <td>//question.createdby.personname//</td>
                     <td><label class="switch"><input type="checkbox" ng-model="question.active" ng-change="updateQuestionActive(question)"><span class="slider round"></span></label></td>
+                    <td><button type="button" class = "btn btn-default btn-xs remove-item" ng-click="removeQuestion(question)"><span class="glyphicon glyphicon-remove"></span></button></td>
                 </tr>
                 <tr>
                     <td><input type = "text" class = "form-control" ng-model = "newquestion"></td>
@@ -49,11 +50,11 @@
                         </table>
                     </td>
                     <td>
-                        <div class="dropdown">
-                            <select class="form-control" ng-model="newquestioncategory">
-                                <option ng-repeat = "category in categories" value="//category.id//">//category.name//</option>
-                            </select>
-                        </div>
+                            <label>
+                            <input class = "form-control" list = "categories" ng-model = "newquestioncategory"></label>
+                            <datalist id="categories">
+                                <option ng-repeat = "category in categories" ng-value="category.name">//category.name//</button></option>
+                            </datalist>
                     </td>
                     <td ng-model = "newquestionperson">//getLoggedinPerson().personname//</td>
                     <td><label class="switch"><input type="checkbox" ng-model = "newquestionactive"  ng-init="newquestionactive=true"><span class="slider round"></span></label></td>

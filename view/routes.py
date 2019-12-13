@@ -34,6 +34,16 @@ def answers():
     return render_template('answerchecking.html')
 
 
+@view.route('/uploadsheets')
+def uploadsheets():
+    return render_template('uploadsheets.html')
+
+
+@view.route('/revealwinner')
+def reveal():
+    return render_template('revealwinner.html')
+
+
 @view.route('/api/v1.0/teams', methods=['GET'])
 def get_teams():
     scores = db.session.query(SubAnswerGiven.team_id, func.count(SubAnswerGiven.id).label('score')).group_by(SubAnswerGiven.team_id).filter(SubAnswerGiven.correct).all()
@@ -95,10 +105,15 @@ def add_question():
         subanswer = SubAnswer(variants=variants)
         subanswers.append(subanswer)
         variants = []
-    newquestioncategory_id = post.get('category_id')
+    newquestioncategory = post.get('category')
+    category = Category.query.filter(Category.name == newquestioncategory).first()
+    print(category)
+    if category is None:
+        category = Category(name=newquestioncategory)
+
     newquestionperson_id = post.get('person_id')
     newquestionactive = post.get('active')
-    q = Question(question=newquestion, category_id=newquestioncategory_id,
+    q = Question(question=newquestion, questioncategory=category,
         person_id=newquestionperson_id, active=newquestionactive, subanswers=subanswers)
     db.session.add(q)
     db.session.commit()
@@ -107,18 +122,30 @@ def add_question():
 
 @view.route('/api/v1.0/updatequestion', methods=['POST'])
 def update_question():
-    post = request.get_json();
+    post = request.get_json()
     id = post.get('id')
     questionactive = post.get('active')
     q = Question.query.filter_by(id=id).first()
     q.active = questionactive
-    q.session.commit()
+    db.session.commit()
     return
+
+
+@view.route('/api/v1.0/removequestion', methods=['POST'])
+def remove_question():
+    post = request.get_json()
+    id = post.get('id')
+    subanswers = SubAnswer.query.filter_by(question_id=id).all()
+    for subanswer in subanswers:
+        Variant.query.filter_by(subanswer_id=subanswer.id).delete()
+    SubAnswer.query.filter_by(question_id=id).delete()
+    Question.query.filter_by(id=id).delete()
+    db.session.commit()
 
 
 @view.route('/api/v1.0/updateanswer', methods=['POST'])
 def update_answer():
-    post = request.get_json();
+    post = request.get_json()
     id = post.get('id')
     answercorrect = post.get('correct')
     person_id = post.get('person_id')
@@ -129,9 +156,25 @@ def update_answer():
     return
 
 
+@view.route('/api/v1.0/reset', methods=['POST'])
+def reset():
+    SubAnswerGiven.query.delete()
+    db.session.commit()
+    return
+
+
+@view.route('/api/v1.0/newteam', methods=['POST'])
+def addteam():
+    post = request.get_json()
+    teamname = post.get('teamname')
+    team = Team(teamname=teamname)
+    db.session.add(team)
+    db.session.commit()
+    return
+
+
 @view.route('/uploader', methods=['GET', 'POST'])
 def upload():
-
     if request.method == 'POST':
         print("saving file!")
         f = request.files['answersheets']
