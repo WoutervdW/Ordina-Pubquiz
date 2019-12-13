@@ -84,8 +84,19 @@ angular.module('module', ['ngRoute'])
             $http.post("/api/v1.0/newteam", JSON.stringify(data))
             window.location.reload();
         }
+        $scope.removeTeam = function(team){
+            var data = {"id":team.id}
+            $http.post("/api/v1.0/removeteam", JSON.stringify(data))
+            window.location.reload();
+        }
+          $scope.removeTeams = function(){
+            $http.post("/api/v1.0/removeteams")
+            window.location.reload();
+        }
+
         $scope.login = function(){
-            var data
+            var data = {"username": $scope.username, "password": $scope.password}
+            $http.post("/login", JSON.stringify(data))
         }
 
         //todo: return person that is logged in

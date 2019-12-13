@@ -3,6 +3,7 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_bootstrap import Bootstrap
 from flask_marshmallow import Marshmallow
 from flask import Flask
+from flask_login import LoginManager
 from view.config import Config
 
 
@@ -16,6 +17,7 @@ db = SQLAlchemy(view)
 ma = Marshmallow(view)
 
 migrate = Migrate(view, db)
+login = LoginManager(view)
 
 from view import routes, models
 

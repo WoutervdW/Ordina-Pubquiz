@@ -10,6 +10,7 @@ import datetime
 import app
 import cv2
 import numpy as np
+from flask_login import current_user, login_user
 from view.models import Team, TeamSchema, Question, QuestionSchema, SubAnswer, SubAnswerSchema, Variant, VariantSchema, Category, CategorySchema, Answersheet, Person, \
 PersonSchema, SubAnswerGiven, SubAnswerGivenSchema, Word
 from werkzeug.utils import secure_filename
@@ -44,9 +45,19 @@ def reveal():
     return render_template('revealwinner.html')
 
 
-@view.route('/login')
+@view.route('/login', methods=['POST', 'GET'])
 def login():
-    return render_template('login.html')
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        post = request.get_json()
+        username = post.get('username')
+        print(username)
+        pw = post.get('password')
+        user = Person.query.filter_by(personname=username).first()
+        if user is None or not user.check_password(pw):
+            flash('Invalid username or password')
+    return render_template('login.html', title='Sign In')
 
 
 @view.route('/api/v1.0/teams', methods=['GET'])
@@ -174,6 +185,23 @@ def addteam():
     teamname = post.get('teamname')
     team = Team(teamname=teamname)
     db.session.add(team)
+    db.session.commit()
+    return
+
+
+@view.route('/api/v1.0/removeteam', methods=['POST'])
+def remove_team():
+    post = request.get_json()
+    id = post.get('id')
+    Team.query.filter_by(id=id).delete()
+    db.session.commit()
+    return
+
+
+@view.route('/api/v1.0/removeteams', methods=['POST'])
+def remove_teams():
+    post = request.get_json()
+    Team.query.delete()
     db.session.commit()
     return
 
