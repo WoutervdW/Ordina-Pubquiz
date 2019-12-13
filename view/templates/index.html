@@ -27,6 +27,7 @@
                 <tr ng-repeat="team in teams | orderBy:propertyName:reverse">
                     <td>//team.teamname//</td>
                     <td>//team.score//</td>
+                    <td><button type="button" class = "btn btn-default btn-xs remove-item" ng-click="removeTeam(team)"><span class="glyphicon glyphicon-remove"></span></button></td>
                 </tr>
                  <tr>
                      <td><input type = "text" class = "form-control" ng-model = "newteam"></td>
@@ -35,6 +36,7 @@
                  </tr>
             </tbody>
         </table>
+        <button class="btn btn-primary" ng-click = "removeTeams()">Verwijder alle teams</button>
     </div>
 </div>
 {%endblock%}
