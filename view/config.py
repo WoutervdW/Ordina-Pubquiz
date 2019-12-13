@@ -3,16 +3,16 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config(object):
-    # print("Config")
+    print("Config")
     # ...
     # ...
-    user = os.environ['POSTGRES_USER']
-    password = os.environ['POSTGRES_PASSWORD']
-    host = os.environ['POSTGRES_HOST']
-    database = os.environ['POSTGRES_DB']
-    port = os.environ['POSTGRES_PORT']
+    user = os.environ.get('POSTGRES_USER') or None
+    password = os.environ.get('POSTGRES_PASSWORD') or None
+    host = os.environ.get('POSTGRES_HOST') or None
+    database = os.environ.get('POSTGRES_DB') or None
+    port = os.environ.get('POSTGRES_PORT') or None
 
-    session_type = os.environ['SESSION_TYPE']
+    session_type = os.environ.get('SESSION_TYPE') or None
 
 
     SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}'

@@ -112,7 +112,7 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
     # We choose 1500 because that will definitely have all the points within the image
     # and the posibility of having a similar looking area is minimized.
     # TODO Make the (width-900) a bit more nicer (if you change it in 1 place you might forget it here)
-    offset_range = 900
+    offset_range = 600
     left_side = answer_image_original[0:height, 0:offset_range]
     right_side = answer_image_original[0:height, (width-offset_range):width]
     # show_image(right_side)
@@ -131,18 +131,18 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
     left_block_contours = []
     for c in contours_left_side:
         area = cv2.contourArea(c)
-        # Area is about 100000 up to 1400000
-        if 80000 < area < 190000:
+        # Area is about 100000 with the line we defined
+        if 80000 < area < 120000:
             left_block_contours.append(c)
 
     cv2.drawContours(left_side_img, left_block_contours, -1, (255, 0, 0), thickness=10)
     # show_image(left_side_img)
 
-    # cv2.imwrite("out/" + image_name + "_left.png", left_side_img)
+    # cv2.imwrite(image_name + "_left.png", left_side_img)
     right_side_img = right_side.copy()
 
     # We draw a fake line over the image, this is so we can find the corners by finding areas with a certain size
-    cv2.line(right_side_img, (10, 0), (10, height), (0, 0, 0), 10)
+    cv2.line(right_side_img, (200, 0), (200, height), (0, 0, 0), 10)
 
     right_side_processed = pre_process_image(right_side_img, False)
     contours_right_side, _ = cv2.findContours(right_side_processed, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
@@ -151,8 +151,8 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
     right_block_contours = []
     for c in contours_right_side:
         area = cv2.contourArea(c)
-        # Area is about 50000 up to 80000
-        if 30000 < area < 130000:
+        # Area is about 60000 with the line we defined
+        if 40000 < area < 80000:
             right_block_contours.append(c)
 
     cv2.drawContours(right_side_img, right_block_contours, -1, (255, 0, 0), thickness=10)

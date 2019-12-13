@@ -55,14 +55,14 @@ class LineSegmentationTest(unittest.TestCase):
         path = "test_files/image_files/"
         file_name = "scan_0"
         line_length = read_number_of_lines(path, file_name)
-        self.assertEqual(line_length, 28)
+        self.assertEqual(line_length, 14)
 
     def test_image_to_lines_scan_1(self):
         path = "test_files/image_files/"
         file_name = "scan_1"
         line_length = read_number_of_lines(path, file_name)
         # We don't count the big input field in this one, so we are looking for 23 lines.
-        self.assertEqual(line_length, 23)
+        self.assertEqual(line_length, 14)
 
     def test_image_to_lines_scan_2(self):
         path = "test_files/image_files/"

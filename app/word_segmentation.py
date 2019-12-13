@@ -33,9 +33,9 @@ def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res,
         (word_box, word_img) = w
         (x, y, w, h) = word_box
         # save word
-        # We also have to take into account that we removed the bars on the side by slicing the image with '5'
+        # We also have to take into account that we removed the bars on the left side by removing 60
         # We will add this to the new bounding box.
-        x_new = (x * multiply_factor) + (180 * multiply_factor)
+        x_new = (x * multiply_factor) + (60 * multiply_factor)
         y_new = y * multiply_factor
         width_new = w * multiply_factor
         height_new = h * multiply_factor
@@ -145,7 +145,7 @@ def prepare_image(img, height):
     h = img.shape[0]
     factor = height / h
     resized = cv2.resize(img, dsize=None, fx=factor, fy=factor)
-    without_bars = resized[:, 180:]
+    without_bars = resized[:, 60:]
     # We will remove the left part, which always has the same size and is never needed
     return without_bars
 
