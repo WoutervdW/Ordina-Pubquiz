@@ -16,6 +16,7 @@ import os
 import cv2
 import argparse
 from view.models import Answersheet
+from view.models import Team
 from view.config import InputConfig
 
 
@@ -100,15 +101,35 @@ def run_program(pubquiz_answer_sheets, save_image=False, db=None):
 
             answersheet_id = 0
             if db is not None:
+                print("linking team to page")
+                # We will link the answersheet to the correct team. If it does not exist we will create it.
+                team = Team.query.filter_by(teamname=InputConfig.team_page[p]).first()
+                if team is None:
+                    # The team does not exist yet, so we will create it with 0 score.
+                    new_team = Team(
+                        teamname=InputConfig.team_page[p],
+                        score=0
+                    )
+                    db.session.add(new_team)
+                    # We already commit it because we need to query it right after to find the id.
+                    db.session.commit()
+
                 print("saving answersheet to the database")
-                print(InputConfig.page_1_line_number)
                 # Save the image to the database!
                 # convert the image to byte array so it can be saved in the database
                 answer = pages[p].tostring()
                 # create an Image object to store it in the database
                 width = len(pages[p])
                 height = len(pages[p][0])
-                new_answersheet = Answersheet(answersheet_image=answer, image_width=width, image_height=height)
+
+                # We know a team exists with the configured name because if it didn't we just created it.
+                team = Team.query.filter_by(teamname=InputConfig.team_page[p]).first()
+                new_answersheet = Answersheet(
+                    answersheet_image=answer,
+                    team_id=team.id,
+                    image_width=width,
+                    image_height=height
+                )
                 # add the object to the database session
                 db.session.add(new_answersheet)
                 # commit the session so that the image is stored in the database
