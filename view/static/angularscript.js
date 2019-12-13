@@ -62,7 +62,10 @@ angular.module('module', ['ngRoute'])
             $http.post("/api/v1.0/newquestion", JSON.stringify(data))
             $scope.newquestion = "";
             window.location.reload();
-
+      }
+      $scope.removeQuestion = function(question){
+            var data = {"id":question.id}
+            $http.post("/api/v1.0/removequestion", JSON.stringify(data))
       }
       $scope.updateQuestionActive = function(question){
             var data = {"id":question.id, "active":question.active}

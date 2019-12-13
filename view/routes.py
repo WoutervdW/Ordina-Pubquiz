@@ -36,7 +36,7 @@ def answers():
 
 @view.route('/uploadsheets')
 def uploadsheets():
-        return render_template('uploadsheets.html')
+    return render_template('uploadsheets.html')
 
 
 @view.route('/api/v1.0/teams', methods=['GET'])
@@ -117,7 +117,7 @@ def add_question():
 
 @view.route('/api/v1.0/updatequestion', methods=['POST'])
 def update_question():
-    post = request.get_json();
+    post = request.get_json()
     id = post.get('id')
     questionactive = post.get('active')
     q = Question.query.filter_by(id=id).first()
@@ -126,9 +126,21 @@ def update_question():
     return
 
 
+@view.route('/api/v1.0/removequestion', methods=['POST'])
+def remove_question():
+    post = request.get_json()
+    id = post.get('id')
+    subanswers = SubAnswer.query.filter_by(question_id=id).all()
+    for subanswer in subanswers:
+        Variant.query.filter_by(subanswer_id=subanswer.id).delete()
+    SubAnswer.query.filter_by(question_id=id).delete()
+    Question.query.filter_by(id=id).delete()
+    db.session.commit()
+
+
 @view.route('/api/v1.0/updateanswer', methods=['POST'])
 def update_answer():
-    post = request.get_json();
+    post = request.get_json()
     id = post.get('id')
     answercorrect = post.get('correct')
     person_id = post.get('person_id')
