@@ -101,7 +101,7 @@ angular.module('module', ['ngRoute'])
 
         $scope.login = function(){
             var data = {"username": $scope.username, "password": $scope.password}
-            $http.post("/login", JSON.stringify(data))
+            $http.post("/api/v1.0/login", JSON.stringify(data))
         }
 
         //todo: return person that is logged in

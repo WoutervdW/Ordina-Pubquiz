@@ -1,5 +1,5 @@
 from view import view, db
-from flask import Flask, jsonify, render_template, abort, request, redirect, url_for, flash, make_response
+from flask import Flask, jsonify, render_template, abort, request, redirect, url_for, flash, make_response, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func, distinct
 import main
@@ -10,7 +10,6 @@ import datetime
 import app
 import cv2
 import numpy as np
-from flask_login import current_user, login_user
 from view.models import Team, TeamSchema, Question, QuestionSchema, SubAnswer, SubAnswerSchema, Variant, VariantSchema, Category, CategorySchema, Answersheet, Person, \
 PersonSchema, SubAnswerGiven, SubAnswerGivenSchema, Word
 from werkzeug.utils import secure_filename
@@ -45,19 +44,9 @@ def reveal():
     return render_template('revealwinner.html')
 
 
-@view.route('/login', methods=['POST', 'GET'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    if request.method == 'POST':
-        post = request.get_json()
-        username = post.get('username')
-        print(username)
-        pw = post.get('password')
-        user = Person.query.filter_by(personname=username).first()
-        if user is None or not user.check_password(pw):
-            flash('Invalid username or password')
-    return render_template('login.html', title='Sign In')
+@view.route('/login')
+def showlogin():
+    return render_template('login.html')
 
 
 @view.route('/api/v1.0/teams', methods=['GET'])
@@ -107,6 +96,23 @@ def get_answers():
     return jsonify(result)
 
 
+@view.route('/api/v1.0/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        post = request.get_json()
+        username = post.get('username')
+        password = post.get('password')
+
+        db.commit()
+        if user and user.check_password_hash(
+                user.password, password):
+            session['logged_in'] = True
+            status = True
+        else:
+            status = False
+        return jsonify({'result': status})
+
+
 @view.route('/api/v1.0/newquestion', methods=['POST'])
 def add_question():
     post = request.get_json()
@@ -151,11 +157,14 @@ def update_question():
             qtemp = Question.query.filter_by(questionnumber=questionnumber).first()
             if qtemp is None:
                 q.questionnumber = questionnumber
-                break;
+                break
             else:
                 if qtemp.id == id:
-                    break;
+                    break
                 questionnumber = questionnumber + 1
+
+    user = Person.query.filter_by(personname="admin").first()
+    user.set_password('admin')
     db.session.commit()
     return 'OK'
 
@@ -171,6 +180,7 @@ def remove_question():
     Question.query.filter_by(id=id).delete()
     db.session.commit()
     return 'OK'
+
 
 @view.route('/api/v1.0/updateanswer', methods=['POST'])
 def update_answer():

@@ -7,6 +7,7 @@ class Person(db.Model):
     __tablename__ = 'person'
     id = db.Column(db.Integer, primary_key=True)
     personname = db.Column(db.String(255))
+    password_hash = db.Column(db.String(255))
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -17,7 +18,7 @@ class Person(db.Model):
 class PersonSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('id', 'personname')
+        fields = ('id', 'personname', 'password_hash')
 
 
 class Team(db.Model):
