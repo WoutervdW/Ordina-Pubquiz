@@ -4,7 +4,7 @@ asn1crypto==0.24.0
 astor==0.8.0
 attrs==19.3.0
 Click==7.0
-cryptography==2.1.4
+cryptography==2.3
 cycler==0.10.0
 dominate==2.4.0
 editdistance==0.5.3
