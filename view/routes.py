@@ -133,7 +133,7 @@ def add_question():
         person_id=newquestionperson_id, active=newquestionactive, subanswers=subanswers)
     db.session.add(q)
     db.session.commit()
-    return
+    return 'OK'
 
 
 @view.route('/api/v1.0/updatequestion', methods=['POST'])
@@ -150,7 +150,7 @@ def update_question():
         q.questionnumber = questionnumber
         print(questionnumber)
     db.session.commit()
-    return
+    return 'OK'
 
 
 @view.route('/api/v1.0/removequestion', methods=['POST'])
@@ -163,7 +163,7 @@ def remove_question():
     SubAnswer.query.filter_by(question_id=id).delete()
     Question.query.filter_by(id=id).delete()
     db.session.commit()
-
+    return 'OK'
 
 @view.route('/api/v1.0/updateanswer', methods=['POST'])
 def update_answer():
@@ -175,14 +175,14 @@ def update_answer():
     sa.correct = answercorrect
     sa.person_id = person_id
     db.session.commit()
-    return
+    return 'OK'
 
 
 @view.route('/api/v1.0/reset', methods=['POST'])
 def reset():
     SubAnswerGiven.query.delete()
     db.session.commit()
-    return
+    return 'OK'
 
 
 @view.route('/api/v1.0/newteam', methods=['POST'])
@@ -192,7 +192,7 @@ def addteam():
     team = Team(teamname=teamname)
     db.session.add(team)
     db.session.commit()
-    return
+    return 'OK'
 
 
 @view.route('/api/v1.0/removeteam', methods=['POST'])
@@ -201,7 +201,7 @@ def remove_team():
     id = post.get('id')
     Team.query.filter_by(id=id).delete()
     db.session.commit()
-    return
+    return 'OK'
 
 
 @view.route('/api/v1.0/removeteams', methods=['POST'])
@@ -209,7 +209,7 @@ def remove_teams():
     post = request.get_json()
     Team.query.delete()
     db.session.commit()
-    return
+    return 'OK'
 
 
 @view.route('/uploader', methods=['GET', 'POST'])
