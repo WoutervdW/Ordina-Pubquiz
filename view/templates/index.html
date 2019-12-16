@@ -17,9 +17,11 @@
         <table class="table table-hover table-sm">
             <thead>
                 <tr>
-                    <th scope = "col" ng-click = "sortBy('teamname')" >Team
+                    <th scope = "col" class="col-xs-6" ng-click = "sortBy('teamname')" >Team
                     </th>
                     <th scope = "col" ng-click = "sortBy('score')">Score
+                    </th>
+                     <th scope = "col" ng-click = "sortBy('score')">
                     </th>
                 </tr>
             </thead>
@@ -27,10 +29,10 @@
                 <tr ng-repeat="team in teams | orderBy:propertyName:reverse">
                     <td>//team.teamname//</td>
                     <td>//team.score//</td>
-                    <td><button type="button" class = "btn btn-default btn-xs remove-item" ng-click="removeTeam(team)"><span class="glyphicon glyphicon-remove"></span></button></td>
+                    <td><button type="button" class = "btn btn-danger" ng-click="removeTeam(team)"><span class="glyphicon glyphicon-remove"></span></button></td>
                 </tr>
                  <tr>
-                     <td><input type = "text" class = "form-control" ng-model = "newteam"></td>
+                     <td><input type = "text" class = "form-control" ng-model = "newteam" ng-keyup="$event.keyCode == 13 ? addTeam() : null"></td>
                      <td></td>
                      <td><button class="btn btn-primary" ng-click = "addTeam()">Voeg toe</button></td>
                  </tr>

@@ -140,9 +140,15 @@ def add_question():
 def update_question():
     post = request.get_json()
     id = post.get('id')
-    questionactive = post.get('active')
     q = Question.query.filter_by(id=id).first()
-    q.active = questionactive
+    if post.get('active') is not None:
+        questionactive = post.get('active')
+        q.active = questionactive
+
+    if post.get('questionnumber') is not None:
+        questionnumber = post.get('questionnumber')
+        q.questionnumber = questionnumber
+        print(questionnumber)
     db.session.commit()
     return
 

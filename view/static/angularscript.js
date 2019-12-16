@@ -72,11 +72,15 @@ angular.module('module', ['ngRoute'])
             var data = {"id":question.id, "active":question.active}
             $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
         }
+        $scope.updateQuestionNumber = function(question){
+            var data = {"id":question.id, "questionnumber": question.questionnumber}
+            $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
+        }
         $scope.updateAnswerCheck = function(answer){
             var data = {"id": answer.id, "correct": answer.correct, "person_id":$scope.getLoggedinPerson().id}
             $http.post("/api/v1.0/updateanswer", JSON.stringify(data))
         }
-        $scope.reset = function(){
+        $scope.deleteAllAnswers = function(){
             $http.post("/api/v1.0/reset")
         }
         $scope.addTeam = function(team){

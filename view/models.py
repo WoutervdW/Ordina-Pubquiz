@@ -79,6 +79,7 @@ class SubAnswerSchema(ma.Schema):
 class Question(db.Model):
     __tablename__ = 'question'
     id = db.Column(db.Integer, primary_key=True)
+    questionnumber = db.Column(db.Integer)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
     createdby = db.relationship('Person')
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
@@ -91,7 +92,7 @@ class Question(db.Model):
 class QuestionSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('id', 'person_id', 'category_id', 'question', 'active', 'subanswers', 'questioncategory', 'createdby')
+        fields = ('id', 'questionnumber', 'person_id', 'category_id', 'question', 'active', 'subanswers', 'questioncategory', 'createdby')
     subanswers = ma.Nested(SubAnswerSchema(many=True))
     questioncategory = ma.Nested(CategorySchema)
     createdby = ma.Nested(PersonSchema)
