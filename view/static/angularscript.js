@@ -75,6 +75,7 @@ angular.module('module', ['ngRoute'])
         $scope.updateQuestionNumber = function(question){
             var data = {"id":question.id, "questionnumber": question.questionnumber}
             $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
+
         }
         $scope.updateAnswerCheck = function(answer){
             var data = {"id": answer.id, "correct": answer.correct, "person_id":$scope.getLoggedinPerson().id}

@@ -146,9 +146,16 @@ def update_question():
         q.active = questionactive
 
     if post.get('questionnumber') is not None:
-        questionnumber = post.get('questionnumber')
-        q.questionnumber = questionnumber
-        print(questionnumber)
+        questionnumber = int(post.get('questionnumber'))
+        while True:
+            qtemp = Question.query.filter_by(questionnumber=questionnumber).first()
+            if qtemp is None:
+                q.questionnumber = questionnumber
+                break;
+            else:
+                if qtemp.id == id:
+                    break;
+                questionnumber = questionnumber + 1
     db.session.commit()
     return 'OK'
 
