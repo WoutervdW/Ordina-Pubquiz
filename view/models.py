@@ -26,6 +26,9 @@ class Team(db.Model):
     teamname = db.Column(db.String(255))
     score = db.Column(db.Integer)
 
+    def get_team_name(self):
+        return self.teamname
+
 
 class TeamSchema(ma.Schema):
     class Meta:
@@ -87,6 +90,9 @@ class Question(db.Model):
     subanswers = db.relationship('SubAnswer')
     active = db.Column(db.Boolean)
 
+    def get_question(self):
+        return self.question
+
 
 class QuestionSchema(ma.Schema):
     class Meta:
@@ -133,6 +139,9 @@ class Answersheet(db.Model):
     answersheet_image = db.Column(db.LargeBinary)
     image_width = db.Column(db.Integer)
     image_height = db.Column(db.Integer)
+
+    def get_team_id(self):
+        return self.team_id
 
 
 class AnswerSheetQuestion(db.Model):

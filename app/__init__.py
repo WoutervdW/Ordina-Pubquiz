@@ -17,6 +17,8 @@ import cv2
 import argparse
 from view.models import Answersheet
 from view.models import Team
+from view.models import SubAnswerGiven
+from view.models import SubAnswer
 from view.config import InputConfig
 
 
@@ -69,17 +71,47 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
             save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, db, number_box_size)
         #
         # # We can now examine each word.
-        # words = get_words_image(line_image, multiply_factor, res)
-        # words_results = []
-        # result_line = "line " + str(words[0][1]) + " predictions"
-        # for word in words:
-        #     # TODO add contrast to each word
-        #     read_results = read_word_from_image(word[0], model)
-        #     words_results.append(read_results)
-        #     result_line = result_line + " word: " + str(word[2]) + " " + str(read_results[0]) + " with probability " + str(read_results[1])
-        #     print(words_results)
-        # result_line = result_line + "\n"
-        # f.write(result_line)
+        words = get_words_image(line_image, multiply_factor, res)
+        words_results = []
+        result_line = "line " + str(words[0][1]) + " predictions"
+        for word in words:
+            # TODO add contrast to each word
+            read_results = read_word_from_image(word[0], model)
+            words_results.append(read_results)
+            result_line = result_line + " word: " + str(word[2]) + " " + str(read_results[0]) + " with probability " + str(read_results[1])
+            print(words_results)
+            if db is not None:
+                answersheet_detail = InputConfig.page_lines[answersheet_id]
+                # TODO @Sander: find correct question id (possibly configuration)
+                # We assume the configuration is always correct. It returns a question id and a subanswer id
+                question_id = InputConfig.question_to_id.get("1")
+                question = SubAnswer.query.filter_by(id=question_id[1]).first()
+                # TODO @Sander: get the correct answer (from the question)
+                # get the team. The answersheet_id should always exist in the database and should always be exactly one
+                answersheet = Answersheet.query.filter_by(id=answersheet_id).first()
+                team_id = answersheet.get_team_id()
+                team = Team.query.filter_by(id=team_id).first()
+                answered_by = team.get_team_name()
+                # TODO @Sander: find corr_answer_id and corr_answer (possibly configuration) this should be filled in the form
+                # correct is always false at first and can be set to True later
+                # TODO @Sander: person_id is now always the same, how will this be determined?
+                s = SubAnswerGiven(
+                    question_id=question_id[0],
+                    corr_question=question.get_question(),
+                    team_id=team_id,
+                    answered_by=answered_by,
+                    corr_answer_id="",
+                    corr_answer="",
+                    answer_given=words_results[0],
+                    correct=False,
+                    confidence=words_results[1],
+                    person_id=2,
+                    checkedby="answerchecker",
+                    line_id=line_image[2]
+                )
+
+        result_line = result_line + "\n"
+        f.write(result_line)
 
     # For now write the results to a file.
     # TODO connect this to the answer checker.

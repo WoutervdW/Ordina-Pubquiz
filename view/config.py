@@ -14,7 +14,6 @@ class Config(object):
 
     session_type = os.environ.get('SESSION_TYPE') or None
 
-
     SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -32,7 +31,9 @@ class InputConfig:
     team_page.append("De Winnaars")
     page_1_line_number = 28
     page_lines = []
-    # We will define all the lines in an array of arrays where
+    # We will define all the lines in an array of arrays. The database starts with id 1,
+    # so we will define an empty array on the 0 index
+    page_lines.append([])
     page_lines.append([])
     page_lines[0].append("team naam: De Winnars")
     page_lines[0].append("vraag antwoord")
@@ -63,5 +64,9 @@ class InputConfig:
     page_lines[1].append(10)
     page_lines[1].append(11)
     page_lines[1].append(12)
+
+    # Here we map which question id the question number belongs to (this should be updated to an extra column in the question)
+    question_to_id = {}
+    question_to_id["1"] = [5, 2]
 
 
