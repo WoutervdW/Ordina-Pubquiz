@@ -55,7 +55,7 @@ def read_word_from_image(image_to_read, model):
     return results
 
 
-def get_words_image(line_image, multiply_factor, res, number_box_size, db=None, model=None, answersheet_id=None):
+def save_word_details(line_image, multiply_factor, res, number_box_size, db=None, model=None, answersheet_id=None, line_number=-1, subanswer_number=-1):
     words = []
     index = 0
     predicted_line = ""
@@ -82,7 +82,7 @@ def get_words_image(line_image, multiply_factor, res, number_box_size, db=None, 
             print("save the word to the database with width %s and height %s" % (word_width, word_height))
 
             read_results = read_word_from_image(cropped, model)
-            print("saving word with regocnized word " + read_results[0][0])
+            print("saving word with recognized word " + read_results[0][0])
             predicted_line = predicted_line + read_results[0][0] + " "
             new_word = Word(
                 line_id=line_image[2],
@@ -101,7 +101,7 @@ def get_words_image(line_image, multiply_factor, res, number_box_size, db=None, 
     if db is not None:
         answersheet_detail = InputConfig.page_lines[1]
         print("answersheet number " + str(answersheet_id))
-        line_detail = answersheet_detail[line_image[2]]
+        line_detail = answersheet_detail[line_number]
         print("line detail " + str(line_detail))
         if str(line_detail).isdigit():
             print("This line is a valid question")
@@ -109,14 +109,9 @@ def get_words_image(line_image, multiply_factor, res, number_box_size, db=None, 
             # TODO @Sander: find correct question id (possibly configuration)
             # We assume the configuration is always correct. It returns a question id and a subanswer id
             question_id = InputConfig.question_to_id.get(str(line_detail))
-            # if question_id == previous_question:
-            #     subanswer_number += 1
-            # else:
-            #     previous_question = question_id
-            #     subanswer_number = 0
-            sub_answer_id = question_id[1][0]
+            sub_answer_id = question_id[1][subanswer_number]
             print("question id " + str(question_id))
-            question = Question.query.filter_by(id=question_id[0]).first()
+            # question = Question.query.filter_by(id=question_id[0]).first()
             sub_answer = SubAnswer.query.filter_by(id=sub_answer_id).first()
             # TODO @Sander: For now we assume there is only 1. Solve this later.
             variant = Variant.query.filter_by(subanswer_id=sub_answer.id).first()

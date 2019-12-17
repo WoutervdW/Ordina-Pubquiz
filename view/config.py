@@ -27,8 +27,8 @@ class InputConfig:
     page_count = 7
     # Define which team belongs to which page.
     team_page = []
-    team_page.append("De Winnaars")
-    team_page.append("De Winnaars")
+    team_page.append("Wouter scan")
+    team_page.append("Wouter scan")
     page_1_line_number = 28
     page_lines = []
     # We will define all the lines in an array of arrays. The database starts with id 1,
