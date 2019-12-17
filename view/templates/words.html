@@ -15,6 +15,9 @@
 <div>
     <img width=50% src="{{ url_for('load_word', word_id=word.id) }}">
 </div>
+<div>
+    {{ word.word_recognised }}
+</div>
 {% endfor %}
 {% if prev_url %}
     <a href="{{ prev_url }}">Newer posts</a>

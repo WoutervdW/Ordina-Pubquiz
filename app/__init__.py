@@ -7,8 +7,6 @@ https://towardsdatascience.com/build-a-handwritten-text-recognition-system-using
 import sys
 from app.Model import Model
 from app.Model import DecoderType
-from app.sample_preprocessor import preprocess
-from app.DataLoader import Batch
 from app.pdf_to_image import convert_pdf_to_image
 from app.line_segmentation import line_segmentation, crop_and_warp
 from app.word_segmentation import word_segmentation, prepare_image, find_rect, show_image, save_word_image, get_words_image
@@ -23,45 +21,6 @@ from view.models import Question
 from view.models import Variant
 from view.config import InputConfig
 import numpy as np
-
-
-def increase_contrast(img):
-    # increase contrast
-    pxmin = np.min(img)
-    pxmax = np.max(img)
-    imgContrast = (img - pxmin) / (pxmax - pxmin) * 255
-
-    # increase line width
-    kernel_contrast = np.ones((12, 12), np.uint8)
-    imgMorph = cv2.erode(imgContrast, kernel_contrast, iterations=1)
-
-    return imgMorph
-
-
-def infer(_model, word_image):
-    """
-    recognize text in image provided by file path
-    """
-    # image = fn_img
-    fn_img = cv2.cvtColor(word_image, cv2.COLOR_BGR2GRAY)
-
-    # We will set a threshold for the gray lines to become clear black for the recognition
-    ret, thresh4 = cv2.threshold(fn_img, 220, 255, cv2.THRESH_BINARY)
-    # We increase the thickness of the lines to make the program better at reading the letters
-    fn_img = increase_contrast(thresh4)
-
-    image = preprocess(fn_img, Model.img_size)
-    batch = Batch([image])
-    (recognized, probability) = _model.infer_batch(batch, False)
-    print('Recognized:', '"' + recognized[0] + '"')
-    if probability is not None:
-        print('Probability:', probability[0])
-    return recognized, probability
-
-
-def read_word_from_image(image_to_read, model):
-    results = infer(model, image_to_read)
-    return results
 
 
 def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan", db=None, answersheet_id=None):
@@ -86,80 +45,80 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         resized_height = 50
         multiply_factor = original_height / resized_height
         # After the resizing, the size of the number box will always be around this value.
-        number_box_size = 64
+        number_box_size = 66
         line = prepare_image(line, resized_height, number_box_size)
         # TODO test out the theta and min_area parameter changes if the results are not good.
         res = word_segmentation(line, kernel_size=25, sigma=11, theta=7, min_area=100)
 
         # iterate over all segmented words
-        print('Segmented into %d words' % len(res))
-        if save_image:
-            save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, db, number_box_size)
-        #
-        # # We can now examine each word.
-        words = get_words_image(line_image, multiply_factor, res, number_box_size)
-        words_results = []
-        predicted_line = ""
-        for word in words:
-            print("reading words")
-            # # TODO add contrast to each word
-            read_results = read_word_from_image(word[0], model)
-            word_index += 1
-            words_results.append(read_results)
-            # print(words_results)
-            predicted_line = predicted_line + str(read_results[0]) + " "
-            # # TODO @Sander: save prediciton with the word
+        # print('Segmented into %d words' % len(res))
+        # if save_image:
+        #     save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, db, number_box_size)
+        # #
+        # We can now examine each word.
+        words = get_words_image(line_image, multiply_factor, res, number_box_size, db, model, answersheet_id)
+        # words_results = []
+        # predicted_line = ""
+        # for word in words:
+        #     print("reading words")
+        #     # # TODO add contrast to each word
+        #     read_results = read_word_from_image(word[0], model)
+        #     word_index += 1
+        #     words_results.append(read_results)
+        #     # print(words_results)
+        #     predicted_line = predicted_line + str(read_results[0]) + " "
+        #     # TODO @Sander: save prediciton with the word
 
         # We now want to save the details of this line with the answer given
-        if db is not None:
-            answersheet_detail = InputConfig.page_lines[1]
-            print("answersheet number " + str(answersheet_id))
-            line_detail = answersheet_detail[line_image[2]]
-            print("line detail " + str(line_detail))
-            if str(line_detail).isdigit():
-                print("This line is a valid question")
-                # If it's a digit we know it is a correct question, so we can start finding the question details
-                # TODO @Sander: find correct question id (possibly configuration)
-                # We assume the configuration is always correct. It returns a question id and a subanswer id
-                question_id = InputConfig.question_to_id.get(str(line_detail))
-                if question_id == previous_question:
-                    subanswer_number += 1
-                else:
-                    previous_question = question_id
-                    subanswer_number = 0
-                sub_answer_id = question_id[1][subanswer_number]
-                print("question id " + str(question_id))
-                question = Question.query.filter_by(id=question_id[0]).first()
-                sub_answer = SubAnswer.query.filter_by(id=sub_answer_id).first()
-                # TODO @Sander: For now we assume there is only 1. Solve this later.
-                variant = Variant.query.filter_by(subanswer_id=sub_answer.id).first()
-
-                print("sub_answer id " + str(sub_answer.id))
-                print("variant id " + str(variant.id))
-                # get the team. The answersheet_id should always exist in the database and should always be exactly one
-                answersheet = Answersheet.query.filter_by(id=answersheet_id).first()
-                team_id = answersheet.get_team_id()
-                team = Team.query.filter_by(id=team_id).first()
-                answered_by = team.get_team_name()
-                print("team_id  " + str(team_id))
-                print("answered_by " + str(answered_by))
-                # correct is always false at first and can be set to True later
-                # TODO @Sander: person_id is now always the same, how will this be determined?
-                #     checkedby="answerchecker",
-                # corr_answer = variant.get_answer(),
-                #     answered_by=answered_by,
-                #     confidence=words_results[1],
-                sub_answer_given = SubAnswerGiven(
-                    question_id=question_id[0],
-                    team_id=team_id,
-                    corr_answer_id=sub_answer.id,
-                    person_id=2,
-                    correct=False,
-                    line_id=line_image[2],
-                    answer_given=predicted_line
-                )
-                db.session.add(sub_answer_given)
-                db.session.commit()
+        # if db is not None:
+        #     answersheet_detail = InputConfig.page_lines[1]
+        #     print("answersheet number " + str(answersheet_id))
+        #     line_detail = answersheet_detail[line_image[2]]
+        #     print("line detail " + str(line_detail))
+        #     if str(line_detail).isdigit():
+        #         print("This line is a valid question")
+        #         # If it's a digit we know it is a correct question, so we can start finding the question details
+        #         # TODO @Sander: find correct question id (possibly configuration)
+        #         # We assume the configuration is always correct. It returns a question id and a subanswer id
+        #         question_id = InputConfig.question_to_id.get(str(line_detail))
+        #         if question_id == previous_question:
+        #             subanswer_number += 1
+        #         else:
+        #             previous_question = question_id
+        #             subanswer_number = 0
+        #         sub_answer_id = question_id[1][subanswer_number]
+        #         print("question id " + str(question_id))
+        #         question = Question.query.filter_by(id=question_id[0]).first()
+        #         sub_answer = SubAnswer.query.filter_by(id=sub_answer_id).first()
+        #         # TODO @Sander: For now we assume there is only 1. Solve this later.
+        #         variant = Variant.query.filter_by(subanswer_id=sub_answer.id).first()
+        #
+        #         print("sub_answer id " + str(sub_answer.id))
+        #         print("variant id " + str(variant.id))
+        #         # get the team. The answersheet_id should always exist in the database and should always be exactly one
+        #         answersheet = Answersheet.query.filter_by(id=answersheet_id).first()
+        #         team_id = answersheet.get_team_id()
+        #         team = Team.query.filter_by(id=team_id).first()
+        #         answered_by = team.get_team_name()
+        #         print("team_id  " + str(team_id))
+        #         print("answered_by " + str(answered_by))
+        #         # correct is always false at first and can be set to True later
+        #         # TODO @Sander: person_id is now always the same, how will this be determined?
+        #         #     checkedby="answerchecker",
+        #         # corr_answer = variant.get_answer(),
+        #         #     answered_by=answered_by,
+        #         #     confidence=words_results[1],
+        #         sub_answer_given = SubAnswerGiven(
+        #             question_id=question_id[0],
+        #             team_id=team_id,
+        #             corr_answer_id=sub_answer.id,
+        #             person_id=2,
+        #             correct=False,
+        #             line_id=line_image[2],
+        #             answer_given=predicted_line
+        #         )
+        #         db.session.add(sub_answer_given)
+        #         db.session.commit()
 
 
 
