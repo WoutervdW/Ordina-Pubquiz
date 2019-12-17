@@ -141,7 +141,7 @@ def add_question():
     if category is None:
         category = Category(name=newquestioncategory)
 
-    newquestionperson_id = post.get('person_id')
+    newquestionperson_id = session['userid']
     newquestionactive = post.get('active')
     q = Question(question=newquestion, questioncategory=category,
         person_id=newquestionperson_id, active=newquestionactive, subanswers=subanswers)
