@@ -6,13 +6,13 @@ from app.line_segmentation import crop_and_warp
 from view.models import Word
 
 
-def get_words_image(line_image, multiply_factor, res):
+def get_words_image(line_image, multiply_factor, res, number_box_size):
     words = []
     index = 0
     for (j, w) in enumerate(res):
         (word_box, word_img) = w
         (x, y, w, h) = word_box
-        x_new = (x * multiply_factor) + 5
+        x_new = (x * multiply_factor) + (number_box_size * multiply_factor)
         y_new = y * multiply_factor
         width_new = w * multiply_factor
         height_new = h * multiply_factor

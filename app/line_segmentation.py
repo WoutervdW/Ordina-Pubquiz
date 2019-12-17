@@ -176,17 +176,22 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
         corners_full = find_corners_center(corners_left, corners_right)
         cropped_full = crop_and_warp(answer_image_original, corners_full)
 
-
-
-        # Save the line image to the database!
-        # convert the image to byte array so it can be saved in the database
-        answer = cropped_full.tostring()
         # create an Image object to store it in the database
         # shape = answer_image
         line_width = len(cropped_full)
         line_height = len(cropped_full[0])
 
-        finished_line = [cropped_full, x]
+        trim = 15
+        without_bars = cropped_full[trim:line_width-trim, trim:line_height-trim]
+
+        line_width = len(without_bars)
+        line_height = len(without_bars[0])
+
+        finished_line = [without_bars, x]
+
+        # Save the line image to the database!
+        # convert the image to byte array so it can be saved in the database
+        answer = without_bars.tostring()
 
         if db is not None:
             print("save line to database with width %s and height %s" % (line_width, line_height))
@@ -204,6 +209,9 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
 
             # We pass the line id along to link the words with the correct line.
             finished_line.append(new_line.id)
+            print("some stuff about the line")
+            print("line number: " + str(finished_line[1]))
+            print("line id: " + str(finished_line[2]))
 
         # We also pass the line index along wiht this collection of lines. This is so that for the word recognition
         # part we can easily identify which line it is.

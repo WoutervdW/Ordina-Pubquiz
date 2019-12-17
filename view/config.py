@@ -35,21 +35,22 @@ class InputConfig:
     # so we will define an empty array on the 0 index
     page_lines.append([])
     page_lines.append([])
-    page_lines[0].append("team naam: De Winnars")
-    page_lines[0].append("vraag antwoord")
-    page_lines[0].append("Ronde 1: Eerste en enige ronde")
-    page_lines[0].append(1)
-    page_lines[0].append(2)
-    page_lines[0].append(2)
-    page_lines[0].append(2)
-    page_lines[0].append(2)
-    page_lines[0].append(2)
-    page_lines[0].append(3)
-    page_lines[0].append(3)
-    page_lines[0].append(4)
-    page_lines[0].append(5)
-    page_lines[0].append(6)
-    page_lines.append([])
+    # similarly to the answersheet we define an empty line since the database starts with id 1
+    page_lines[1].append("")
+    page_lines[1].append("team naam: De Winnars")
+    page_lines[1].append("vraag antwoord")
+    page_lines[1].append("Ronde 1: Eerste en enige ronde")
+    page_lines[1].append(1)
+    page_lines[1].append(2)
+    page_lines[1].append(2)
+    page_lines[1].append(2)
+    page_lines[1].append(2)
+    page_lines[1].append(2)
+    page_lines[1].append(3)
+    page_lines[1].append(3)
+    page_lines[1].append(4)
+    page_lines[1].append(5)
+    page_lines[1].append(6)
     page_lines[1].append(7)
     page_lines[1].append(7)
     page_lines[1].append(7)
@@ -67,6 +68,18 @@ class InputConfig:
 
     # Here we map which question id the question number belongs to (this should be updated to an extra column in the question)
     question_to_id = {}
-    question_to_id["1"] = [5, 2]
+    question_to_id["1"] = [5, [2]]
+    question_to_id["2"] = [6, [3, 4, 5, 6, 7]]
+    question_to_id["3"] = [7, [8, 9]]
+    question_to_id["4"] = [8, [10]]
+    question_to_id["5"] = [9, [11]]
+    question_to_id["6"] = [10, [12]]
+    question_to_id["7"] = [11, [13, 14, 15, 16, 17]]
+    question_to_id["8"] = [12, [18, 19, 20, 21, 22]]
+    question_to_id["9"] = [13, [23]]
+    question_to_id["10"] = [14, [24]]
+    question_to_id["11"] = [15, [25]]
+    question_to_id["12"] = [16, [26]]
+
 
 

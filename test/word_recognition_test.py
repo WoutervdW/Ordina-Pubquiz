@@ -4,6 +4,8 @@ from app.Model import Model
 from app.sample_preprocessor import preprocess
 from app.DataLoader import Batch
 import cv2
+from app.word_segmentation import show_image
+import numpy as np
 
 
 def test_word(scan_number, line_number, word_number, model):
@@ -19,12 +21,27 @@ def test_word(scan_number, line_number, word_number, model):
     return None
 
 
+def increase_contrast(img):
+    # increase contrast
+    pxmin = np.min(img)
+    pxmax = np.max(img)
+    imgContrast = (img - pxmin) / (pxmax - pxmin) * 255
+
+    # increase line width
+    kernel_contrast = np.ones((12, 12), np.uint8)
+    imgMorph = cv2.erode(imgContrast, kernel_contrast, iterations=1)
+
+    return imgMorph
+
+
 def infer(_model, word_image):
     """
     recognize text in image provided by file path
     """
-    # image = fn_img
     fn_img = cv2.cvtColor(word_image, cv2.COLOR_BGR2GRAY)
+    ret, thresh4 = cv2.threshold(fn_img, 220, 255, cv2.THRESH_BINARY)
+    fn_img = increase_contrast(thresh4)
+    show_image(fn_img)
     image = preprocess(fn_img, Model.img_size)
     batch = Batch([image])
     (recognized, probability) = _model.infer_batch(batch, True)
@@ -42,8 +59,8 @@ class WordRecognitionTest(unittest.TestCase):
     def test_word_recognition(self):
         model = Model(open('../model/charList.txt').read(), "../model/")
         scan_number = 0
-        line_number = 0
-        word_number = 0
+        line_number = 4
+        word_number = 1
         print(test_word(scan_number, line_number, word_number, model))
         self.assertEqual(True, True)
 

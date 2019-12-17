@@ -7,9 +7,10 @@ A simple example of how you can increase the contrast of a given image.
 """
 import numpy as np
 import cv2
+from app.word_segmentation import show_image
 
 # read
-img = cv2.imread('tekst_5.png', cv2.IMREAD_GRAYSCALE)
+img = cv2.imread('word_0.png', cv2.IMREAD_GRAYSCALE)
 
 # increase contrast
 pxmin = np.min(img)
@@ -19,9 +20,10 @@ imgContrast = (img - pxmin) / (pxmax - pxmin) * 255
 # increase line width
 kernel = np.ones((3, 3), np.uint8)
 imgMorph = cv2.erode(imgContrast, kernel, iterations = 1)
+show_image(imgMorph)
 
 # write
-cv2.imwrite('tekst_6.png', imgMorph)
+cv2.imwrite('word_0_thick_2.png', imgMorph)
 
 # TODO find out how to determine what contract works best simple solution -> untill probability is highest
 """

@@ -19,7 +19,23 @@ from view.models import Answersheet
 from view.models import Team
 from view.models import SubAnswerGiven
 from view.models import SubAnswer
+from view.models import Question
+from view.models import Variant
 from view.config import InputConfig
+import numpy as np
+
+
+def increase_contrast(img):
+    # increase contrast
+    pxmin = np.min(img)
+    pxmax = np.max(img)
+    imgContrast = (img - pxmin) / (pxmax - pxmin) * 255
+
+    # increase line width
+    kernel_contrast = np.ones((12, 12), np.uint8)
+    imgMorph = cv2.erode(imgContrast, kernel_contrast, iterations=1)
+
+    return imgMorph
 
 
 def infer(_model, word_image):
@@ -28,11 +44,18 @@ def infer(_model, word_image):
     """
     # image = fn_img
     fn_img = cv2.cvtColor(word_image, cv2.COLOR_BGR2GRAY)
+
+    # We will set a threshold for the gray lines to become clear black for the recognition
+    ret, thresh4 = cv2.threshold(fn_img, 220, 255, cv2.THRESH_BINARY)
+    # We increase the thickness of the lines to make the program better at reading the letters
+    fn_img = increase_contrast(thresh4)
+
     image = preprocess(fn_img, Model.img_size)
     batch = Batch([image])
-    (recognized, probability) = _model.infer_batch(batch, True)
+    (recognized, probability) = _model.infer_batch(batch, False)
     print('Recognized:', '"' + recognized[0] + '"')
-    print('Probability:', probability[0])
+    if probability is not None:
+        print('Probability:', probability[0])
     return recognized, probability
 
 
@@ -42,15 +65,18 @@ def read_word_from_image(image_to_read, model):
 
 
 def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan", db=None, answersheet_id=None):
+    word_index = 0
     # gray = cv2.cvtColor(answer_sheet_image, cv2.COLOR_BGR2GRAY)
     # Now we have the answer sheet in image form and we can move on to the line segmentation
     output_folder = "out/"
     lines = line_segmentation(answer_sheet_image, save_image, output_folder, sheet_name, db, answersheet_id)
-    # We save the results to a file, which will be in the sheet subfolder with the sheet name.
-    # f = open(output_folder + sheet_name + "/" + sheet_name + ".txt", "w")
 
+    # We keep track of which question is being handled, because 1 question can have multiple lines
+    previous_question = -1
+    subanswer_number = 0
     # After the line segmentation is done we can find the separate words
     for line_image in lines:
+        print("processing line: " + str(line_image[2]))
         line = line_image[0]
         # -kernelSize: size of filter kernel (odd integer)
         # -sigma: standard deviation of Gaussian function used for filter kernel
@@ -60,10 +86,10 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         resized_height = 50
         multiply_factor = original_height / resized_height
         # After the resizing, the size of the number box will always be around this value.
-        number_box_size = 62
+        number_box_size = 64
         line = prepare_image(line, resized_height, number_box_size)
         # TODO test out the theta and min_area parameter changes if the results are not good.
-        res = word_segmentation(line, kernel_size=25, sigma=11, theta=5, min_area=150)
+        res = word_segmentation(line, kernel_size=25, sigma=11, theta=7, min_area=100)
 
         # iterate over all segmented words
         print('Segmented into %d words' % len(res))
@@ -71,51 +97,70 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
             save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, db, number_box_size)
         #
         # # We can now examine each word.
-        words = get_words_image(line_image, multiply_factor, res)
+        words = get_words_image(line_image, multiply_factor, res, number_box_size)
         words_results = []
-        result_line = "line " + str(words[0][1]) + " predictions"
+        predicted_line = ""
         for word in words:
-            # TODO add contrast to each word
+            print("reading words")
+            # # TODO add contrast to each word
             read_results = read_word_from_image(word[0], model)
+            word_index += 1
             words_results.append(read_results)
-            result_line = result_line + " word: " + str(word[2]) + " " + str(read_results[0]) + " with probability " + str(read_results[1])
-            print(words_results)
-            if db is not None:
-                answersheet_detail = InputConfig.page_lines[answersheet_id]
+            # print(words_results)
+            predicted_line = predicted_line + str(read_results[0]) + " "
+            # # TODO @Sander: save prediciton with the word
+
+        # We now want to save the details of this line with the answer given
+        if db is not None:
+            answersheet_detail = InputConfig.page_lines[1]
+            print("answersheet number " + str(answersheet_id))
+            line_detail = answersheet_detail[line_image[2]]
+            print("line detail " + str(line_detail))
+            if str(line_detail).isdigit():
+                print("This line is a valid question")
+                # If it's a digit we know it is a correct question, so we can start finding the question details
                 # TODO @Sander: find correct question id (possibly configuration)
                 # We assume the configuration is always correct. It returns a question id and a subanswer id
-                question_id = InputConfig.question_to_id.get("1")
-                question = SubAnswer.query.filter_by(id=question_id[1]).first()
-                # TODO @Sander: get the correct answer (from the question)
+                question_id = InputConfig.question_to_id.get(str(line_detail))
+                if question_id == previous_question:
+                    subanswer_number += 1
+                else:
+                    previous_question = question_id
+                    subanswer_number = 0
+                sub_answer_id = question_id[1][subanswer_number]
+                print("question id " + str(question_id))
+                question = Question.query.filter_by(id=question_id[0]).first()
+                sub_answer = SubAnswer.query.filter_by(id=sub_answer_id).first()
+                # TODO @Sander: For now we assume there is only 1. Solve this later.
+                variant = Variant.query.filter_by(subanswer_id=sub_answer.id).first()
+
+                print("sub_answer id " + str(sub_answer.id))
+                print("variant id " + str(variant.id))
                 # get the team. The answersheet_id should always exist in the database and should always be exactly one
                 answersheet = Answersheet.query.filter_by(id=answersheet_id).first()
                 team_id = answersheet.get_team_id()
                 team = Team.query.filter_by(id=team_id).first()
                 answered_by = team.get_team_name()
-                # TODO @Sander: find corr_answer_id and corr_answer (possibly configuration) this should be filled in the form
+                print("team_id  " + str(team_id))
+                print("answered_by " + str(answered_by))
                 # correct is always false at first and can be set to True later
                 # TODO @Sander: person_id is now always the same, how will this be determined?
-                s = SubAnswerGiven(
+                #     checkedby="answerchecker",
+                # corr_answer = variant.get_answer(),
+                #     answered_by=answered_by,
+                #     confidence=words_results[1],
+                sub_answer_given = SubAnswerGiven(
                     question_id=question_id[0],
-                    corr_question=question.get_question(),
                     team_id=team_id,
-                    answered_by=answered_by,
-                    corr_answer_id="",
-                    corr_answer="",
-                    answer_given=words_results[0],
-                    correct=False,
-                    confidence=words_results[1],
+                    corr_answer_id=sub_answer.id,
                     person_id=2,
-                    checkedby="answerchecker",
-                    line_id=line_image[2]
+                    correct=False,
+                    line_id=line_image[2],
+                    answer_given=predicted_line
                 )
+                db.session.add(sub_answer_given)
+                db.session.commit()
 
-        result_line = result_line + "\n"
-        f.write(result_line)
-
-    # For now write the results to a file.
-    # TODO connect this to the answer checker.
-    # f.close()
 
 
 def run_program(pubquiz_answer_sheets, save_image=False, db=None):
