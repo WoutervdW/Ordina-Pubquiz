@@ -46,18 +46,19 @@ def reveal():
 
 @view.route('/login')
 def login():
-    if session['logged_in']:
+    if 'logged_in' in session and session['logged_in']:
         return render_template('index.html')
     return render_template('login.html')
 
 
 @view.route('/api/v1.0/login', methods=['POST'])
-def do_admin_login():
+def do_login():
     username = request.form['username']
     password = request.form['password']
     user = Person.query.filter_by(personname=username).first()
     if user and user.check_password(password):
         session['logged_in'] = True
+        session['userid'] = user.id
         return redirect(url_for('index'))
     else:
         if user:
@@ -140,7 +141,7 @@ def add_question():
     if category is None:
         category = Category(name=newquestioncategory)
 
-    newquestionperson_id = post.get('person_id')
+    newquestionperson_id = session['userid']
     newquestionactive = post.get('active')
     q = Question(question=newquestion, questioncategory=category,
         person_id=newquestionperson_id, active=newquestionactive, subanswers=subanswers)
@@ -191,7 +192,7 @@ def update_answer():
     post = request.get_json()
     id = post.get('id')
     answercorrect = post.get('correct')
-    person_id = post.get('person_id')
+    person_id = session['userid']
     sa = SubAnswerGiven.query.filter_by(id=id).first()
     sa.correct = answercorrect
     sa.person_id = person_id
@@ -227,7 +228,6 @@ def remove_team():
 
 @view.route('/api/v1.0/removeteams', methods=['POST'])
 def remove_teams():
-    post = request.get_json()
     Team.query.delete()
     db.session.commit()
     return 'OK'
