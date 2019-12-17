@@ -45,7 +45,15 @@ def reveal():
 
 
 @view.route('/login')
-def showlogin():
+def login():
+    if not session.get('logged_in'):
+        return render_template('login.html')
+    return render_template('index.html')
+
+
+@view.route('/logout')
+def logout():
+    session['logged_in'] = False
     return render_template('login.html')
 
 
@@ -96,21 +104,19 @@ def get_answers():
     return jsonify(result)
 
 
-@view.route('/api/v1.0/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        post = request.get_json()
-        username = post.get('username')
-        password = post.get('password')
-
-        db.commit()
-        if user and user.check_password_hash(
-                user.password, password):
-            session['logged_in'] = True
-            status = True
-        else:
-            status = False
-        return jsonify({'result': status})
+@view.route('/api/v1.0/login', methods=['POST'])
+def loginUser():
+    post = request.get_json()
+    username = post.get('username')
+    password = post.get('password')
+    user = Person.query.filter_by(personname=username).first()
+    if user and user.check_password(password):
+        session['logged_in'] = True
+        print('login')
+        return 'OK'
+    flash('Inloggegevens niet correct')
+    print('notlogin')
+    return 'not OK'
 
 
 @view.route('/api/v1.0/newquestion', methods=['POST'])
@@ -162,9 +168,6 @@ def update_question():
                 if qtemp.id == id:
                     break
                 questionnumber = questionnumber + 1
-
-    user = Person.query.filter_by(personname="admin").first()
-    user.set_password('admin')
     db.session.commit()
     return 'OK'
 
