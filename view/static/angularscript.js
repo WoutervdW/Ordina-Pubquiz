@@ -78,7 +78,7 @@ angular.module('module', ['ngRoute'])
 
         }
         $scope.updateAnswerCheck = function(answer){
-            var data = {"id": answer.id, "correct": answer.correct, "person_id":$scope.getLoggedinPerson().id}
+            var data = {"id": answer.id, "correct": answer.correct}
             $http.post("/api/v1.0/updateanswer", JSON.stringify(data))
         }
         $scope.deleteAllAnswers = function(){
@@ -97,11 +97,6 @@ angular.module('module', ['ngRoute'])
           $scope.removeTeams = function(){
             $http.post("/api/v1.0/removeteams")
             window.location.reload();
-        }
-
-        //todo: return person that is logged in
-        $scope.getLoggedinPerson = function(){
-            return {id: "2", personname:"admin"} ;
         }
     });
 
