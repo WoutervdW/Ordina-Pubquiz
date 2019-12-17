@@ -17,13 +17,14 @@
 {% block navbar %}
 <nav class = "navbar navbar-default">
     <a href = "/index">Home</a>
+    {% if session['logged_in'] == True %}
     <a href = "/uploadsheets">Upload antwoordvellen</a>
     <a href = "/questions">Quizvragen</a>
     <a href = "/answerchecking">Nakijken</a>
-    {% if session['logged_in'] == True %}
-    <a href=  "/logout">Logout</a>
+    <a href=  "/logout">Uitloggen</a>
     {% else %}
-    <a href = "/login">Login</a>
+    <a href = "/answerchecking">Antwoorden</a>
+    <a href = "/login">Inloggen</a>
     {% endif %}
 </nav>
 {% endblock %}
