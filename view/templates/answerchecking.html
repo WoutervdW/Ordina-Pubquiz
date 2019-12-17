@@ -37,14 +37,20 @@
                         </table>
                      </td>
                      <td>//subanswergiven.answer_given//</td>
+                     {% if session['logged_in'] == True %}
                      <td><label class="switch"><input type="checkbox" ng-model="subanswergiven.correct" ng-change="updateAnswerCheck(subanswergiven)"><span class="slider round"></span></label></td>
+                     {% else %}
+                     <td><label class="switch"><input type="checkbox" ng-model="subanswergiven.correct" ng-disabled="true"><span class="slider round"></span></label></td>
+                     {% endif %}
                      <td>//subanswergiven.image//</td>
                      <td>//subanswergiven.checkedby.personname//</td>
                      <td>//subanswergiven.confidence//%</td>
                 </tr>
             </tbody>
         </table>
-        <button class="btn btn-primary" ng-click = "reset()">Reset</button>
+        {% if session['logged_in'] == True %}
+        <button class="btn btn-primary" ng-click = "deleteAllAnswers()">Reset</button>
+         {% endif %}
     </div>
 </div>
 

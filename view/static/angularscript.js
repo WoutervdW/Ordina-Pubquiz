@@ -5,7 +5,7 @@ angular.module('module', ['ngRoute'])
         $interpolateProvider.endSymbol('//');
     })
     //controller
-    .controller('controller', function($scope, $http, $location, $window){
+    .controller('controller', function($scope, $http, $location, $window, $timeout){
         $http({
             method: "GET",
             url: "/api/v1.0/teams"
@@ -58,7 +58,7 @@ angular.module('module', ['ngRoute'])
                 newvariants = [];
             }
             $scope.newsubanswers = [{}];
-            var data = {"question": $scope.newquestion, "subanswers": subanswers, "category": $scope.newquestioncategory, "person_id": $scope.getLoggedinPerson().id, "active":$scope.newquestionactive};
+            var data = {"question": $scope.newquestion, "subanswers": subanswers, "category": $scope.newquestioncategory, "active":$scope.newquestionactive};
             $http.post("/api/v1.0/newquestion", JSON.stringify(data))
             $scope.newquestion = "";
             window.location.reload();
@@ -72,11 +72,16 @@ angular.module('module', ['ngRoute'])
             var data = {"id":question.id, "active":question.active}
             $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
         }
+        $scope.updateQuestionNumber = function(question){
+            var data = {"id":question.id, "questionnumber": question.questionnumber}
+            $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
+
+        }
         $scope.updateAnswerCheck = function(answer){
-            var data = {"id": answer.id, "correct": answer.correct, "person_id":$scope.getLoggedinPerson().id}
+            var data = {"id": answer.id, "correct": answer.correct}
             $http.post("/api/v1.0/updateanswer", JSON.stringify(data))
         }
-        $scope.reset = function(){
+        $scope.deleteAllAnswers = function(){
             $http.post("/api/v1.0/reset")
         }
         $scope.addTeam = function(team){
@@ -94,14 +99,16 @@ angular.module('module', ['ngRoute'])
             window.location.reload();
         }
 
-        $scope.login = function(){
-            var data = {"username": $scope.username, "password": $scope.password}
-            $http.post("/login", JSON.stringify(data))
+        //interval = 1000;
+        for (i = 0; i < 5; i++){
+            setTimeOut(i)
         }
-
-        //todo: return person that is logged in
-        $scope.getLoggedinPerson = function(){
-            return {id: "2", personname:"admin"} ;
+        function setTimeOut(i){
+            $timeout( function(){
+                $scope.test1 = i;
+            }, 5000);
         }
+            //interval = interval + 1000;
     });
+
 

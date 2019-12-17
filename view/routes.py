@@ -1,5 +1,5 @@
 from view import view, db
-from flask import Flask, jsonify, render_template, abort, request, redirect, url_for, flash, make_response
+from flask import Flask, jsonify, render_template, abort, request, redirect, url_for, flash, make_response, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func, distinct
 import main
@@ -10,7 +10,6 @@ import datetime
 import app
 import cv2
 import numpy as np
-from flask_login import current_user, login_user
 from view.models import Team, TeamSchema, Question, QuestionSchema, SubAnswer, SubAnswerSchema, Variant, VariantSchema, Category, CategorySchema, Answersheet, Person, \
 PersonSchema, SubAnswerGiven, SubAnswerGivenSchema, Word
 from werkzeug.utils import secure_filename
@@ -45,19 +44,34 @@ def reveal():
     return render_template('revealwinner.html')
 
 
-@view.route('/login', methods=['POST', 'GET'])
+@view.route('/login')
 def login():
-    if current_user.is_authenticated:
+    if 'logged_in' in session and session['logged_in']:
+        return render_template('index.html')
+    return render_template('login.html')
+
+
+@view.route('/api/v1.0/login', methods=['POST'])
+def do_login():
+    username = request.form['username']
+    password = request.form['password']
+    user = Person.query.filter_by(personname=username).first()
+    if user and user.check_password(password):
+        session['logged_in'] = True
+        session['userid'] = user.id
         return redirect(url_for('index'))
-    if request.method == 'POST':
-        post = request.get_json()
-        username = post.get('username')
-        print(username)
-        pw = post.get('password')
-        user = Person.query.filter_by(personname=username).first()
-        if user is None or not user.check_password(pw):
-            flash('Invalid username or password')
-    return render_template('login.html', title='Sign In')
+    else:
+        if user:
+            flash('Wachtwoord klopt niet')
+        else:
+            flash('Gebruiker bestaat niet')
+        return login()
+
+
+@view.route("/logout")
+def logout():
+    session['logged_in'] = False
+    return login()
 
 
 @view.route('/api/v1.0/teams', methods=['GET'])
@@ -127,24 +141,37 @@ def add_question():
     if category is None:
         category = Category(name=newquestioncategory)
 
-    newquestionperson_id = post.get('person_id')
+    newquestionperson_id = session['userid']
     newquestionactive = post.get('active')
     q = Question(question=newquestion, questioncategory=category,
         person_id=newquestionperson_id, active=newquestionactive, subanswers=subanswers)
     db.session.add(q)
     db.session.commit()
-    return
+    return 'OK'
 
 
 @view.route('/api/v1.0/updatequestion', methods=['POST'])
 def update_question():
     post = request.get_json()
     id = post.get('id')
-    questionactive = post.get('active')
     q = Question.query.filter_by(id=id).first()
-    q.active = questionactive
+    if post.get('active') is not None:
+        questionactive = post.get('active')
+        q.active = questionactive
+
+    if post.get('questionnumber') is not None:
+        questionnumber = int(post.get('questionnumber'))
+        while True:
+            qtemp = Question.query.filter_by(questionnumber=questionnumber).first()
+            if qtemp is None:
+                q.questionnumber = questionnumber
+                break
+            else:
+                if qtemp.id == id:
+                    break
+                questionnumber = questionnumber + 1
     db.session.commit()
-    return
+    return 'OK'
 
 
 @view.route('/api/v1.0/removequestion', methods=['POST'])
@@ -157,6 +184,7 @@ def remove_question():
     SubAnswer.query.filter_by(question_id=id).delete()
     Question.query.filter_by(id=id).delete()
     db.session.commit()
+    return 'OK'
 
 
 @view.route('/api/v1.0/updateanswer', methods=['POST'])
@@ -164,19 +192,19 @@ def update_answer():
     post = request.get_json()
     id = post.get('id')
     answercorrect = post.get('correct')
-    person_id = post.get('person_id')
+    person_id = session['userid']
     sa = SubAnswerGiven.query.filter_by(id=id).first()
     sa.correct = answercorrect
     sa.person_id = person_id
     db.session.commit()
-    return
+    return 'OK'
 
 
 @view.route('/api/v1.0/reset', methods=['POST'])
 def reset():
     SubAnswerGiven.query.delete()
     db.session.commit()
-    return
+    return 'OK'
 
 
 @view.route('/api/v1.0/newteam', methods=['POST'])
@@ -186,7 +214,7 @@ def addteam():
     team = Team(teamname=teamname)
     db.session.add(team)
     db.session.commit()
-    return
+    return 'OK'
 
 
 @view.route('/api/v1.0/removeteam', methods=['POST'])
@@ -195,15 +223,14 @@ def remove_team():
     id = post.get('id')
     Team.query.filter_by(id=id).delete()
     db.session.commit()
-    return
+    return 'OK'
 
 
 @view.route('/api/v1.0/removeteams', methods=['POST'])
 def remove_teams():
-    post = request.get_json()
     Team.query.delete()
     db.session.commit()
-    return
+    return 'OK'
 
 
 @view.route('/uploader', methods=['GET', 'POST'])

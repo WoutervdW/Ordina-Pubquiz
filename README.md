@@ -19,3 +19,6 @@ docker exec -t <container_name> pg_dumpall -c -U postgres > backup.sql
 
 ## Restore
 docker exec -i <postgres_container_name> psql -U postgres -d ordina-pubquiz < backup.sql
+
+## Git for large files
+https://git-lfs.github.com/

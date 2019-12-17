@@ -7,6 +7,7 @@ class Person(db.Model):
     __tablename__ = 'person'
     id = db.Column(db.Integer, primary_key=True)
     personname = db.Column(db.String(255))
+    password_hash = db.Column(db.String(255))
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -14,10 +15,11 @@ class Person(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
 class PersonSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('id', 'personname')
+        fields = ('id', 'personname', 'password_hash')
 
 
 class Team(db.Model):
@@ -85,6 +87,7 @@ class SubAnswerSchema(ma.Schema):
 class Question(db.Model):
     __tablename__ = 'question'
     id = db.Column(db.Integer, primary_key=True)
+    questionnumber = db.Column(db.Integer)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
     createdby = db.relationship('Person')
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
@@ -100,7 +103,7 @@ class Question(db.Model):
 class QuestionSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('id', 'person_id', 'category_id', 'question', 'active', 'subanswers', 'questioncategory', 'createdby')
+        fields = ('id', 'questionnumber', 'person_id', 'category_id', 'question', 'active', 'subanswers', 'questioncategory', 'createdby')
     subanswers = ma.Nested(SubAnswerSchema(many=True))
     questioncategory = ma.Nested(CategorySchema)
     createdby = ma.Nested(PersonSchema)

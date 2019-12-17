@@ -13,16 +13,19 @@
         <table class="table table-hover table-sm">
             <thead>
                 <tr>
+                    <th scope = "col" ng-click = "sortBy('questionnumber')">Vraagnummer</th>
                     <th scope = "col" ng-click = "sortBy('question')" >Vraag</th>
                     <th scope = "col" ng-click = "sortBy('correct_answer')">Correct antwoord</th>
                     <th scope = "col" ng-click = "sortBy('category_id')">Categorie</th>
                     <th scope = "col" ng-click = "sortBy('person_id')">Aangemaakt door</th>
                     <th scope = "col" ng-click = "sortBy('active')">Actief</th>
+                    <th scope = "col"></th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat ="question in questions | orderBy:propertyName:reverse" >
-                    <td> //question.question//</td>
+                    <td><input type = "text" class = "form-control" ng-model="question.questionnumber" ng-change="updateQuestionNumber(question)"></td>
+                    <td>//question.question//</td>
                     <td>
                         <table class = "table table-borderless">
                             <tbody>
@@ -35,9 +38,10 @@
                     <td>//question.questioncategory.name//</td>
                     <td>//question.createdby.personname//</td>
                     <td><label class="switch"><input type="checkbox" ng-model="question.active" ng-change="updateQuestionActive(question)"><span class="slider round"></span></label></td>
-                    <td><button type="button" class = "btn btn-default btn-xs remove-item" ng-click="removeQuestion(question)"><span class="glyphicon glyphicon-remove"></span></button></td>
+                    <td><button type="button" class = "btn btn-danger" ng-click="removeQuestion(question)"><span class="glyphicon glyphicon-remove"></span></button></td>
                 </tr>
                 <tr>
+                    <td></td>
                     <td><input type = "text" class = "form-control" ng-model = "newquestion"></td>
                     <td style="white-space:nowrap;">
                         <table class = "table table-borderless">
@@ -56,7 +60,7 @@
                                 <option ng-repeat = "category in categories" ng-value="category.name">//category.name//</button></option>
                             </datalist>
                     </td>
-                    <td ng-model = "newquestionperson">//getLoggedinPerson().personname//</td>
+                    <td></td>
                     <td><label class="switch"><input type="checkbox" ng-model = "newquestionactive"  ng-init="newquestionactive=true"><span class="slider round"></span></label></td>
                     <td><button class="btn btn-primary" ng-click = "addQuestion()">Voeg toe</button></td>
                 </tr>
