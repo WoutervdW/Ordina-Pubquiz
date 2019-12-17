@@ -7,15 +7,25 @@
 <body>
 {% extends "base.html" %}
 {% block content %}
-<div class = "wrapper"  ng-app = "module" ng-controller = "controller">
+<div class = "wrapper">
     <h2>Inloggen</h2>
-    <form>
+    <form action = "/api/v1.0/login" method="POST">
         <p><label>Gebruikersnaam</label>
-        <input class = "form-control" ng-model = "username"></p>
+        <input class = "form-control" name="username"></p>
         <p><label>Wachtwoord</label>
-        <input type = "password" class = "form-control" ng-model = "password"></p>
-        <p><button class="btn btn-primary" ng-click = "login()">Login</button></p>
+        <input type = "password" class = "form-control" name="password"></p>
+        <p><input type = "submit" class="btn btn-primary" value = "Login"></p>
     </form>
+    {% with messages = get_flashed_messages() %}
+	  {% if messages %}
+	    {% for message in messages %}
+		  <div class="alert alert-warning alert-dismissible" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+			{{message}}
+		  </div>
+		{% endfor %}
+	  {% endif %}
+	{% endwith %}
 </div>
 {%endblock%}
 </body>

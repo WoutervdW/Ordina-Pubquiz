@@ -46,15 +46,31 @@ def reveal():
 
 @view.route('/login')
 def login():
-    if not session.get('logged_in'):
-        return render_template('login.html')
-    return render_template('index.html')
+    if session['logged_in']:
+        return render_template('index.html')
+    return render_template('login.html')
 
 
-@view.route('/logout')
+@view.route('/api/v1.0/login', methods=['POST'])
+def do_admin_login():
+    username = request.form['username']
+    password = request.form['password']
+    user = Person.query.filter_by(personname=username).first()
+    if user and user.check_password(password):
+        session['logged_in'] = True
+        return redirect(url_for('index'))
+    else:
+        if user:
+            flash('Wachtwoord klopt niet')
+        else:
+            flash('Gebruiker bestaat niet')
+        return login()
+
+
+@view.route("/logout")
 def logout():
     session['logged_in'] = False
-    return render_template('login.html')
+    return login()
 
 
 @view.route('/api/v1.0/teams', methods=['GET'])
@@ -102,21 +118,6 @@ def get_answers():
     allanswers = SubAnswerGiven.query.all()
     result = answers_schema.dump(allanswers)
     return jsonify(result)
-
-
-@view.route('/api/v1.0/login', methods=['POST'])
-def loginUser():
-    post = request.get_json()
-    username = post.get('username')
-    password = post.get('password')
-    user = Person.query.filter_by(personname=username).first()
-    if user and user.check_password(password):
-        session['logged_in'] = True
-        print('login')
-        return 'OK'
-    flash('Inloggegevens niet correct')
-    print('notlogin')
-    return 'not OK'
 
 
 @view.route('/api/v1.0/newquestion', methods=['POST'])
