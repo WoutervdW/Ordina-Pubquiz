@@ -46,7 +46,7 @@ def reveal():
 
 @view.route('/login')
 def login():
-    if session['logged_in']:
+    if 'logged_in' in session and session['logged_in']:
         return render_template('index.html')
     return render_template('login.html')
 

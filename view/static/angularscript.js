@@ -5,7 +5,7 @@ angular.module('module', ['ngRoute'])
         $interpolateProvider.endSymbol('//');
     })
     //controller
-    .controller('controller', function($scope, $http, $location, $window){
+    .controller('controller', function($scope, $http, $location, $window, $timeout){
         $http({
             method: "GET",
             url: "/api/v1.0/teams"
@@ -98,5 +98,17 @@ angular.module('module', ['ngRoute'])
             $http.post("/api/v1.0/removeteams")
             window.location.reload();
         }
+
+        //interval = 1000;
+        for (i = 0; i < 5; i++){
+            setTimeOut(i)
+        }
+        function setTimeOut(i){
+            $timeout( function(){
+                $scope.test1 = i;
+            }, 5000);
+        }
+            //interval = interval + 1000;
     });
+
 
