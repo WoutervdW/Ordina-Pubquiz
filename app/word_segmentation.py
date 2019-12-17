@@ -4,15 +4,65 @@ import cv2
 import numpy as np
 from app.line_segmentation import crop_and_warp
 from view.models import Word
+from app.sample_preprocessor import preprocess
+from app.Model import Model
+from view.models import SubAnswerGiven
+from view.models import SubAnswer
+from view.models import Question
+from view.models import Variant
+from view.models import Answersheet
+from view.models import Team
+from app.DataLoader import Batch
+from view.config import InputConfig
 
 
-def get_words_image(line_image, multiply_factor, res):
+def increase_contrast(img):
+    # increase contrast
+    pxmin = np.min(img)
+    pxmax = np.max(img)
+    imgContrast = (img - pxmin) / (pxmax - pxmin) * 255
+
+    # increase line width
+    kernel_contrast = np.ones((12, 12), np.uint8)
+    imgMorph = cv2.erode(imgContrast, kernel_contrast, iterations=1)
+
+    return imgMorph
+
+
+def infer(_model, word_image):
+    """
+    recognize text in image provided by file path
+    """
+    # image = fn_img
+    fn_img = cv2.cvtColor(word_image, cv2.COLOR_BGR2GRAY)
+
+    # We will set a threshold for the gray lines to become clear black for the recognition
+    ret, thresh4 = cv2.threshold(fn_img, 220, 255, cv2.THRESH_BINARY)
+    # We increase the thickness of the lines to make the program better at reading the letters
+    fn_img = increase_contrast(thresh4)
+
+    image = preprocess(fn_img, Model.img_size)
+    batch = Batch([image])
+    (recognized, probability) = _model.infer_batch(batch, False)
+    print('Recognized:', '"' + recognized[0] + '"')
+    if probability is not None:
+        print('Probability:', probability[0])
+    return recognized, probability
+
+
+def read_word_from_image(image_to_read, model):
+    results = infer(model, image_to_read)
+    return results
+
+
+def save_word_details(line_image, multiply_factor, res, number_box_size, db=None, model=None, answersheet_id=None, line_number=-1, subanswer_number=-1):
     words = []
     index = 0
+    predicted_line = ""
     for (j, w) in enumerate(res):
         (word_box, word_img) = w
         (x, y, w, h) = word_box
-        x_new = (x * multiply_factor) + 5
+        x_new = (x * multiply_factor) + (number_box_size * multiply_factor)
         y_new = y * multiply_factor
         width_new = w * multiply_factor
         height_new = h * multiply_factor
@@ -20,7 +70,78 @@ def get_words_image(line_image, multiply_factor, res):
         # We want to apply the crop and saving on the original line image
         cropped = crop_and_warp(line_image[0], rect)
         words.append([cropped, line_image[1], index])
+
+        if db is not None:
+            # Save the word image to the database!
+            # convert the image to byte array so it can be saved in the database
+            word_image = cropped.tostring()
+            # create an Image object to store it in the database
+            # TODO fill in the other details as well! (not just the image)
+            word_width = len(cropped)
+            word_height = len(cropped[0])
+            print("save the word to the database with width %s and height %s" % (word_width, word_height))
+
+            read_results = read_word_from_image(cropped, model)
+            print("saving word with recognized word " + read_results[0][0])
+            predicted_line = predicted_line + read_results[0][0] + " "
+            new_word = Word(
+                line_id=line_image[2],
+                word_recognised=read_results[0],
+                word_image=word_image,
+                image_width=word_width,
+                image_height=word_height
+            )
+            # add the object to the database session
+            db.session.add(new_word)
+            # commit the session so that the image is stored in the database
+            db.session.commit()
+
         index += 1
+
+    if db is not None:
+        answersheet_detail = InputConfig.page_lines[1]
+        print("answersheet number " + str(answersheet_id))
+        line_detail = answersheet_detail[line_number]
+        print("line detail " + str(line_detail))
+        if str(line_detail).isdigit():
+            print("This line is a valid question")
+            # If it's a digit we know it is a correct question, so we can start finding the question details
+            # TODO @Sander: find correct question id (possibly configuration)
+            # We assume the configuration is always correct. It returns a question id and a subanswer id
+            question_id = InputConfig.question_to_id.get(str(line_detail))
+            sub_answer_id = question_id[1][subanswer_number]
+            print("question id " + str(question_id))
+            # question = Question.query.filter_by(id=question_id[0]).first()
+            sub_answer = SubAnswer.query.filter_by(id=sub_answer_id).first()
+            # TODO @Sander: For now we assume there is only 1. Solve this later.
+            variant = Variant.query.filter_by(subanswer_id=sub_answer.id).first()
+
+            print("sub_answer id " + str(sub_answer.id))
+            print("variant id " + str(variant.id))
+            # get the team. The answersheet_id should always exist in the database and should always be exactly one
+            answersheet = Answersheet.query.filter_by(id=answersheet_id).first()
+            team_id = answersheet.get_team_id()
+            team = Team.query.filter_by(id=team_id).first()
+            answered_by = team.get_team_name()
+            print("team_id  " + str(team_id))
+            print("answered_by " + str(answered_by))
+            # correct is always false at first and can be set to True later
+            # TODO @Sander: person_id is now always the same, how will this be determined?
+            #     checkedby="answerchecker",
+            # corr_answer = variant.get_answer(),
+            #     answered_by=answered_by,
+            #     confidence=words_results[1],
+            sub_answer_given = SubAnswerGiven(
+                question_id=question_id[0],
+                team_id=team_id,
+                corr_answer_id=sub_answer.id,
+                person_id=2,
+                correct=False,
+                line_id=line_image[2],
+                answer_given=predicted_line
+            )
+            db.session.add(sub_answer_given)
+            db.session.commit()
     return words
 
 

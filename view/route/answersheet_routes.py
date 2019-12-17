@@ -2,6 +2,7 @@ from view import view, db
 from view.models import Answersheet
 from view.models import Line
 from view.models import Word
+from view.models import SubAnswerGiven
 from flask import request
 from flask import make_response
 from flask import render_template
@@ -54,6 +55,10 @@ def answersheet_all():
 
 @view.route('/nuke/all', methods=['GET'])
 def nuke_all():
+    SubAnswerGiven.query.delete()
+    db.session.commit()
+    db.engine.execute('alter sequence subanswergiven_id_seq RESTART with 1')
+
     Word.query.delete()
     db.session.commit()
     db.engine.execute('alter sequence word_id_seq RESTART with 1')

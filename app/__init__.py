@@ -7,11 +7,9 @@ https://towardsdatascience.com/build-a-handwritten-text-recognition-system-using
 import sys
 from app.Model import Model
 from app.Model import DecoderType
-from app.sample_preprocessor import preprocess
-from app.DataLoader import Batch
 from app.pdf_to_image import convert_pdf_to_image
 from app.line_segmentation import line_segmentation, crop_and_warp
-from app.word_segmentation import word_segmentation, prepare_image, find_rect, show_image, save_word_image, get_words_image
+from app.word_segmentation import word_segmentation, prepare_image, find_rect, show_image, save_word_image, save_word_details
 import os
 import cv2
 import argparse
@@ -19,38 +17,29 @@ from view.models import Answersheet
 from view.models import Team
 from view.models import SubAnswerGiven
 from view.models import SubAnswer
+from view.models import Question
+from view.models import Variant
 from view.config import InputConfig
+import numpy as np
 
 
-def infer(_model, word_image):
-    """
-    recognize text in image provided by file path
-    """
-    # image = fn_img
-    fn_img = cv2.cvtColor(word_image, cv2.COLOR_BGR2GRAY)
-    image = preprocess(fn_img, Model.img_size)
-    batch = Batch([image])
-    (recognized, probability) = _model.infer_batch(batch, True)
-    print('Recognized:', '"' + recognized[0] + '"')
-    print('Probability:', probability[0])
-    return recognized, probability
-
-
-def read_word_from_image(image_to_read, model):
-    results = infer(model, image_to_read)
-    return results
-
+line_number = 0
 
 def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan", db=None, answersheet_id=None):
+    global line_number
+    word_index = 0
     # gray = cv2.cvtColor(answer_sheet_image, cv2.COLOR_BGR2GRAY)
     # Now we have the answer sheet in image form and we can move on to the line segmentation
     output_folder = "out/"
     lines = line_segmentation(answer_sheet_image, save_image, output_folder, sheet_name, db, answersheet_id)
-    # We save the results to a file, which will be in the sheet subfolder with the sheet name.
-    # f = open(output_folder + sheet_name + "/" + sheet_name + ".txt", "w")
 
+    # We keep track of which question is being handled, because 1 question can have multiple lines
+    prev_question = -1
+    subanswer_number = 0
     # After the line segmentation is done we can find the separate words
     for line_image in lines:
+        line_number += 1
+        print("processing line: " + str(line_number))
         line = line_image[0]
         # -kernelSize: size of filter kernel (odd integer)
         # -sigma: standard deviation of Gaussian function used for filter kernel
@@ -60,62 +49,26 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         resized_height = 50
         multiply_factor = original_height / resized_height
         # After the resizing, the size of the number box will always be around this value.
-        number_box_size = 62
+        number_box_size = 66
         line = prepare_image(line, resized_height, number_box_size)
         # TODO test out the theta and min_area parameter changes if the results are not good.
-        res = word_segmentation(line, kernel_size=25, sigma=11, theta=5, min_area=150)
+        res = word_segmentation(line, kernel_size=25, sigma=11, theta=7, min_area=100)
 
         # iterate over all segmented words
-        print('Segmented into %d words' % len(res))
-        if save_image:
-            save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, db, number_box_size)
-        #
-        # # We can now examine each word.
-        words = get_words_image(line_image, multiply_factor, res)
-        words_results = []
-        result_line = "line " + str(words[0][1]) + " predictions"
-        for word in words:
-            # TODO add contrast to each word
-            read_results = read_word_from_image(word[0], model)
-            words_results.append(read_results)
-            result_line = result_line + " word: " + str(word[2]) + " " + str(read_results[0]) + " with probability " + str(read_results[1])
-            print(words_results)
-            if db is not None:
-                answersheet_detail = InputConfig.page_lines[answersheet_id]
-                # TODO @Sander: find correct question id (possibly configuration)
-                # We assume the configuration is always correct. It returns a question id and a subanswer id
-                question_id = InputConfig.question_to_id.get("1")
-                question = SubAnswer.query.filter_by(id=question_id[1]).first()
-                # TODO @Sander: get the correct answer (from the question)
-                # get the team. The answersheet_id should always exist in the database and should always be exactly one
-                answersheet = Answersheet.query.filter_by(id=answersheet_id).first()
-                team_id = answersheet.get_team_id()
-                team = Team.query.filter_by(id=team_id).first()
-                answered_by = team.get_team_name()
-                # TODO @Sander: find corr_answer_id and corr_answer (possibly configuration) this should be filled in the form
-                # correct is always false at first and can be set to True later
-                # TODO @Sander: person_id is now always the same, how will this be determined?
-                s = SubAnswerGiven(
-                    question_id=question_id[0],
-                    corr_question=question.get_question(),
-                    team_id=team_id,
-                    answered_by=answered_by,
-                    corr_answer_id="",
-                    corr_answer="",
-                    answer_given=words_results[0],
-                    correct=False,
-                    confidence=words_results[1],
-                    person_id=2,
-                    checkedby="answerchecker",
-                    line_id=line_image[2]
-                )
-
-        result_line = result_line + "\n"
-        f.write(result_line)
-
-    # For now write the results to a file.
-    # TODO connect this to the answer checker.
-    # f.close()
+        # print('Segmented into %d words' % len(res))
+        # if save_image:
+        #     save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, db, number_box_size)
+        # #
+        # We can now examine each word.
+        answersheet_detail = InputConfig.page_lines[1]
+        line_detail = answersheet_detail[line_number]
+        question_id = InputConfig.question_to_id.get(str(line_detail))
+        if question_id == prev_question:
+            subanswer_number += 1
+        else:
+            prev_question = question_id
+            subanswer_number = 0
+        save_word_details(line_image, multiply_factor, res, number_box_size, db, model, answersheet_id, line_number, subanswer_number)
 
 
 def run_program(pubquiz_answer_sheets, save_image=False, db=None):

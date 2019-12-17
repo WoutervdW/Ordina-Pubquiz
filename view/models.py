@@ -59,6 +59,9 @@ class Variant(db.Model):
     answer = db.Column(db.String(255))
     isNumber = db.Column(db.Boolean)
 
+    def get_answer(self):
+        return self.answer
+
 
 class VariantSchema(ma.Schema):
     class Meta:
@@ -160,6 +163,7 @@ class Word(db.Model):
     __tablename__ = 'word'
     id = db.Column(db.Integer, primary_key=True)
     line_id = db.Column(db.Integer, db.ForeignKey('line.id'))
+    word_recognised = db.Column(db.String(255))
     word_image = db.Column(db.LargeBinary)
     image_width = db.Column(db.Integer)
     image_height = db.Column(db.Integer)
