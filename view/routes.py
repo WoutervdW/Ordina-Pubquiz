@@ -44,6 +44,11 @@ def reveal():
     return render_template('revealwinner.html')
 
 
+@view.route('/questionplayer')
+def playquestions():
+    return render_template('questionplayer.html')
+
+
 @view.route('/login')
 def login():
     if 'logged_in' in session and session['logged_in']:

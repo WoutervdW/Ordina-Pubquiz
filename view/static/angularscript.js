@@ -1,4 +1,4 @@
-// define angular interpolationtags as {a a}
+// define angular interpolationtags as //
 angular.module('module', ['ngRoute'])
     .config(function($interpolateProvider) {
         $interpolateProvider.startSymbol('//');
@@ -108,14 +108,44 @@ angular.module('module', ['ngRoute'])
             $scope.teams = $filter('orderBy')($scope.teams, 'score', false)
         });
         $scope.i = 0;
-        $scope.revealteams = []
+        $scope.revealteams = [];
+
         $interval( function(){
+        $scope.time = $scope.time + 1000;
             if ($scope.i < $scope.teams.length){
                 $scope.revealteams.push({"teamname": $scope.teams[$scope.i].teamname, "score":$scope.teams[$scope.i].score});
                 $scope.revealteams = $filter('orderBy')($scope.revealteams, 'score', true)
                 $scope.i =  $scope.i + 1;
             }
-        }, 3000);
+        }, 4000);
+    })
+    .controller('pubquizcontroller', function($scope, $http, $filter, $interval){
+        $http({
+            method: "GET",
+            url: "/api/v1.0/questions"
+        }).then(function (response){
+            $scope.questions = response.data;
+            $scope.questions = $scope.questions.filter(q => q.questionnumber  > 0);
+            $scope.questions = $filter('orderBy')($scope.questions, 'questionnumber', false);
+            showQuestions();
+        });
+
+        function showQuestions(){
+        i = 0;
+            var showQuestion = function(){
+                if (i < $scope.questions.length){
+                $scope.displayedquestion = $scope.questions[i];
+                i =  i + 1;
+                }
+                else{
+                    $scope.displayedquestion.questionnumber = "";
+                    $scope.displayedquestion.question = "einde pubquiz";
+
+                }
+            }
+        showQuestion();
+        $interval(showQuestion, 30000);
+        };
     });
 
 
