@@ -3,6 +3,7 @@ from flask import Flask, jsonify, render_template, abort, request, redirect, url
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func, distinct
 import main
+import answer_checking
 import json
 import random
 import string
@@ -250,7 +251,9 @@ def upload():
 
 @view.route('/api/v1.p/checkanswers', methods=['POST'])
 def check_answers():
-    print("checking answers!")
+    answer_checking.check_all_answers(db)
+    return "answers are checked"
+
 
 
 
