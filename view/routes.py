@@ -247,3 +247,10 @@ def upload():
         x.start()
         return "answersheet is being processed"
 
+
+@view.route('/api/v1.p/checkanswers', methods=['POST'])
+def check_answers():
+    print("checking answers!")
+
+
+

@@ -49,7 +49,8 @@
         </table>
         {% if session['logged_in'] == True %}
         <button class="btn btn-primary" ng-click = "deleteAllAnswers()">Reset</button>
-         {% endif %}
+        <button class="btn btn-primary" ng-click = "checkAllAnswers()">Check answers</button>
+        {% endif %}
     </div>
 </div>
 
