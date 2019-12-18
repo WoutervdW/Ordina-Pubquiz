@@ -84,6 +84,9 @@ angular.module('module', ['ngRoute'])
         $scope.deleteAllAnswers = function(){
             $http.post("/api/v1.0/reset")
         }
+        $scope.checkAllAnswers = function(){
+            $http.post("/api/v1.p/checkanswers")
+        }
         $scope.addTeam = function(team){
             var data = {"teamname":$scope.newteam}
             $http.post("/api/v1.0/newteam", JSON.stringify(data))
