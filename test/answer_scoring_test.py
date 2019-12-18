@@ -1,6 +1,6 @@
 import unittest
-from answer_scoring.answer_scoring import score_answers_one_by_one
-from answer_scoring.qa import Question
+from answer_checking.answer_scoring import score_answers_one_by_one
+from answer_checking.qa import Question
 
 
 # TODO: Update with changes in answer scoring and string processing
