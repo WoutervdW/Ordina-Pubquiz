@@ -44,6 +44,14 @@ services:
           - 5000:5000
         links:
           - postgres
+          
+  #node:
+  #      build:
+  #          context: .
+  #          dockerfile: Dockerfile-node
+  #      volumes:
+   #       - "./:/usr/src/app"
+        
 
 volumes:
     db_volume:
