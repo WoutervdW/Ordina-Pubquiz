@@ -4,5 +4,19 @@ body{
    /* background-color: #000000 !important; */
     overflow: hidden !important;
     font-color: white;
+    text-align: center;
 }
 
+.questionnumber{
+    background-color: #F07D00;
+    color: white;
+    font-size: 20pt;
+    padding: 20px;
+    margin:20px;
+}
+
+.question{
+    color: #F07D00;
+    margin: 20px;
+    font-size: 30pt;
+}
