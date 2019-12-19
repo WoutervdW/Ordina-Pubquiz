@@ -59,14 +59,17 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         #     save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, number_box_size)
         # #
         # We can now examine each word.
-        answersheet_detail = InputConfig.page_lines[1]
-        line_detail = answersheet_detail[line_number]
-        question_id = InputConfig.question_to_id.get(str(line_detail))
-        if question_id == prev_question:
-            subanswer_number += 1
-        else:
-            prev_question = question_id
-            subanswer_number = 0
+        # answersheet_detail = InputConfig.page_lines[1]
+        line_detail = InputConfig.quiz[line_number]
+        if str(line_detail).isdigit():
+            question_id = line_detail
+            # If the line detail is a number, this corresponds to the question
+            print("processing question: " + str(question_id))
+            if question_id == prev_question:
+                subanswer_number += 1
+            else:
+                prev_question = question_id
+                subanswer_number = 0
         save_word_details(line_image, multiply_factor, res, number_box_size, db, model, answersheet_id, line_number, subanswer_number)
 
 

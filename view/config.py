@@ -27,59 +27,54 @@ class InputConfig:
     page_count = 7
     # Define which team belongs to which page.
     team_page = []
-    team_page.append("Wouter scan")
-    team_page.append("Wouter scan")
+    team_page.append("De Verliezers")
+    team_page.append("De Verliezers")
     page_1_line_number = 28
-    page_lines = []
-    # We will define all the lines in an array of arrays. The database starts with id 1,
-    # so we will define an empty array on the 0 index
-    page_lines.append([])
-    page_lines.append([])
-    # similarly to the answersheet we define an empty line since the database starts with id 1
-    page_lines[1].append("")
-    page_lines[1].append("team naam: De Winnars")
-    page_lines[1].append("vraag antwoord")
-    page_lines[1].append("Ronde 1: Eerste en enige ronde")
-    page_lines[1].append(1)
-    page_lines[1].append(2)
-    page_lines[1].append(2)
-    page_lines[1].append(2)
-    page_lines[1].append(2)
-    page_lines[1].append(2)
-    page_lines[1].append(3)
-    page_lines[1].append(3)
-    page_lines[1].append(4)
-    page_lines[1].append(5)
-    page_lines[1].append(6)
-    page_lines[1].append(7)
-    page_lines[1].append(7)
-    page_lines[1].append(7)
-    page_lines[1].append(7)
-    page_lines[1].append(7)
-    page_lines[1].append(8)
-    page_lines[1].append(8)
-    page_lines[1].append(8)
-    page_lines[1].append(8)
-    page_lines[1].append(8)
-    page_lines[1].append(9)
-    page_lines[1].append(10)
-    page_lines[1].append(11)
-    page_lines[1].append(12)
 
-    # Here we map which question id the question number belongs to (this should be updated to an extra column in the question)
-    question_to_id = {}
-    question_to_id["1"] = [5, [2]]
-    question_to_id["2"] = [6, [3, 4, 5, 6, 7]]
-    question_to_id["3"] = [7, [8, 9]]
-    question_to_id["4"] = [8, [10]]
-    question_to_id["5"] = [9, [11]]
-    question_to_id["6"] = [10, [12]]
-    question_to_id["7"] = [11, [13, 14, 15, 16, 17]]
-    question_to_id["8"] = [12, [18, 19, 20, 21, 22]]
-    question_to_id["9"] = [13, [23]]
-    question_to_id["10"] = [14, [24]]
-    question_to_id["11"] = [15, [25]]
-    question_to_id["12"] = [16, [26]]
+    quiz = []
+    quiz.append("")
+    quiz.append("team naam: De Winnaars")
+    quiz.append("Vraag | Antwoord")
+    quiz.append("Ronde 1: Eerste en enige ronde")
+    quiz.append(1)
+    quiz.append(2)
+    quiz.append(2)
+    quiz.append(2)
+    quiz.append(2)
+    quiz.append(2)
+    quiz.append(3)
+    quiz.append(3)
+    quiz.append(4)
+    quiz.append(5)
+    quiz.append(6)
+    quiz.append(7)
+    quiz.append(7)
+    quiz.append(7)
+    quiz.append(7)
+    quiz.append(7)
+    quiz.append(8)
+    quiz.append(8)
+    quiz.append(8)
+    quiz.append(8)
+    quiz.append(8)
+    quiz.append(9)
+    quiz.append(10)
+    quiz.append(11)
+    quiz.append(12)
+
+    question_subanswer = {}
+    question_subanswer["1"] = [8]
+    question_subanswer["2"] = [9, 10, 11, 12, 13]
+    question_subanswer["3"] = [16, 17]
+    question_subanswer["4"] = [18]
+    question_subanswer["5"] = [19]
+    question_subanswer["6"] = [20]
+    question_subanswer["7"] = [21, 22, 23, 24, 25]
+    question_subanswer["8"] = [31, 32, 33, 34, 35]
+    question_subanswer["9"] = [38]
+    question_subanswer["10"] = [39]
+    question_subanswer["11"] = [40]
+    question_subanswer["12"] = [41]
 
 
 

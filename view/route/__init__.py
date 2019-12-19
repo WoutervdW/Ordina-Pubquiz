@@ -10,7 +10,7 @@ from view.route.line_routes import get_answersheets_lines
 from view.route.answersheet_routes import answersheet_all
 from view.route.answersheet_routes import load_answersheet
 from view.route.answersheet_routes import nuke_all_answersheets
-
+from view.route.answersheet_routes import nuke_all
 
 from view.route.answer_routes import update_answer
 from view.route.answer_routes import reset
