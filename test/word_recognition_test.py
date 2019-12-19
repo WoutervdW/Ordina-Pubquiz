@@ -28,7 +28,7 @@ def increase_contrast(img):
     imgContrast = (img - pxmin) / (pxmax - pxmin) * 255
 
     # increase line width
-    kernel_contrast = np.ones((12, 12), np.uint8)
+    kernel_contrast = np.ones((4, 4), np.uint8)
     imgMorph = cv2.erode(imgContrast, kernel_contrast, iterations=1)
 
     return imgMorph
@@ -39,10 +39,12 @@ def infer(_model, word_image):
     recognize text in image provided by file path
     """
     fn_img = cv2.cvtColor(word_image, cv2.COLOR_BGR2GRAY)
-    ret, thresh4 = cv2.threshold(fn_img, 220, 255, cv2.THRESH_BINARY)
-    fn_img = increase_contrast(thresh4)
+    show_image(fn_img)
+    # ret, fn_img = cv2.threshold(fn_img, 220, 255, cv2.THRESH_BINARY)
+    fn_img = increase_contrast(fn_img)
     show_image(fn_img)
     image = preprocess(fn_img, Model.img_size)
+    show_image(image)
     batch = Batch([image])
     (recognized, probability) = _model.infer_batch(batch, True)
     print('Recognized:', '"' + recognized[0] + '"')
@@ -59,8 +61,8 @@ class WordRecognitionTest(unittest.TestCase):
     def test_word_recognition(self):
         model = Model(open('../model/charList.txt').read(), "../model/")
         scan_number = 0
-        line_number = 4
-        word_number = 1
+        line_number = 7
+        word_number = 0
         print(test_word(scan_number, line_number, word_number, model))
         self.assertEqual(True, True)
 
@@ -77,6 +79,16 @@ class WordRecognitionTest(unittest.TestCase):
         # If it arrives here without errors it has succesfully attempted to recoginize all words without errors
         self.assertTrue(True)
 
+    def test_test_word(self):
+        model = Model(open('../model/charList.txt').read(), "../model/")
+        path = "test_words/B.PNG"
+
+        word = cv2.imread(path)
+        show_image(word)
+        if word is not None:
+            read_results = read_word_from_image(word, model)
+            return read_results
+        return None
 
 
 

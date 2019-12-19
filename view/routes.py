@@ -11,7 +11,7 @@ import app
 import cv2
 import numpy as np
 from view.models import Team, TeamSchema, Question, QuestionSchema, SubAnswer, SubAnswerSchema, Variant, VariantSchema, Category, CategorySchema, Answersheet, Person, \
-PersonSchema, SubAnswerGiven, SubAnswerGivenSchema, Word
+PersonSchema, SubAnswerGiven, SubAnswerGivenSchema, Word, Line
 from werkzeug.utils import secure_filename
 from collections import OrderedDict
 import threading
@@ -117,8 +117,27 @@ def get_persons():
 def get_answers():
     answers_schema = SubAnswerGivenSchema(many=True)
     allanswers = SubAnswerGiven.query.all()
+    for answer in allanswers:
+        answer.line.image = "5"
     result = answers_schema.dump(allanswers)
     return jsonify(result)
+
+
+@view.route('/api/v1.0/getImage', methods=['GET'])
+def get_line_image_answerchecker():
+    # id = request.get_json()
+    print("get line for table with id " + str(5))
+    line = Line.query.filter_by(id=5).first()
+    image_data = line.line_image
+    # I need to know the exact shape it had in order to load it from the database
+    width = line.image_width
+    height = line.image_height
+    np_line = np.fromstring(image_data, np.uint8).reshape(width, height, 3)
+
+    ret, png = cv2.imencode('.png', np_line)
+    response = make_response(png.tobytes())
+    response.headers['Content-Type'] = 'image/png'
+    return "44"
 
 
 @view.route('/api/v1.0/newquestion', methods=['POST'])
@@ -198,6 +217,12 @@ def update_answer():
     sa.person_id = person_id
     db.session.commit()
     return 'OK'
+
+
+# @view.route('api/v1.0/loadLineImage', methods['POST'])
+# def load_line_image():
+#     print("testing this function")
+#     post = request.get_json()
 
 
 @view.route('/api/v1.0/reset', methods=['POST'])

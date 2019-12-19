@@ -16,9 +16,10 @@ def nuke_all_lines():
     return 'ok'
 
 
-@view.route("/lines/load/<int:line_id>", methods=['GET', 'POST'])
-def load_lines(line_id):
-    print("loading given line with id " + str(line_id))
+@view.route("/lines/load/<string:line_detail>", methods=['GET', 'POST'])
+def load_lines(line_detail):
+    print("loading given line with id " + str(line_detail))
+    line_id = int(line_detail.split("_")[1])
     line = Line.query.filter_by(id=line_id).first()
     if line is None:
         return "answer with id " + str(line_id) + " does not exist in the database."

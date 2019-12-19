@@ -2,7 +2,7 @@ Pubquiz Demo vragen!
 22 rgeles, elke regel 1 punt
 
 1: waar staat osd voor?
-Open Source Iets
+Open Source Development
 1
 
 2: noem 5 van de osd afdelingen

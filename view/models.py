@@ -125,16 +125,24 @@ class SubAnswerGiven(db.Model):
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
     checkedby = db.relationship('Person')
     line_id = db.Column(db.Integer, db.ForeignKey('line.id'), nullable=False)
+    line = db.relationship('Line')
+
+
+class LineSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('id', 'answersheet_id', 'image_width', 'image_height', 'image')
 
 
 class SubAnswerGivenSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('id', 'question', 'answered_by', 'corr_question', 'corr_answer', 'answer_given', 'correct', 'person_id', 'checkedby', 'confidence', 'answer_image', 'image_width', 'image_height')
+        fields = ('id', 'question', 'answered_by', 'corr_question', 'corr_answer', 'answer_given', 'correct', 'person_id', 'checkedby', 'confidence', 'line')
     checkedby = ma.Nested(PersonSchema)
     corr_question = ma.Nested(QuestionSchema)
     corr_answer = ma.Nested(SubAnswerSchema)
     answered_by = ma.Nested(TeamSchema)
+    line = ma.Nested(LineSchema)
 
 
 class Answersheet(db.Model):

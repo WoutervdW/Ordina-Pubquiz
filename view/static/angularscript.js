@@ -94,9 +94,18 @@ angular.module('module', ['ngRoute'])
             $http.post("/api/v1.0/removeteam", JSON.stringify(data))
             window.location.reload();
         }
-          $scope.removeTeams = function(){
+        $scope.removeTeams = function(){
             $http.post("/api/v1.0/removeteams")
             window.location.reload();
+        }
+        $scope.getImage = function(lineId){
+             $http({
+                method: "GET",
+                url: "/api/v1.0/getImage"
+            }).then(function (response){
+                $scope.teams = response.data;
+            });
+            console.log("line " + lineId);
         }
 
         //interval = 1000;

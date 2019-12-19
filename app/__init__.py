@@ -22,12 +22,11 @@ from view.models import Variant
 from view.config import InputConfig
 import numpy as np
 
-
 line_number = 0
+
 
 def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan", db=None, answersheet_id=None):
     global line_number
-    word_index = 0
     # gray = cv2.cvtColor(answer_sheet_image, cv2.COLOR_BGR2GRAY)
     # Now we have the answer sheet in image form and we can move on to the line segmentation
     output_folder = "out/"
@@ -57,7 +56,7 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         # iterate over all segmented words
         # print('Segmented into %d words' % len(res))
         # if save_image:
-        #     save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, db, number_box_size)
+        #     save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, number_box_size)
         # #
         # We can now examine each word.
         answersheet_detail = InputConfig.page_lines[1]

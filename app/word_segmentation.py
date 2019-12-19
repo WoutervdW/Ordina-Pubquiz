@@ -23,7 +23,7 @@ def increase_contrast(img):
     imgContrast = (img - pxmin) / (pxmax - pxmin) * 255
 
     # increase line width
-    kernel_contrast = np.ones((12, 12), np.uint8)
+    kernel_contrast = np.ones((4, 4), np.uint8)
     imgMorph = cv2.erode(imgContrast, kernel_contrast, iterations=1)
 
     return imgMorph
@@ -37,9 +37,9 @@ def infer(_model, word_image):
     fn_img = cv2.cvtColor(word_image, cv2.COLOR_BGR2GRAY)
 
     # We will set a threshold for the gray lines to become clear black for the recognition
-    ret, thresh4 = cv2.threshold(fn_img, 220, 255, cv2.THRESH_BINARY)
+    # ret, fn_img = cv2.threshold(fn_img, 220, 255, cv2.THRESH_BINARY)
     # We increase the thickness of the lines to make the program better at reading the letters
-    fn_img = increase_contrast(thresh4)
+    fn_img = increase_contrast(fn_img)
 
     image = preprocess(fn_img, Model.img_size)
     batch = Batch([image])
@@ -145,7 +145,7 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
     return words
 
 
-def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, db=None, number_box_size=60):
+def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, number_box_size=60):
     path = output_folder + sheet_name + "/line_" + str(line_image[1]) + "/words"
     if not os.path.exists(path):
         os.makedirs(path)
@@ -166,27 +166,6 @@ def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res,
         cv2.imwrite(path + '/word_' + str(index) + '.png', cropped)
         cv2.rectangle(line_image[0], (int(x_new), int(y_new)),
                       (int(x_new + width_new), int(y_new + height_new)), 0, 1)
-
-        if db is not None:
-            # Save the word image to the database!
-            # convert the image to byte array so it can be saved in the database
-            word_image = cropped.tostring()
-            # create an Image object to store it in the database
-            # TODO fill in the other details as well! (not just the image)
-            word_width = len(cropped)
-            word_height = len(cropped[0])
-            print("save the word to the database with width %s and height %s" % (word_width, word_height))
-
-            new_word = Word(
-                line_id=line_image[2],
-                word_image=word_image,
-                image_width=word_width,
-                image_height=word_height
-            )
-            # add the object to the database session
-            db.session.add(new_word)
-            # commit the session so that the image is stored in the database
-            db.session.commit()
 
         # draw bounding box in summary image
         cv2.rectangle(line_image[0], (x, y), (x + w, y + h), 0, 1)
