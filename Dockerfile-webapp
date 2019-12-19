@@ -1,5 +1,4 @@
-FROM ordina-pubquiz_backend
-
+FROM ordina-pubquiz_main
 ENV FLASK_APP "home.py"
 ENV FLASK_ENV "development"
 ENV FLASK_DEBUG True
