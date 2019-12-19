@@ -1,7 +1,8 @@
+from answer_checking import answer_checker
 from view import view, db
 from flask import request, session
 from view.models import SubAnswerGiven
-import answer_checking
+import answer_checking.answer_checker
 
 
 @view.route('/api/v1.0/updateanswer', methods=['POST'])
@@ -26,5 +27,5 @@ def reset():
 
 @view.route('/api/v1.p/checkanswers', methods=['POST'])
 def check_answers():
-    answer_checking.check_all_answers(db)
+    answer_checker.check_all_answers(db)
     return "answers are checked"
