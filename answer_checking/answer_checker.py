@@ -3,6 +3,7 @@ import re
 from view.models import Team
 from view.models import SubAnswerGiven
 from view.models import SubAnswer
+from view.models import Variant
 
 
 # TODO: check string similarity using fuzzywuzzy (https://www.datacamp.com/community/tutorials/fuzzy-string-python)
@@ -14,14 +15,20 @@ from view.models import SubAnswer
 # TODO: get questions from database
 
 
-def check_correct(answer, correct_answers):
+def check_correct(answer, correct_answer_variants):
+    """
+
+    :param answer: string of given answer
+    :param correct_answer_variants: list of strings: variants of correct answer
+    :return:
+    """
     # number_correct has to be True if the number exists and is correct, False if the number exists but isn't
     # correct and None if no number exists
-    for correct_answer in correct_answers:
-        number_correct = check_numerical_values(answer, correct_answer)  # Compare numbers in the answer
+    for correct_answer_variant in correct_answer_variants:
+        number_correct = check_numerical_values(answer, correct_answer_variant)  # Compare numbers in the answer
         if number_correct is None:
             # No number, check correctness based on string-based comparison
-            if check_string(answer, correct_answer):
+            if check_string(answer, correct_answer_variant):
                 return True
         else:
             if number_correct:
@@ -32,16 +39,16 @@ def check_correct(answer, correct_answers):
     return False
 
 
-def check_numerical_values(answer, correct_answer):
+def check_numerical_values(answer, correct_answer_variant):
     """
     Find all numbers in the answer
     :param answer:
-    :param correct_answer:
+    :param correct_answer_variant:
     :return:
     """
     all_digits_pattern = re.compile(r'\d+')  # get all individual numbers
     answer_values = all_digits_pattern.findall(answer)  # Find all numbers in the answer
-    correct_answer_values = all_digits_pattern.findall(correct_answer)  # Find all numbers in the correct answer
+    correct_answer_values = all_digits_pattern.findall(correct_answer_variant)  # Find all numbers in the correct answer
 
     if len(correct_answer_values) == 0:
         return None
@@ -54,14 +61,17 @@ def check_numerical_values(answer, correct_answer):
         return False
 
 
-def check_string(answer, correct_answer):
+def check_string(answer, correct_answer_variant):
     answer = preprocess_string(answer)
-    correct_answer = preprocess_string(correct_answer)
+    correct_answer_variant = preprocess_string(correct_answer_variant)
 
     # Select the string with the highest matching percentage
     # highest = process.extractOne(answer, correct_answers)
     # correct_answer_list.remove(highest[0])
-    return fuzz.WRatio(answer, correct_answer) > 80
+    # TODO @Wouter: return the ratio of correctness ("confidence") AND the decision of correctness
+    #  Implement confidence as distance of correctness from 0 or 100 (the closer to 50%, the less confident we can
+    #  be that the answer is actually wrong or right)
+    return fuzz.WRatio(answer, correct_answer_variant) > 80
 
 
 def preprocess_string(answer):
@@ -72,7 +82,35 @@ def preprocess_string(answer):
 def check_all_answers(db=None):
     print("Checking all answers")
     if db is not None:
-        given_answers = SubAnswerGiven.query.all()
-        for given_answer in given_answers:
-            variants = given_answer.corr_answer.variants
-            check_correct(given_answer, variants)
+        # get all given subanswers
+        subanswers_given = SubAnswerGiven.query.all()
+        for subanswer_given in subanswers_given:
+            print("Given answer: " + subanswer_given.answer_given)
+            # Get the question id of the given answer
+            question_id = subanswer_given.question_id
+
+            # Get the list of all subanswers that belong to the same question as subanswer_given
+            subanswers = SubAnswer.query.filter_by(question_id=question_id).all()
+
+            # Get all variants for each subanswer and append them into one (python) list
+            subanswer_variants_lists = []
+            for subanswer in subanswers:
+                subanswer_id = subanswer.id
+
+                variants = Variant.query.filter_by(subanswer_id=subanswer_id)
+                variant_answers = [variant.answer for variant in variants]
+                subanswer_variants_lists.append(variant_answers)
+
+            print("Correct answer options: " + str(subanswer_variants_lists))
+
+            for subanswer_variants in subanswer_variants_lists:
+                # TODO @wouter: remember checked answers! If an answer occurs twice, the second instance should not be
+                #  correct
+                if check_correct(subanswer_given.answer_given, subanswer_variants):
+                    print("correct")
+                    subanswer_given.correct = True
+                    db.session.commit()
+                subanswer_variants_lists.remove(subanswer_variants)
+
+            # TODO @wouter: change correct / incorrect buttons automatically live in view
+
