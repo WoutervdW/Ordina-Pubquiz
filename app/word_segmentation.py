@@ -99,18 +99,22 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
         index += 1
 
     if db is not None:
-        answersheet_detail = InputConfig.page_lines[1]
         print("answersheet number " + str(answersheet_id))
-        line_detail = answersheet_detail[line_number]
+        line_detail = InputConfig.quiz[line_number]
         print("line detail " + str(line_detail))
         if str(line_detail).isdigit():
             print("This line is a valid question")
             # If it's a digit we know it is a correct question, so we can start finding the question details
             # TODO @Sander: find correct question id (possibly configuration)
             # We assume the configuration is always correct. It returns a question id and a subanswer id
-            question_id = InputConfig.question_to_id.get(str(line_detail))
-            sub_answer_id = question_id[1][subanswer_number]
-            print("question id " + str(question_id))
+            # question_id = InputConfig.question_to_id.get(str(line_detail))
+            question_number = InputConfig.quiz[line_number]
+            # We assume there is exactly 1 question for the given question number
+            question = Question.query.filter_by(questionnumber=question_number).first()
+            question_id = question.id
+            # TODO @Sander: find a better way to get the sub answer
+            sub_answer_id = InputConfig.question_subanswer.get(str(question_number))[subanswer_number]
+            print("question number " + str(question_number))
             # question = Question.query.filter_by(id=question_id[0]).first()
             sub_answer = SubAnswer.query.filter_by(id=sub_answer_id).first()
             # TODO @Sander: For now we assume there is only 1. Solve this later.
@@ -132,7 +136,7 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
             #     answered_by=answered_by,
             #     confidence=words_results[1],
             sub_answer_given = SubAnswerGiven(
-                question_id=question_id[0],
+                question_id=question_id,
                 team_id=team_id,
                 corr_answer_id=sub_answer.id,
                 person_id=2,
