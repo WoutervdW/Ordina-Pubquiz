@@ -124,6 +124,9 @@ def run_program(pubquiz_answer_sheets, save_image=False, db=None):
 
             process_sheet(pages[p], model, save_image, sheet_name, db, answersheet_id)
 
+    global line_number
+    line_number = 0
+
 
 def save_answersheet():
     pubquiz_anser_sheets = 'scan.pdf'

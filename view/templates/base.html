@@ -5,7 +5,8 @@
     <title>Ordina Pubquiz</title>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="//code.angularjs.org/1.7.9/angular.min.js"></script>
-   <script src="//code.angularjs.org/1.7.9/angular-route.js"></script>
+    <script src="//code.angularjs.org/1.7.9/angular-route.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
     <script src="{{ url_for('static', filename='angularscript.js') }}"></script>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
@@ -22,6 +23,7 @@
     <a href = "/questions">Quizvragen</a>
     <a href = "/answerchecking">Nakijken</a>
     <a href = "/revealwinner">Uitslag</a>
+    <a href = "/questionplayer">Speel Pubquiz</a>
     <a href=  "/logout">Uitloggen</a>
     {% else %}
     <a href = "/answerchecking">Antwoorden</a>

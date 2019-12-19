@@ -3,12 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Onthulling</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='revealwinner.css') }}">
 </head>
+
+
 <body>
+
 {% extends "base.html" %}
 {% block content %}
-<div class = "container"  ng-app = "module" ng-controller = "controller">
-<div>5 seconds delay message : //test1//</div>
+<div ng-app = "module" ng-controller = "revealcontroller">
+    <div>
+        <ul ng-repeat = "team in revealteams">
+            <li>
+                <span class = "teamname">//team.teamname//</span>
+                <span class = "score">//team.score//</span>
+            </li>
+    </ul>
+    </div>
+</div>
 {% endblock %}
+
+
 </body>
+
+
+
 </html>
+

@@ -5,15 +5,16 @@ Pubquiz Demo vragen!
 Open Source Development
 1
 
-2: noem 5 van de osd afdelingen
+2: noem alle open source afdelingen afdelingen van Ordina. + bonuspunt voor een BUM naam
 Pythoneers
 JTech
-JSRoot
+JSRoots
 CodeStar
 nog een
+
 6
 
-3: De jaren ‘90 culthelden Beavis en Butthead droegen allebei een t-shirt met daarop het logo van een beroemde band. Om welke twee bands ging het? Ze zijn goed voor een half punt per stuk!
+3: De jaren ‘90 culthelden Beavis en Butthead droegen allebei een t-shirt met daarop het logo van een beroemde band. Om welke twee bands ging het?
 - Metallica
 - AC/DC
 8
@@ -26,7 +27,7 @@ Tin
 1643 – 1727
 10
 
-6: We branden los met een sportvraag! Bij welke sport duurt een wedstrijd langer (kijkend naar zuivere speeltijd)? Is dit A: basketbal of B: ijshockey?
+6: Sportvraag! Bij welke sport duurt een wedstrijd langer (kijkend naar zuivere speeltijd)? Is dit A: basketbal of B: ijshockey?
 B – IJshockey
 11
 
@@ -60,6 +61,7 @@ Brasil Kirin
 Sagres
 Scottish & Newcastle (voor 45,5%, 54,5% eigendom van Carlsberg)
 Vrumona (frisdrankfabrikant)
+Heineken
 16
 
 8: noem 5 albums van de beatles: (op wikipedia staan er 30, maar deze zouden ze moeten kennen)

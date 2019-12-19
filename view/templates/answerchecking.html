@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta charset="UTF-8">
     <title>Answers</title>
 </head>
 <body>
@@ -52,7 +51,8 @@
         </table>
         {% if session['logged_in'] == True %}
         <button class="btn btn-primary" ng-click = "deleteAllAnswers()">Reset</button>
-         {% endif %}
+        <button class="btn btn-primary" ng-click = "checkAllAnswers()">Check answers</button>
+        {% endif %}
     </div>
 </div>
 
