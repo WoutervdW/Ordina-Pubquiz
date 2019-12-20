@@ -13,6 +13,7 @@ def update_answer():
     person_id = session['userid']
     sa = SubAnswerGiven.query.filter_by(id=id).first()
     sa.correct = answercorrect
+    print(answercorrect)
     sa.person_id = person_id
     db.session.commit()
     return 'OK'

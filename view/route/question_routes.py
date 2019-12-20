@@ -54,7 +54,9 @@ def update_question():
             else:
                 if qtemp.id == id:
                     break
-                questionnumber = questionnumber + 1
+                q.questionnumber = questionnumber + 1
+    else:
+        q.questionnumber = 0
     db.session.commit()
     return 'OK'
 
