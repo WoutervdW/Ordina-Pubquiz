@@ -85,7 +85,7 @@ angular.module('module', ['ngRoute'])
             $http.post("/api/v1.0/reset")
         }
         $scope.checkAllAnswers = function(){
-            $http.post("/api/v1.p/checkanswers")
+            $http.post("/api/v1.0/checkanswers")
         }
         $scope.addTeam = function(team){
             var data = {"teamname":$scope.newteam}

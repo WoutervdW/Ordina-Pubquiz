@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <title>Answers</title>
 </head>
 <body>
@@ -17,7 +18,7 @@
                     <th scope = "col" ng-click = "sortBy('question_id')">Correct Antwoord</th>
                     <th scope = "col" ng-click = "sortBy('answer_given')" >Gegeven Antwoord</th>
                     <th scope = "col" ng-click = "sortBy('correct')">Correct</th>
-                    <th scope = "col" ng-click = "sortBy('answer_image')">Afbeelding</th>
+                    <th width = "200%" scope = "col" ng-click = "sortBy('answer_image')">Afbeelding</th>
                     <th scope = "col" ng-click = "sortBy('person_id')">Laatst nagekeken door</th>
                     <th scope = "col" ng-click = "sortBy('confidence')">Zekerheid systeem</th>
                 </tr>
@@ -42,7 +43,7 @@
                      <td><label class="switch"><input type="checkbox" ng-model="subanswergiven.correct" ng-disabled="true"><span class="slider round"></span></label></td>
                      {% endif %}
                      <td>
-                         <img width=100% src="lines/load/line_//subanswergiven.line.id//">
+                         <img width=200% src="lines/load/line_//subanswergiven.line.id//">
                      </td>
                      <td>//subanswergiven.checkedby.personname//</td>
                      <td>//subanswergiven.confidence//%</td>

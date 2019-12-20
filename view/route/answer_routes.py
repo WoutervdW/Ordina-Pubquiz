@@ -26,7 +26,7 @@ def reset():
     return 'OK'
 
 
-@view.route('/api/v1.p/checkanswers', methods=['POST'])
+@view.route('/api/v1.0/checkanswers', methods=['POST'])
 def check_answers():
-    answer_checker.check_all_answers(db)
+    answer_checker.check_all_answers()
     return "answers are checked"
