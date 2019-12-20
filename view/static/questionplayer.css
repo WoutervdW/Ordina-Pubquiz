@@ -19,4 +19,6 @@ body{
     color: #F07D00;
     margin: 20px;
     font-size: 30pt;
+    width: 50%;
+    text-align:center;
 }

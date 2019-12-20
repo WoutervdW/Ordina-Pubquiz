@@ -108,8 +108,11 @@ def check_all_answers(db=None):
                 #  correct
                 if check_correct(subanswer_given.answer_given, subanswer_variants):
                     print("correct")
-                    subanswer_given.correct = True
-                    db.session.commit()
+                    subanswer_given.correct
+                else:
+                    print("incorrect")
+                    subanswer_given.correct = False
+                db.session.commit()
                 subanswer_variants_lists.remove(subanswer_variants)
 
             # TODO @wouter: change correct / incorrect buttons automatically live in view

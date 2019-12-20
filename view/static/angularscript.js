@@ -101,6 +101,10 @@ angular.module('module', ['ngRoute'])
             $http.post("/api/v1.0/removeteams")
             window.location.reload();
         }
+
+        $scope.updateAnswerLabel = function(){
+            $scope.answersheetform.label = "adsf";
+        }
     })
     .controller('revealcontroller', function($scope, $http, $interval, $filter){
         $http({
@@ -150,5 +154,6 @@ angular.module('module', ['ngRoute'])
         $interval(showQuestion, 30000);
         };
     });
+
 
 
