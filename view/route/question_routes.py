@@ -58,7 +58,6 @@ def update_question():
             q.questionnumber = questionnumber
     else:
         q.questionnumber = None
-        print("abracadabra")
     db.session.commit()
     return 'OK'
 

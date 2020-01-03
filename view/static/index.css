@@ -1,23 +1,37 @@
-.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
-    background-color: #FFA133;
-    color: white;
+body {
+    padding-top: 50px;
 }
 
-th {
+
+.header {
+    top: 50px;
     background-color: #F07D00;
     color: white;
     cursor: pointer;
 }
 
-.table-borderless {
-     margin:0 !important;
+.table-fixed tbody {
+    display:block;
+    height:600px;
+    width:100%;
+    overflow:auto;
+}
+
+.table-borderless tbody {
+    height: auto;
+    width: 100%;
+}
+
+thead, tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;
 }
 
 
-.table-borderless td, .table-borderless th {
-    border: 0 !important;
-    padding: 0 !important;
-
+.table-responsive {
+    position: relative;
+    margin-top: 35px;
 }
 
 

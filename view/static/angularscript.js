@@ -151,7 +151,7 @@ angular.module('module', ['ngRoute'])
                 }
             }
         showQuestion();
-        $interval(showQuestion, 30000);
+        $interval(showQuestion, 300);
         };
     });
 

@@ -15,7 +15,7 @@
 <body>
 {% extends 'bootstrap/base.html' %}
 {% block navbar %}
-<nav class = "navbar navbar-default">
+<nav class = "navbar navbar-fixed-top navbar-default">
     <a href = "/index">Home</a>
     {% if session['logged_in'] == True %}
     <a href = "/uploadsheets">Upload antwoordvellen</a>
