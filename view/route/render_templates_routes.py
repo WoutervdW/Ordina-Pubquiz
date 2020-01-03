@@ -1,6 +1,6 @@
 from view import view
 from flask import render_template, session, request, redirect, flash, url_for
-from view.models import Person
+from view.models import Person, SubAnswerGiven
 
 
 @view.route('/')
@@ -16,7 +16,9 @@ def questions():
 
 @view.route('/answerchecking')
 def answers():
-    return render_template('answerchecking.html')
+    page = request.args.get('page', 1, type=int)
+    answers = SubAnswerGiven.query.paginate(page, view.config['ANSWERS_PER_PAGE'], False)
+    return render_template('answerchecking.html', subanswers=answers)
 
 
 @view.route('/uploadsheets')
