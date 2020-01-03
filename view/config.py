@@ -27,8 +27,8 @@ class InputConfig:
     page_count = 7
     # Define which team belongs to which page.
     team_page = []
-    team_page.append("De Verliezers")
-    team_page.append("De Verliezers")
+    team_page.append("Blanco")
+    team_page.append("Blanco")
     page_1_line_number = 28
 
     quiz = []

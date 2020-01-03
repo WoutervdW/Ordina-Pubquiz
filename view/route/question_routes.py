@@ -44,7 +44,7 @@ def update_question():
         questionactive = post.get('active')
         q.active = questionactive
 
-    if post.get('questionnumber') is not None:
+    if post.get('questionnumber').isdigit():
         questionnumber = int(post.get('questionnumber'))
         while True:
             qtemp = Question.query.filter_by(questionnumber=questionnumber).first()
@@ -54,9 +54,10 @@ def update_question():
             else:
                 if qtemp.id == id:
                     break
-                q.questionnumber = questionnumber + 1
+            questionnumber = questionnumber + 1
+            q.questionnumber = questionnumber
     else:
-        q.questionnumber = 0
+        q.questionnumber = None
     db.session.commit()
     return 'OK'
 
