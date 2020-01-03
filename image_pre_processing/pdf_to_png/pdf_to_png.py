@@ -6,7 +6,7 @@ download the binary and set a path to the bin.
 """
 from pdf2image import convert_from_path
 
-pages = convert_from_path("Sander_Test.pdf", 500)
+pages = convert_from_path("Sander_Test.pdf", 75)
 
 for page in pages:
     page.save('Sander_Test.png', 'PNG')

@@ -62,7 +62,7 @@ def test_single_line(scan_number, line_number, expected_word_count, configuratio
 class WordSegmentationTest(unittest.TestCase):
 
     def test_word_segmentation_scan_0_lines(self):
-        path = "test_files/line_files/scan_0/"
+        path = "test_files/line_files/Template_4_0/"
         lines = [line for line in os.listdir(path)]
         # word_result = [1, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
         # if len(lines) != len(word_result):
@@ -72,13 +72,13 @@ class WordSegmentationTest(unittest.TestCase):
         #     self.assertEqual(len(lines), len(word_result))
         scan_0_word_test = True
         for x in range(0, len(lines)):
-            if not check_line(path, lines[x], 2, "scan_0"):
+            if not check_line(path, lines[x], 2, "Template_4_0"):
                 scan_0_word_test = False
 
         self.assertTrue(scan_0_word_test)
 
     def test_word_segmentation_scan_1_lines(self):
-        path = "test_files/line_files/scan_1/"
+        path = "test_files/line_files/Template_4_1/"
         lines = [line for line in os.listdir(path)]
         # TODO @Sander: The ordering is off. It scans the folder and orders it (0, 1, 10, 11, ...2, 20, 21 etc.)
         # word_result = [2,  2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7, 2, 2, 2, 3, 2, 2, 2, 1, 1, 1, 1, 1]
@@ -89,7 +89,7 @@ class WordSegmentationTest(unittest.TestCase):
         #     self.assertEqual(len(lines), len(word_result))
         scan_1_word_test = True
         for x in range(0, len(lines)):
-            if not check_line(path, lines[x], 2, "scan_1"):
+            if not check_line(path, lines[x], 2, "Template_4_1"):
                 scan_1_word_test = False
 
         self.assertTrue(scan_1_word_test)

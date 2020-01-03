@@ -15,7 +15,7 @@ def convert_pdf_to_image(path):
         return None
     # We also assume the pdf is located 1 folder below but we can just give the name only
     # (I think because we called main.py that will be the working directory)
-    pages = convert_from_path(path, 500)
+    pages = convert_from_path(path, 150)
 
     # The image is in PIL format, we will convert it to opencv format
     open_cv_image = [np.array(p) for p in pages]

@@ -9,7 +9,7 @@ import numpy as np
 
 
 def test_word(scan_number, line_number, word_number, model):
-    path = "test_files/word_files/scan_" \
+    path = "test_files/word_files/Template_4_" \
            + str(scan_number) + "/line_" \
            + str(line_number) + "/words/word_" \
            + str(word_number) + ".png"
@@ -39,12 +39,12 @@ def infer(_model, word_image):
     recognize text in image provided by file path
     """
     fn_img = cv2.cvtColor(word_image, cv2.COLOR_BGR2GRAY)
-    show_image(fn_img)
+    # show_image(fn_img)
     # ret, fn_img = cv2.threshold(fn_img, 220, 255, cv2.THRESH_BINARY)
     fn_img = increase_contrast(fn_img)
-    show_image(fn_img)
+    # show_image(fn_img)
     image = preprocess(fn_img, Model.img_size)
-    show_image(image)
+    # show_image(image)
     batch = Batch([image])
     (recognized, probability) = _model.infer_batch(batch, True)
     print('Recognized:', '"' + recognized[0] + '"')
@@ -76,7 +76,7 @@ class WordRecognitionTest(unittest.TestCase):
                 words = [words for words in os.listdir(scan_path + scans[scan] + "/" + lines[line])]
                 for word in range(0, len(words)):
                     print(test_word(scan, line, word, model))
-        # If it arrives here without errors it has succesfully attempted to recoginize all words without errors
+        # If it arrives here without errors it has successfully attempted to recognize all words without errors
         self.assertTrue(True)
 
     def test_test_word(self):

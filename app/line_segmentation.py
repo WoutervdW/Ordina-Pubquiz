@@ -109,10 +109,8 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
     # Than take the points together and find the lines.
     # processed = pre_process_image(answer_image_original, False)
     height, width, _ = answer_image_original.shape
-    # We choose 1500 because that will definitely have all the points within the image
-    # and the posibility of having a similar looking area is minimized.
-    # TODO Make the (width-900) a bit more nicer (if you change it in 1 place you might forget it here)
-    offset_range = 600
+    # We define an offset based on the width, this will be used to find the corners on both side of the image
+    offset_range = int(width/6)
     left_side = answer_image_original[0:height, 0:offset_range]
     right_side = answer_image_original[0:height, (width-offset_range):width]
     # show_image(right_side)
@@ -120,11 +118,11 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
     left_side_img = left_side.copy()
 
     # We draw a fake line over the image, this is so we can find the corners by finding areas with a certain size
-    cv2.line(left_side_img, (offset_range-10, 0), (offset_range-10, height), (0, 0, 0), 10)
+    cv2.line(left_side_img, (offset_range-1, 0), (offset_range-1, height), (0, 0, 0), 2)
 
     left_side_processed = pre_process_image(left_side_img, False)
     contours_left_side, _ = cv2.findContours(left_side_processed, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    cv2.drawContours(left_side_img, contours_left_side, -1, (0, 255, 0), thickness=5)
+    cv2.drawContours(left_side_img, contours_left_side, -1, (0, 255, 0), thickness=2)
 
     # show_image(left_side_img)
     # The blocks will have a specific area which we will look for.
@@ -132,7 +130,8 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
     for c in contours_left_side:
         area = cv2.contourArea(c)
         # Area is about 100000 with the line we defined
-        if 80000 < area < 120000:
+        # TODO Fix magic numbers We chose these area numbers to be the area size of the contours found left and right
+        if 9000 < area < 13000:
             left_block_contours.append(c)
 
     cv2.drawContours(left_side_img, left_block_contours, -1, (255, 0, 0), thickness=10)
@@ -142,7 +141,9 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
     right_side_img = right_side.copy()
 
     # We draw a fake line over the image, this is so we can find the corners by finding areas with a certain size
-    cv2.line(right_side_img, (200, 0), (200, height), (0, 0, 0), 10)
+    # TODO Fix magic number (we choose 100 because it gives a contour close to the last line
+    cv2.line(right_side_img, (100, 0), (100, height), (0, 0, 0), 2)
+    # show_image(right_side_img)
 
     right_side_processed = pre_process_image(right_side_img, False)
     contours_right_side, _ = cv2.findContours(right_side_processed, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
@@ -152,7 +153,7 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
     for c in contours_right_side:
         area = cv2.contourArea(c)
         # Area is about 60000 with the line we defined
-        if 40000 < area < 80000:
+        if 2000 < area < 5000:
             right_block_contours.append(c)
 
     cv2.drawContours(right_side_img, right_block_contours, -1, (255, 0, 0), thickness=10)
@@ -181,7 +182,8 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
         line_width = len(cropped_full)
         line_height = len(cropped_full[0])
 
-        trim = 15
+        # TODO Fix magic number. We chose 2 becuase it will trim any line that is below or above the words
+        trim = 2
         without_bars = cropped_full[trim:line_width-trim, trim:line_height-trim]
 
         line_width = len(without_bars)

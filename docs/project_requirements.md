@@ -52,3 +52,7 @@ W
 
 
 
+extra installations:
+I had to install pycairo and some other binaries for the pygobject module
+https://stackoverflow.com/questions/50156741/installing-pygobject-through-pycharm-yields-error-command-c-cl-exe-fail
+update: I removed pygobject, since I don't know if it's being used at all
