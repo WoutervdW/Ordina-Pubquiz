@@ -20,6 +20,7 @@ class Config(object):
     ANSWERSHEETS_PER_PAGE = 2
     LINES_PER_PAGE = 20
     WORDS_PER_PAGE = 20
+    ANSWERS_PER_PAGE = 3
 
 
 class InputConfig:
