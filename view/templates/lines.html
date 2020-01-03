@@ -15,7 +15,8 @@
     {% for line in lines %}
     <div>
         <a href="{{ url_for('get_line_words', line_id=line.id) }}">
-            <img width=50% src="{{ url_for('load_lines', line_id=line.id) }}">
+            <img width=50% src="{{ url_for('load_lines_id', line_id=line.id) }}">
+<!--            <img width=50% src="lines/load/line_{{line.id}}">-->
         </a>
     </div>
     {% endfor %}

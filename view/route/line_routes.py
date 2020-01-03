@@ -35,6 +35,24 @@ def load_lines(line_detail):
     return response
 
 
+@view.route("/lines/load/<int:line_id>", methods=['GET', 'POST'])
+def load_lines_id(line_id):
+    print("loading given line with id " + str(line_id))
+    line = Line.query.filter_by(id=line_id).first()
+    if line is None:
+        return "answer with id " + str(line_id) + " does not exist in the database."
+    image_data = line.line_image
+    # I need to know the exact shape it had in order to load it from the database
+    width = line.image_width
+    height = line.image_height
+    np_line = np.fromstring(image_data, np.uint8).reshape(width, height, 3)
+
+    ret, png = cv2.imencode('.png', np_line)
+    response = make_response(png.tobytes())
+    response.headers['Content-Type'] = 'image/png'
+    return response
+
+
 @view.route("/lines/load", methods=['GET', 'POST'])
 def lines_all():
     page = request.args.get('page', 1, type=int)
