@@ -50,7 +50,6 @@ psycopg2-binary==2.8.4
 pycparser==2.19
 pyparsing==2.4.5
 pyrsistent==0.15.6
-pytesseract==0.3.1
 python-dateutil==2.8.1
 python-dotenv==0.10.3
 python-editor==1.0.4
