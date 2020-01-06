@@ -21,6 +21,8 @@ from view.models import Question
 from view.models import Variant
 from view.config import InputConfig
 import numpy as np
+import pytesseract
+pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
 line_number = 0
 
