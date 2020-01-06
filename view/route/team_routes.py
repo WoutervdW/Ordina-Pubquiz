@@ -1,9 +1,11 @@
 from view import view, db
 from flask import jsonify, request
+from flask_cors import cross_origin
 from sqlalchemy import func
 from view.models import SubAnswerGiven, Team, TeamSchema
 
 
+@cross_origin()
 @view.route('/api/v1.0/teams', methods=['GET'])
 def get_teams():
     scores = db.session.query(SubAnswerGiven.team_id, func.count(SubAnswerGiven.id).label('score')).group_by(SubAnswerGiven.team_id).filter(SubAnswerGiven.correct).all()
