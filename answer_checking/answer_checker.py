@@ -28,30 +28,28 @@ def check_correct(answer, correct_answer_variants):
     for correct_answer_variant in correct_answer_variants:
         number_correct = check_numerical_values(answer, correct_answer_variant)  # Compare numbers in the answer
         if number_correct is None:
-            # No number, check correctness based on string-based comparison
-            if check_string(answer, correct_answer_variant):
-                return True
-        else:
-            if number_correct:
-                # Number correct, see if the rest of the string is also correct.
-                # TODO: Combine the correctness of the string and number parts
-                return True
-
+            # No number in given answer, check correctness based on string-based comparison
+            return check_string(answer, correct_answer_variant)
+        elif number_correct:
+            # Number correct, see if the rest of the string is also correct.
+            # TODO: Combine the correctness of the string and number parts
+            return True
     return False
 
 
 def check_numerical_values(answer, correct_answer_variant):
     """
     Find all numbers in the answer
-    :param answer:
-    :param correct_answer_variant:
-    :return:
+    :param answer: string
+    :param correct_answer_variant: string
+    :return: None if no number in given answer, True if correct number in given answer, False if incorrect number
     """
     all_digits_pattern = re.compile(r'\d+')  # get all individual numbers
     answer_values = all_digits_pattern.findall(answer)  # Find all numbers in the answer
     correct_answer_values = all_digits_pattern.findall(correct_answer_variant)  # Find all numbers in the correct answer
 
-    if len(correct_answer_values) == 0:
+    if len(answer_values) == 0:
+        # no number in given answer
         return None
     elif len(answer_values) != 0 and len(correct_answer_values) != 0:
         answer_value = int(''.join(map(str, answer_values)))  # concatenate all numbers in the answer
@@ -82,12 +80,14 @@ def preprocess_string(answer):
 
 def check_all_answers():
     print("Checking all answers")
-   # if db is not None:
     # get all given subanswers
-    subanswers_given = SubAnswerGiven.query.all()
-    checker = Person.query.filter_by(personname = "systeem").first()
-    for subanswer_given in subanswers_given:
+    all_subanswers_given = SubAnswerGiven.query.all()
+    checker = Person.query.filter_by(personname="systeem").first()
+
+    # check correctness per given answer
+    for subanswer_given in all_subanswers_given:
         print("Given answer: " + subanswer_given.answer_given)
+
         # Get the question id of the given answer
         question_id = subanswer_given.question_id
 
@@ -95,29 +95,29 @@ def check_all_answers():
         subanswers = SubAnswer.query.filter_by(question_id=question_id).all()
 
         # Get all variants for each subanswer and append them into one (python) list
-        subanswer_variants_lists = []
+        variant_lists = []
         for subanswer in subanswers:
             subanswer_id = subanswer.id
-
             variants = Variant.query.filter_by(subanswer_id=subanswer_id)
-            variant_answers = [variant.answer for variant in variants]
-            subanswer_variants_lists.append(variant_answers)
+            variants = [variant.answer for variant in variants]
+            variant_lists.append(variants)
 
-        print("Correct answer options: " + str(subanswer_variants_lists))
+        print("Correct answer options: " + str(variant_lists))
 
-        for subanswer_variants in subanswer_variants_lists:
+        # check all
+        for variants in variant_lists:
             # TODO @wouter: remember checked answers! If an answer occurs twice, the second instance should not be
-            #  correct
-            if check_correct(subanswer_given.answer_given, subanswer_variants):
+            #  correct (If the same answer twice is correct, than the "correct answers" should contain two of the
+            #  same answer). So, the first instance should be removed.
+            if check_correct(subanswer_given.answer_given, variants):
                 print("correct")
                 subanswer_given.correct = True
-                break;
+                variant_lists.remove(variants)
+                break
             else:
                 print("incorrect")
                 subanswer_given.correct = False
-            subanswer_given.checkedby = checker;
+                # variant_lists.remove(variants)
+            subanswer_given.checkedby = checker
             db.session.commit()
-            #subanswer_variants_lists.remove(subanswer_variants)
-
-        # TODO @wouter: change correct / incorrect buttons automatically live in view
-
+            # TODO @wouter: change correct / incorrect buttons automatically live in view
