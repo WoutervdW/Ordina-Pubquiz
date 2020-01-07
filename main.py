@@ -6,6 +6,7 @@ https://towardsdatascience.com/build-a-handwritten-text-recognition-system-using
 """
 import app
 import os
+from flask import redirect
 
 
 def run_program(db, pubquiz_file_name):
@@ -19,4 +20,6 @@ def run_program(db, pubquiz_file_name):
         os.remove(pubquiz_file_name)
 
     print("HOI SANDER")
+    return redirect("http://www.example.com", code=302)
+
 

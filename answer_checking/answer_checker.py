@@ -108,14 +108,14 @@ def check_all_answers():
         for subanswer_variants in subanswer_variants_lists:
             # TODO @wouter: remember checked answers! If an answer occurs twice, the second instance should not be
             #  correct
-            if check_correct(subanswer_given.answer_given, subanswer_variants):
-                print("correct")
-                subanswer_given.correct = True
-                break;
-            else:
-                print("incorrect")
-                subanswer_given.correct = False
-            subanswer_given.checkedby = checker;
+            if subanswer_given.checkedby.personname == 'nog niet nagekeken':
+                if check_correct(subanswer_given.answer_given, subanswer_variants):
+                    print("correct")
+                    subanswer_given.correct = True
+                else:
+                    print("incorrect")
+                    subanswer_given.correct = False
+                subanswer_given.checkedby = checker;
             db.session.commit()
             #subanswer_variants_lists.remove(subanswer_variants)
 
