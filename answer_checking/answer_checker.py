@@ -1,6 +1,5 @@
 from fuzzywuzzy import fuzz, process
 import re
-from view.models import Team
 from view.models import SubAnswerGiven
 from view.models import SubAnswer
 from view.models import Variant, Person
@@ -9,11 +8,6 @@ from view import db
 
 # TODO: check string similarity using fuzzywuzzy (https://www.datacamp.com/community/tutorials/fuzzy-string-python)
 # TODO: Remove the entry from the list if it has been checked, to prevent duplicate answers from scoring points.
-# TODO: compare numbers as ints
-# TODO: get the Question from calculate_score to string comparison for the category to parse the string correctly
-#  (numbers in songs should be parsed as strings, in other answers they should probably be parsed as integers)
-
-# TODO: get questions from database
 
 
 def check_correct(answer, correct_answer_variants):
@@ -61,24 +55,38 @@ def check_numerical_values(answer, correct_answer_variant):
 
 
 def check_string(answer, correct_answer_variant):
-    answer = preprocess_string(answer)
-    correct_answer_variant = preprocess_string(correct_answer_variant)
-
     # Select the string with the highest matching percentage
-    # highest = process.extractOne(answer, correct_answers)
+    # highest = process.extractOne(answer, correct_answers, scorer=fuzz.WRatio)
     # correct_answer_list.remove(highest[0])
     # TODO @Wouter: return the ratio of correctness ("confidence") AND the decision of correctness
     #  Implement confidence as distance of correctness from 0 or 100 (the closer to 50%, the less confident we can
     #  be that the answer is actually wrong or right)
-    return fuzz.WRatio(answer, correct_answer_variant) > 80
+
+    # pre-process strings
+    answer = preprocess_string(answer)
+    correct_answer_variant = preprocess_string(correct_answer_variant)
+
+    correctness = fuzz.WRatio(answer, correct_answer_variant)
+    confidence = calc_confidence(correctness)
+
+    return correctness, confidence
 
 
 def preprocess_string(answer):
-    answer = answer.lower()
+    # lower & upper case is handled by fuzz.WRatio
+    # answer = answer.lower()
     return answer
 
 
-def check_all_answers():
+def calc_confidence(correctness):
+    # could be improved by using word length
+    # 100 or 0 should be 100
+    # 50 should be 0
+    confidence = 2 * abs(correctness - 50)
+    return confidence
+
+
+def check_all_answers(threshold=80):
     print("Checking all answers")
     # get all given subanswers
     all_subanswers_given = SubAnswerGiven.query.all()
@@ -109,7 +117,9 @@ def check_all_answers():
             # TODO @wouter: remember checked answers! If an answer occurs twice, the second instance should not be
             #  correct (If the same answer twice is correct, than the "correct answers" should contain two of the
             #  same answer). So, the first instance should be removed.
-            if check_correct(subanswer_given.answer_given, variants):
+            correctness, confidence = check_correct(subanswer_given.answer_given, variants)
+
+            if correctness >= threshold:
                 print("correct")
                 subanswer_given.correct = True
                 variant_lists.remove(variants)
