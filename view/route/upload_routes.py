@@ -1,5 +1,5 @@
 from view import view, db
-from flask import request
+from flask import request, redirect, url_for
 from werkzeug.utils import secure_filename
 import threading
 import main
@@ -17,4 +17,6 @@ def upload():
         x = threading.Thread(target=main.run_program, args=(db, f.filename,))
         print("thread started")
         x.start()
-        return "answersheet is being processed"
+
+        x.join()
+        return redirect(url_for('answers'),  code=302)

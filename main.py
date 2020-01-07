@@ -18,8 +18,6 @@ def run_program(db, pubquiz_file_name):
     # After the files are processed we remove the file
     if os.path.exists(pubquiz_file_name):
         os.remove(pubquiz_file_name)
-
-    print("HOI SANDER")
-    return redirect("http://www.example.com", code=302)
+    return
 
 
