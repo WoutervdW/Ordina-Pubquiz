@@ -2,6 +2,11 @@ from view import db, ma
 import json
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
+#models for database
+#schema exposes fields to expose
+
+
 class Person(db.Model):
     """ users """
     __tablename__ = 'person'

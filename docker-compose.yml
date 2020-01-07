@@ -7,6 +7,7 @@ services:
             dockerfile: Dockerfile
         image: ordina-pubquiz_main
 
+
     postgres:
         container_name: postgres
         image: postgres:9.6.2-alpine
@@ -22,41 +23,8 @@ services:
      
         volumes:
            - db_volume:/var/lib/postgreql
-
-    sonarqube:
-      image: sonarqube
-      expose:
-        - 9000
-      ports:
-        - 9000:9000
-      networks:
-        - sonarnet
-     # environment:
-     #   - SONARQUBE_JDBC_URL=jdbc:postgresql://db:5432/sonar
-     #   - SONARQUBE_JDBC_USERNAME=sonar
-     #   - SONARQUBE_JDBC_PASSWORD=sonar
-      volumes:
-        - sonarqube_conf:/opt/sonarqube/conf
-        - sonarqube_data:/opt/sonarqube/data
-        - sonarqube_extensions:/opt/sonarqube/extensions
-
-    jenkins:
-      image: jenkins/jenkins
-      ports:
-        - 8080:8080
-        - 50000:50000
-      volumes:
-        - jenkins_data:/jenkins_data
-    backend:
-        container_name: ordina-pubquiz_backend
-        build:
-           context: .
-           dockerfile: Dockerfile-backend
-        image: ordina-pubquiz_backend
-        volumes:
-          - "./:/usr/src/app"
-          - /usr/src/app/view
-
+       
+         
     webapp:
         build:
           context: .
@@ -68,14 +36,8 @@ services:
         links:
           - postgres
 
-networks:
-  sonarnet:
-    driver: bridge
 
 volumes:
     db_volume:
-    sonarqube_conf:
-    sonarqube_data:
-    sonarqube_extensions:
-    jenkins_data:
-      driver: local
+
+  
