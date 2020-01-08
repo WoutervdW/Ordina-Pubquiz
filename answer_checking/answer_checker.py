@@ -93,18 +93,22 @@ def preprocess_string(answer):
     return answer
 
 
-def calculate_confidence(correct_ratio, threshold=80):
+def calculate_confidence(correct_ratio, threshold=50):
     # might be improved by using answer length
 
     # confidence at 100 or 0 correctness should be 100
     # confidence at threshold should be 0
 
+    # hacky way to solve zero-division errors TODO: Create better way to solve these errors
+    if threshold == 0:
+        threshold = 1
+    if threshold == 100:
+        threshold = 99
+
     if correct_ratio < threshold:
         confidence = 100 - correct_ratio / threshold * 100
-    elif correct_ratio >= threshold:
-        confidence = correct_ratio / threshold * 100
-
-    # confidence = 2 * abs(correct_ratio - 50)
+    else:
+        confidence = (correct_ratio - threshold) / (100 - threshold) * 100
     return confidence
 
 
@@ -152,6 +156,6 @@ def check_all_answers(threshold=50):
                     subanswer_given.correct = False
             subanswer_given.checkedby = checker
             db.session.commit()
-        # subanswer_variants_lists.remove(subanswer_variants)
+            # subanswer_variants_lists.remove(subanswer_variants)
 
-        # TODO @wouter: change correct / incorrect buttons automatically live in view
+            # TODO @wouter: change correct / incorrect buttons automatically live in view
