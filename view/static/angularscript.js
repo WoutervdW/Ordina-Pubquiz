@@ -37,9 +37,10 @@ angular.module('module', ['ngRoute'])
             $scope.subanswers = response.data;
         });
 
+
         $scope.newsubanswers = [{}];
         $scope.addField=function(){
-              $scope.newsubanswers.push({})
+              $scope.newsubanswers.push({});
         }
         $scope.sortBy = function sortBy(propertyName){
               $scope.reverse = $scope.propertyName === propertyName ? !$scope.reverse : false;
@@ -101,11 +102,14 @@ angular.module('module', ['ngRoute'])
             $http.post("/api/v1.0/removeteams")
             window.location.reload();
         }
-
         $scope.updateAnswerLabel = function(){
             $scope.answersheetform.label = "adsf";
         }
+        $scope.showloadingbar = function(){
+            $scope.loading = true;
+        }
     })
+
     .controller('revealcontroller', function($scope, $http, $interval, $filter){
         $http({
             method: "GET",

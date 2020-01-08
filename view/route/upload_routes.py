@@ -17,6 +17,5 @@ def upload():
         x = threading.Thread(target=main.run_program, args=(db, f.filename,))
         print("thread started")
         x.start()
-
         x.join()
-        return redirect(url_for('answers'),  code=302)
+        return redirect(url_for('answers'), code=302)

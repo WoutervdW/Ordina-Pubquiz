@@ -6,7 +6,7 @@ https://towardsdatascience.com/build-a-handwritten-text-recognition-system-using
 """
 import app
 import os
-from flask import redirect
+from flask import render_template, redirect
 
 
 def run_program(db, pubquiz_file_name):
@@ -18,6 +18,6 @@ def run_program(db, pubquiz_file_name):
     # After the files are processed we remove the file
     if os.path.exists(pubquiz_file_name):
         os.remove(pubquiz_file_name)
-    return
+    return "OK"
 
 
