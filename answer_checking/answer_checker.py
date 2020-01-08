@@ -116,29 +116,29 @@ def check_all_answers(threshold=50):
 
     # check correctness per given answer
     for subanswer_given in all_subanswers_given:
-        print("Given answer: " + subanswer_given.answer_given)
-        if len(subanswer_given.answer_given) == 0:
-            subanswer_given.correct = False
-        else:
-            # Get the list of all correct subanswers that belong to the same question as the given subanswer
-            question_id = subanswer_given.question_id
-            subanswers = SubAnswer.query.filter_by(question_id=question_id).all()
+        if subanswer_given.checkedby.personname == 'nog niet nagekeken':
+            print("Given answer: " + subanswer_given.answer_given)
+            if len(subanswer_given.answer_given) == 0:
+                subanswer_given.correct = False
+            else:
+                # Get the list of all correct subanswers that belong to the same question as the given subanswer
+                question_id = subanswer_given.question_id
+                subanswers = SubAnswer.query.filter_by(question_id=question_id).all()
 
-            # Get all variants for each subanswer and append them into a usable list
-            variant_lists = []
-            for subanswer in subanswers:
-                subanswer_id = subanswer.id
-                variants = Variant.query.filter_by(subanswer_id=subanswer_id)
-                variants = [variant.answer for variant in variants]
-                variant_lists.append(variants)
+                # Get all variants for each subanswer and append them into a usable list
+                variant_lists = []
+                for subanswer in subanswers:
+                    subanswer_id = subanswer.id
+                    variants = Variant.query.filter_by(subanswer_id=subanswer_id)
+                    variants = [variant.answer for variant in variants]
+                    variant_lists.append(variants)
 
-            print("Correct answer options: " + str(variant_lists))
+                print("Correct answer options: " + str(variant_lists))
 
-        for variants in variant_lists:
-            # TODO @wouter: remember checked answers! If an answer occurs twice, the second instance should not be
-            #  correct (If the same answer twice is correct, than the "correct answers" should contain two of the
-            #  same answer). So, all variants of the first instance should be removed.
-            if subanswer_given.checkedby.personname == 'nog niet nagekeken':
+            for variants in variant_lists:
+                # TODO @wouter: remember checked answers! If an answer occurs twice, the second instance should not be
+                #  correct (If the same answer twice is correct, than the "correct answers" should contain two of the
+                #  same answer). So, all variants of the first instance should be removed.
 
                 correct, confidence = check_correct(subanswer_given.answer_given, variants, threshold)
 
@@ -150,8 +150,8 @@ def check_all_answers(threshold=50):
                 else:
                     print("incorrect")
                     subanswer_given.correct = False
-            subanswer_given.checkedby = checker;
+            subanswer_given.checkedby = checker
             db.session.commit()
-            #subanswer_variants_lists.remove(subanswer_variants)
+        # subanswer_variants_lists.remove(subanswer_variants)
 
         # TODO @wouter: change correct / incorrect buttons automatically live in view
