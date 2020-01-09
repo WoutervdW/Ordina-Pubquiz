@@ -12,12 +12,15 @@ from view import db
 #  that are marked as wrong will have a confidence based on the last compared variant.
 # TODO: check if everywhere correct_ratio >= threshold = True (not correct_ratio > threshold)
 
-def check_correct(answer, correct_answer_variants, threshold):
+def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect, max_conf_correct):
     """
+
 
     :param answer: string of given answer
     :param correct_answer_variants: list of strings: variants of correct answer
     :param threshold: The threshold of similarity that must be reached in order to be correct
+    :param max_conf_incorrect: max confidence for an incorrect answer
+    :param max_conf_correct: max confidence for a correct answer
     :return: correctness (True or False), confidence in decision
     """
     # number_correct has to be True if the number exists and is correct, False if the number exists but isn't
@@ -25,11 +28,12 @@ def check_correct(answer, correct_answer_variants, threshold):
     for correct_answer_variant in correct_answer_variants:
         print(correct_answer_variant)
         correct_ratio, confidence = check_numerical_values(answer, correct_answer_variant,
-                                                           threshold)  # Compare numbers in the answer
-
+                                                           threshold, max_conf_incorrect,
+                                                           max_conf_correct)  # Compare numbers in the answer
         if correct_ratio is None:
             # No number in given answer, check correctness based on string comparison
-            correct_ratio, confidence = check_string(answer, correct_answer_variant, threshold)
+            correct_ratio, confidence = check_string(answer, correct_answer_variant, threshold, max_conf_incorrect,
+                                                     max_conf_correct)
             return correct_ratio > threshold, confidence
 
         elif correct_ratio >= threshold:
@@ -42,7 +46,7 @@ def check_correct(answer, correct_answer_variants, threshold):
             return False, confidence
 
 
-def check_numerical_values(answer, correct_answer_variant, threshold, max_conf_incorrect=50, max_conf_correct=100):
+def check_numerical_values(answer, correct_answer_variant, threshold, max_conf_incorrect, max_conf_correct):
     """
     Find all numbers in the answer
     :param answer: string
@@ -62,18 +66,19 @@ def check_numerical_values(answer, correct_answer_variant, threshold, max_conf_i
             return None, 0
     elif len(correct_answer_values) != 0:  # number found in correct answer
         if len(answer_values) == 0:  # no number found in given_answer
-            return 0, 100
+            return 0, max_conf_incorrect
         else:  # number found in given_answer
             answer_value = int(''.join(map(str, answer_values)))  # concatenate all numbers in the answer
             correct_answer_value = int(
                 ''.join(map(str, correct_answer_values)))  # concatenate all numbers in the answer
             if answer_value == correct_answer_value:
-                return 100, 100  # confident the answer is correct
+                return 100, max_conf_correct  # confident the answer is correct
             else:
-                return 0, 100
+                # might be detected wrong, so check string comparison
+                return 0, max_conf_incorrect
 
 
-def check_string(answer, correct_answer_variant, threshold):
+def check_string(answer, correct_answer_variant, threshold, max_conf_incorrect, max_conf_correct):
     # TODO: use several different string comparison techniques to get better results and confidence
 
     # pre-process strings
@@ -81,7 +86,7 @@ def check_string(answer, correct_answer_variant, threshold):
     correct_answer_variant = preprocess_string(correct_answer_variant)
 
     correct_ratio = fuzz.WRatio(answer, correct_answer_variant)
-    confidence = calculate_confidence(correct_ratio, threshold)
+    confidence = calculate_confidence(correct_ratio, threshold, max_conf_incorrect, max_conf_correct)
 
     return correct_ratio, confidence
 
@@ -92,7 +97,7 @@ def preprocess_string(answer):
     return answer
 
 
-def calculate_confidence(correct_ratio, threshold=50):
+def calculate_confidence(correct_ratio, threshold, max_conf_incorrect, max_conf_correct):
     # might be improved by using answer length
 
     # confidence at 100 or 0 correctness should be 100, confidence at threshold should be 0
@@ -105,13 +110,13 @@ def calculate_confidence(correct_ratio, threshold=50):
         threshold = 99
 
     if correct_ratio < threshold:
-        confidence = 100 - correct_ratio / threshold * 100
+        confidence = max_conf_incorrect - correct_ratio / threshold * max_conf_incorrect
     else:
-        confidence = (correct_ratio - threshold) / (100 - threshold) * 100
+        confidence = (correct_ratio - threshold) / (max_conf_correct - threshold) * max_conf_correct
     return confidence
 
 
-def check_all_answers(threshold=50):
+def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100):
     print("Checking all answers")
 
     # get all given subanswers
@@ -146,7 +151,11 @@ def check_all_answers(threshold=50):
                 #  correct (If the same answer twice is correct, than the "correct answers" should contain two of the
                 #  same answer). So, all variants of the first instance should be removed (locally).
 
-                correct, confidence = check_correct(subanswer_given.answer_given, variants, threshold)
+                correct, confidence = check_correct(subanswer_given.answer_given,
+                                                    variants,
+                                                    threshold,
+                                                    max_conf_incorrect,
+                                                    max_conf_correct)
 
                 if correct:
                     print("correct")
@@ -156,6 +165,7 @@ def check_all_answers(threshold=50):
                 else:
                     print("incorrect")
                     subanswer_given.correct = False
+                    subanswer_given.confidence = confidence
 
             subanswer_given.checkedby = checker
             db.session.commit()
