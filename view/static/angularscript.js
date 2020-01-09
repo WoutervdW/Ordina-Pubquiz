@@ -91,6 +91,7 @@ angular.module('module', ['ngRoute'])
             .post("/api/v1.0/checkanswers")
             .then(function (response) {
                 $scope.checkinganswers = false;
+                window.location.reload();
             })
         }
         $scope.addTeam = function(team){
