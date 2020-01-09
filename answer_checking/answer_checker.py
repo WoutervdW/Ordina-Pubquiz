@@ -85,7 +85,7 @@ def check_all_answers():
    # if db is not None:
     # get all given subanswers
     subanswers_given = SubAnswerGiven.query.all()
-    checker = Person.query.filter_by(personname = "systeem").first()
+    checker = Person.query.filter_by(personname="systeem").first()
     for subanswer_given in subanswers_given:
         print("Given answer: " + subanswer_given.answer_given)
         # Get the question id of the given answer
@@ -115,9 +115,9 @@ def check_all_answers():
                 else:
                     print("incorrect")
                     subanswer_given.correct = False
-                subanswer_given.checkedby = checker;
+                subanswer_given.checkedby = checker
             db.session.commit()
             #subanswer_variants_lists.remove(subanswer_variants)
 
         # TODO @wouter: change correct / incorrect buttons automatically live in view
-
+    return "OK"
