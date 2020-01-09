@@ -86,7 +86,13 @@ angular.module('module', ['ngRoute'])
             $http.post("/api/v1.0/reset")
         }
         $scope.checkAllAnswers = function(){
-            $http.post("/api/v1.0/checkanswers")
+            $scope.checkinganswers = true;
+            $http
+            .post("/api/v1.0/checkanswers")
+            .then(function (response) {
+                $scope.checkinganswers = false;
+                window.location.reload();
+            })
         }
         $scope.addTeam = function(team){
             var data = {"teamname":$scope.newteam}
@@ -105,8 +111,8 @@ angular.module('module', ['ngRoute'])
         $scope.updateAnswerLabel = function(){
             $scope.answersheetform.label = "adsf";
         }
-        $scope.showloadingbar = function(){
-            $scope.loading = true;
+        $scope.showloadingsheetsbar = function(){
+            $scope.loadingsheets = true;
         }
     })
 

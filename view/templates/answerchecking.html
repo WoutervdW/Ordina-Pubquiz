@@ -9,7 +9,8 @@
 {% extends "base.html" %}
 {% block content %}
 <div class = "container"  ng-app = "module" ng-controller = "controller">
-    <div class = "table-responsive">
+    Filter: <input type = "text" ng-model = "searchfilter">
+    <div class = "table-responsive" ng-hide = "checkinganswers">
         <table class="table table-hover table-sm table-fixed">
             <thead class = "header">
                 <tr>
@@ -24,14 +25,14 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="subanswergiven in subanswers | orderBy:propertyName:reverse">
+                <tr ng-repeat="subanswergiven in subanswers | orderBy:propertyName:reverse | filter : searchfilter">
                     <td>//subanswergiven.answered_by.teamname//</td>
                     <td>//subanswergiven.corr_question.question//</td>
                      <td>
                         <table class = "table table-borderless">
                             <tbody>
-                                <tr>
-                                    <td ng-repeat = "variant in subanswergiven.corr_answer.variants">//variant.answer//</td>
+                                <tr ng-repeat = "subanswer in subanswergiven.corr_question.subanswers">
+                                    <td ng-repeat = "variant in subanswer.variants">//variant.answer//</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -55,6 +56,7 @@
         <button class="btn btn-primary" ng-click = "checkAllAnswers()">Check answers</button>
         {% endif %}
     </div>
+    <div class="col-sm-3 col-sm-offset-4"  ng-show="checkinganswers">Moment geduld aub.. Antwoorden worden nagekeken ...</div>
 </div>
 
 {%endblock%}
