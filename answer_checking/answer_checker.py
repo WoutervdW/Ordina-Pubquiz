@@ -10,19 +10,22 @@ from view import db
 # TODO: Remove the entry from the list if it has been checked, to prevent duplicate answers from scoring points.
 # TODO: confidence depends on the last variant checked. This is okay for answers that are right in the end, but answers
 #  that are marked as wrong will have a confidence based on the last compared variant.
-
+# TODO: check if everywhere correct_ratio >= threshold = True (not correct_ratio > threshold)
 
 def check_correct(answer, correct_answer_variants, threshold):
     """
 
     :param answer: string of given answer
     :param correct_answer_variants: list of strings: variants of correct answer
+    :param threshold: The threshold of similarity that must be reached in order to be correct
     :return: correctness (True or False), confidence in decision
     """
     # number_correct has to be True if the number exists and is correct, False if the number exists but isn't
     # correct and None if no number exists
     for correct_answer_variant in correct_answer_variants:
-        correct_ratio, confidence = check_numerical_values(answer, correct_answer_variant, threshold)  # Compare numbers in the answer
+        print(correct_answer_variant)
+        correct_ratio, confidence = check_numerical_values(answer, correct_answer_variant,
+                                                           threshold)  # Compare numbers in the answer
 
         if correct_ratio is None:
             # No number in given answer, check correctness based on string comparison
@@ -39,7 +42,7 @@ def check_correct(answer, correct_answer_variants, threshold):
             return False, confidence
 
 
-def check_numerical_values(answer, correct_answer_variant, threshold):
+def check_numerical_values(answer, correct_answer_variant, threshold, max_conf_incorrect=50, max_conf_correct=100):
     """
     Find all numbers in the answer
     :param answer: string
@@ -66,15 +69,12 @@ def check_numerical_values(answer, correct_answer_variant, threshold):
                 ''.join(map(str, correct_answer_values)))  # concatenate all numbers in the answer
             if answer_value == correct_answer_value:
                 return 100, 100  # confident the answer is correct
+            else:
+                return 0, 100
 
 
 def check_string(answer, correct_answer_variant, threshold):
-    # Select the string with the highest matching percentage
-    # highest = process.extractOne(answer, correct_answers, scorer=fuzz.WRatio)
-    # correct_answer_list.remove(highest[0])
-    # TODO @Wouter: return the ratio of correctness ("confidence") AND the decision of correctness
-    #  Implement confidence as distance of correctness from 0 or 100 (the closer to 50%, the less confident we can
-    #  be that the answer is actually wrong or right)
+    # TODO: use several different string comparison techniques to get better results and confidence
 
     # pre-process strings
     answer = preprocess_string(answer)
@@ -95,8 +95,8 @@ def preprocess_string(answer):
 def calculate_confidence(correct_ratio, threshold=50):
     # might be improved by using answer length
 
-    # confidence at 100 or 0 correctness should be 100
-    # confidence at threshold should be 0
+    # confidence at 100 or 0 correctness should be 100, confidence at threshold should be 0
+    # TODO: confidence should likely be lower at 0 correctness, because of reliability of the system
 
     # hacky way to solve zero-division errors TODO: Create better way to solve these errors
     if threshold == 0:
@@ -113,6 +113,7 @@ def calculate_confidence(correct_ratio, threshold=50):
 
 def check_all_answers(threshold=50):
     print("Checking all answers")
+
     # get all given subanswers
     all_subanswers_given = SubAnswerGiven.query.all()
     checker = Person.query.filter_by(personname="systeem").first()
@@ -121,8 +122,10 @@ def check_all_answers(threshold=50):
     for subanswer_given in all_subanswers_given:
         if subanswer_given.checkedby.personname == 'nog niet nagekeken':
             print("Given answer: " + subanswer_given.answer_given)
-            if len(subanswer_given.answer_given) == 0:
+            if len(subanswer_given.answer_given) == 0:  # Any other reasons to immediately see the answer as False?
+                print("incorrect")
                 subanswer_given.correct = False
+                subanswer_given.confidence = 100
             else:
                 # Get the list of all correct subanswers that belong to the same question as the given subanswer
                 question_id = subanswer_given.question_id
@@ -141,7 +144,7 @@ def check_all_answers(threshold=50):
             for variants in variant_lists:
                 # TODO @wouter: remember checked answers! If an answer occurs twice, the second instance should not be
                 #  correct (If the same answer twice is correct, than the "correct answers" should contain two of the
-                #  same answer). So, all variants of the first instance should be removed.
+                #  same answer). So, all variants of the first instance should be removed (locally).
 
                 correct, confidence = check_correct(subanswer_given.answer_given, variants, threshold)
 
@@ -153,6 +156,7 @@ def check_all_answers(threshold=50):
                 else:
                     print("incorrect")
                     subanswer_given.correct = False
+
             subanswer_given.checkedby = checker
             db.session.commit()
             # subanswer_variants_lists.remove(subanswer_variants)
