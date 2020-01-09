@@ -30,8 +30,8 @@
                      <td>
                         <table class = "table table-borderless">
                             <tbody>
-                                <tr>
-                                    <td ng-repeat = "variant in subanswergiven.corr_answer.variants">//variant.answer//</td>
+                                <tr ng-repeat = "subanswer in subanswergiven.corr_question.subanswers">
+                                    <td ng-repeat = "variant in subanswer.variants">//variant.answer//</td>
                                 </tr>
                             </tbody>
                         </table>
