@@ -9,6 +9,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class = "container"  ng-app = "module" ng-controller = "controller">
+    Filter: <input type = "text" ng-model = "searchfilter">
     <div class = "table-responsive" ng-hide = "checkinganswers">
         <table class="table table-hover table-sm table-fixed">
             <thead class = "header">
@@ -24,7 +25,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="subanswergiven in subanswers | orderBy:propertyName:reverse">
+                <tr ng-repeat="subanswergiven in subanswers | orderBy:propertyName:reverse | filter : searchfilter">
                     <td>//subanswergiven.answered_by.teamname//</td>
                     <td>//subanswergiven.corr_question.question//</td>
                      <td>
@@ -43,7 +44,7 @@
                      <td><label class="switch"><input type="checkbox" ng-model="subanswergiven.correct" ng-disabled="true"><span class="slider round"></span></label></td>
                      {% endif %}
                      <td>
-                        <!-- <img width=200% src="lines/load/line_//subanswergiven.line.id//">-->
+                         <img width=200% src="lines/load/line_//subanswergiven.line.id//">
                      </td>
                      <td>//subanswergiven.checkedby.personname//</td>
                      <td>//subanswergiven.confidence//%</td>
