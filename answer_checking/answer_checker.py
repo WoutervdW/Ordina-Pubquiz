@@ -5,6 +5,8 @@ from view.models import SubAnswer
 from view.models import Variant, Person
 from view import db
 
+import time
+
 
 # TODO: check string similarity using fuzzywuzzy (https://www.datacamp.com/community/tutorials/fuzzy-string-python)
 # TODO: Remove the entry from the list if it has been checked, to prevent duplicate answers from scoring points.
@@ -122,9 +124,13 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
     all_subanswers_given = SubAnswerGiven.query.all()
     checker = Person.query.filter_by(personname="systeem").first()
 
+    checked_answers = 0
+    start = time.time()
     # check correctness per given answer
     for subanswer_given in all_subanswers_given:
         if subanswer_given.checkedby.personname == 'nog niet nagekeken':
+            checked_answers += 1
+
             print("Given answer: " + subanswer_given.answer_given)
             if len(subanswer_given.answer_given) == 0:  # Any other reasons to immediately see the answer as False?
                 print("incorrect")
@@ -155,23 +161,25 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
                                                     threshold,
                                                     max_conf_incorrect,
                                                     max_conf_correct)
-
                 if correct:
                     print("Found similar answer in: " + str(variants))
                     subanswer_given.correct = True
                     subanswer_given.confidence = confidence
                     break
                 else:
-                    #print("Not similar to: " + str(variants))
+                    # print("Not similar to: " + str(variants))
                     subanswer_given.correct = False
                     subanswer_given.confidence = confidence
-        if subanswer_given.correct:
-            print("correct")
-        else:
-            print("no similar answer found")
-        subanswer_given.checkedby = checker
-
+            if subanswer_given.correct:
+                print("correct")
+            else:
+                print("no similar answer found")
+            subanswer_given.checkedby = checker
     db.session.commit()
-        # subanswer_variants_lists.remove(subanswer_variants)
+    # subanswer_variants_lists.remove(subanswer_variants)
 
-        # TODO @wouter: change correct / incorrect buttons automatically live in view
+    print("aantal nagekeken subantwoorden: " + str(checked_answers))
+    end = time.time()
+    print("time elapsed: " + str(end - start))
+
+    # TODO @wouter: change correct / incorrect buttons automatically live in view
