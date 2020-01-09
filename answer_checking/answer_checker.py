@@ -26,7 +26,6 @@ def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect
     # number_correct has to be True if the number exists and is correct, False if the number exists but isn't
     # correct and None if no number exists
     for correct_answer_variant in correct_answer_variants:
-        print(correct_answer_variant)
         correct_ratio, confidence = check_numerical_values(answer, correct_answer_variant,
                                                            threshold, max_conf_incorrect,
                                                            max_conf_correct)  # Compare numbers in the answer
@@ -125,50 +124,54 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
 
     # check correctness per given answer
     for subanswer_given in all_subanswers_given:
-        if subanswer_given.checkedby.personname == 'nog niet nagekeken':
-            print("Given answer: " + subanswer_given.answer_given)
-            if len(subanswer_given.answer_given) == 0:  # Any other reasons to immediately see the answer as False?
-                print("incorrect")
-                subanswer_given.correct = False
-                subanswer_given.confidence = 100
+        # if subanswer_given.checkedby.personname == 'nog niet nagekeken':
+        print("Given answer: " + subanswer_given.answer_given)
+        if len(subanswer_given.answer_given) == 0:  # Any other reasons to immediately see the answer as False?
+            print("incorrect")
+            subanswer_given.correct = False
+            subanswer_given.confidence = 100
+        else:
+            # Get the list of all correct subanswers that belong to the same question as the given subanswer
+            question_id = subanswer_given.question_id
+            subanswers = SubAnswer.query.filter_by(question_id=question_id).all()
+
+            # Get all variants for each subanswer and append them into a usable list
+            variant_lists = []
+            for subanswer in subanswers:
+                subanswer_id = subanswer.id
+                variants = Variant.query.filter_by(subanswer_id=subanswer_id)
+                variants = [variant.answer for variant in variants]
+                variant_lists.append(variants)
+
+            print("Correct answer options: " + str(variant_lists))
+
+        for variants in variant_lists:
+            # TODO @wouter: remember checked answers! If an answer occurs twice, the second instance should not be
+            #  correct (If the same answer twice is correct, than the "correct answers" should contain two of the
+            #  same answer). So, all variants of the first instance should be removed (locally).
+
+            correct, confidence = check_correct(subanswer_given.answer_given,
+                                                variants,
+                                                threshold,
+                                                max_conf_incorrect,
+                                                max_conf_correct)
+
+            if correct:
+                print("Found similar answer in: " + str(variants))
+                subanswer_given.correct = True
+                subanswer_given.confidence = confidence
+                break
             else:
-                # Get the list of all correct subanswers that belong to the same question as the given subanswer
-                question_id = subanswer_given.question_id
-                subanswers = SubAnswer.query.filter_by(question_id=question_id).all()
+                #print("Not similar to: " + str(variants))
+                subanswer_given.correct = False
+                subanswer_given.confidence = confidence
+        if subanswer_given.correct:
+            print("correct")
+        else:
+            print("no similar answer found")
+        subanswer_given.checkedby = checker
+        
+    db.session.commit()
+        # subanswer_variants_lists.remove(subanswer_variants)
 
-                # Get all variants for each subanswer and append them into a usable list
-                variant_lists = []
-                for subanswer in subanswers:
-                    subanswer_id = subanswer.id
-                    variants = Variant.query.filter_by(subanswer_id=subanswer_id)
-                    variants = [variant.answer for variant in variants]
-                    variant_lists.append(variants)
-
-                print("Correct answer options: " + str(variant_lists))
-
-            for variants in variant_lists:
-                # TODO @wouter: remember checked answers! If an answer occurs twice, the second instance should not be
-                #  correct (If the same answer twice is correct, than the "correct answers" should contain two of the
-                #  same answer). So, all variants of the first instance should be removed (locally).
-
-                correct, confidence = check_correct(subanswer_given.answer_given,
-                                                    variants,
-                                                    threshold,
-                                                    max_conf_incorrect,
-                                                    max_conf_correct)
-
-                if correct:
-                    print("correct")
-                    subanswer_given.correct = True
-                    subanswer_given.confidence = confidence
-                    break
-                else:
-                    print("incorrect")
-                    subanswer_given.correct = False
-                    subanswer_given.confidence = confidence
-
-            subanswer_given.checkedby = checker
-            db.session.commit()
-            # subanswer_variants_lists.remove(subanswer_variants)
-
-            # TODO @wouter: change correct / incorrect buttons automatically live in view
+        # TODO @wouter: change correct / incorrect buttons automatically live in view
