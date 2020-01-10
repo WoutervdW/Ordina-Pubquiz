@@ -22,7 +22,7 @@ from view.models import Variant
 from view.config import InputConfig
 import numpy as np
 import pytesseract
-pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+import re
 
 line_number = 0
 
@@ -51,9 +51,7 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         multiply_factor = original_height / resized_height
         # After the resizing, the size of the number box will always be around this value.
         number_box_size = 66
-        print("prepare the image of a line for word segmentation")
-        line = prepare_image(line, resized_height, number_box_size)[0]
-        print("done with preparation, now do the actual segmentation")
+        line, question_image = prepare_image(line, resized_height, number_box_size)
         # TODO test out the theta and min_area parameter changes if the results are not good.
         res = word_segmentation(line, kernel_size=25, sigma=11, theta=7, min_area=100)
 
@@ -69,6 +67,12 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
             else:
                 prev_question = question_id
                 subanswer_number = 0
+
+        # Read the number from the number box. After that we remove any non numbers (in case of lines)
+        question_number = pytesseract.image_to_string(question_image, config="--psm 13")
+        question_number = re.sub("[^0-9]", "", question_number)
+        print("the question number that is read: " + str(question_number))
+
         save_word_details(line_image, multiply_factor, res, number_box_size, db, model, answersheet_id, line_number, subanswer_number)
 
 
