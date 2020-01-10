@@ -23,7 +23,9 @@ def check_line(path, l, line_word_count, scan_file, configurations=None, save_im
 
     line_analyse = line[0].copy()
     number_box_size = 65
-    line_analyse = prepare_image(line_analyse, resized_height, number_box_size)
+    line_result = prepare_image(line_analyse, resized_height, number_box_size)
+    line_analyse = line_result[0]
+    question_number = line_result[1]
     res = word_segmentation(
         line_analyse,
         kernel_size=configurations[0],
@@ -35,6 +37,9 @@ def check_line(path, l, line_word_count, scan_file, configurations=None, save_im
         output_folder = "test_files/word_files/"
         multiply_factor = original_height / resized_height
         save_word_image(output_folder, scan_file, line, multiply_factor, res, number_box_size=number_box_size)
+        # Also save the question number image
+        path_question = output_folder + scan_file + "/line_" + str(line[1]) + "/words"
+        cv2.imwrite(path_question + '/question_number.png', question_number)
 
     # if len(res) != line_word_count:
     #     # The test failed, print what went wrong and return False for the test
@@ -62,7 +67,7 @@ def test_single_line(scan_number, line_number, expected_word_count, configuratio
 class WordSegmentationTest(unittest.TestCase):
 
     def test_word_segmentation_scan_0_lines(self):
-        path = "test_files/line_files/Template_4_0/"
+        path = "test_files/line_files/Template_printsgetallen_10/"
         lines = [line for line in os.listdir(path)]
         # word_result = [1, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
         # if len(lines) != len(word_result):
@@ -72,7 +77,7 @@ class WordSegmentationTest(unittest.TestCase):
         #     self.assertEqual(len(lines), len(word_result))
         scan_0_word_test = True
         for x in range(0, len(lines)):
-            if not check_line(path, lines[x], 2, "Template_4_0"):
+            if not check_line(path, lines[x], 2, "Template_printsgetallen_10"):
                 scan_0_word_test = False
 
         self.assertTrue(scan_0_word_test)

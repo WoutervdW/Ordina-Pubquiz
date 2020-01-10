@@ -53,34 +53,34 @@ class LineSegmentationTest(unittest.TestCase):
         it should return and we want to test for the specific number of lines.
         """
         path = "test_files/image_files/"
-        file_name = "Template_Teamprints_0"
+        file_name = "Template_printsgetallen_10"
         line_length = read_number_of_lines(path, file_name)
         self.assertEqual(line_length, 14)
 
     def test_image_to_lines_scan_1(self):
         path = "test_files/image_files/"
-        file_name = "pubquizdemo1_1"
+        file_name = "Template_Teamprints_1"
         line_length = read_number_of_lines(path, file_name)
         # We don't count the big input field in this one, so we are looking for 23 lines.
         self.assertEqual(line_length, 14)
 
     def test_image_to_lines_scan_2(self):
         path = "test_files/image_files/"
-        file_name = "scan_2"
+        file_name = "Template_Teamprints_2"
         line_length = read_number_of_lines(path, file_name)
-        self.assertEqual(line_length, 28)
+        self.assertEqual(line_length, 14)
 
     def test_image_to_lines_scan_3(self):
         path = "test_files/image_files/"
-        file_name = "scan_3"
+        file_name = "Template_Teamprints_4"
         line_length = read_number_of_lines(path, file_name)
-        self.assertEqual(line_length, 15)
+        self.assertEqual(line_length, 14)
 
     def test_image_to_lines_scan_4(self):
         path = "test_files/image_files/"
-        file_name = "scan_4"
+        file_name = "Template_Teamprints_4"
         line_length = read_number_of_lines(path, file_name)
-        self.assertEqual(line_length, 23)
+        self.assertEqual(line_length, 14)
 
     def test_image_to_lines_scan_5(self):
         path = "test_files/image_files/"
