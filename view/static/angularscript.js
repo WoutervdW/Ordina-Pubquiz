@@ -59,7 +59,7 @@ angular.module('module', ['ngRoute'])
                 newvariants = [];
             }
             $scope.newsubanswers = [{}];
-            var data = {"question": $scope.newquestion, "subanswers": subanswers, "category": $scope.newquestioncategory, "active": $scope.newquestionactive};
+            var data = {"questionnumber": $scope.newquestionnumber, "question": $scope.newquestion, "subanswers": subanswers, "category": $scope.newquestioncategory, "active": $scope.newquestionactive};
             $http.post("/api/v1.0/newquestion", JSON.stringify(data))
             $scope.newquestion = "";
             window.location.reload();
