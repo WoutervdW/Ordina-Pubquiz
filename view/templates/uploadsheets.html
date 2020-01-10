@@ -13,13 +13,13 @@
 <div class = "container"  ng-app = "module" ng-controller = "controller">
     <form action="/uploader" method="POST" enctype="multipart/form-data" ng-submit ="showloadingsheetsbar()" ng-hide = "loadingsheets">
         <div class="form-group">
-            <label>Select pubquiz files</label>
+            <label>Selecteer bestand</label>
             <div class="custom-file">
                 <input type="file" class="custom-file-input" name="answersheets" id="answersheets" required>
-                <label class="custom-file-label" for="answersheets">Select pubquiz files...</label>
+                <label class="custom-file-label" for="answersheets">Selecteer bestand</label>
             </div>
         </div>
-         <button type="submit" class="btn btn-primary">Process pubquiz answer sheets</button>
+         <button type="submit" class="btn btn-primary">Lees bestand in</button>
     </form>
 <div class="col-sm-3 col-sm-offset-4"  ng-show="loadingsheets">Moment geduld aub.. Antwoordvellen worden verwerkt....</div>
 </div>
