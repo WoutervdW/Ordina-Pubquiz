@@ -1,6 +1,7 @@
 // define angular interpolationtags as //
+
 angular.module('module', ['ngRoute'])
-    .config(function($interpolateProvider) {
+    .config(function($interpolateProvider){
         $interpolateProvider.startSymbol('//');
         $interpolateProvider.endSymbol('//');
     })
@@ -37,7 +38,6 @@ angular.module('module', ['ngRoute'])
             $scope.subanswers = response.data;
         });
 
-
         $scope.newsubanswers = [{}];
         $scope.addField=function(){
               $scope.newsubanswers.push({});
@@ -59,7 +59,7 @@ angular.module('module', ['ngRoute'])
                 newvariants = [];
             }
             $scope.newsubanswers = [{}];
-            var data = {"question": $scope.newquestion, "subanswers": subanswers, "category": $scope.newquestioncategory, "active":$scope.newquestionactive};
+            var data = {"question": $scope.newquestion, "subanswers": subanswers, "category": $scope.newquestioncategory, "active": $scope.newquestionactive};
             $http.post("/api/v1.0/newquestion", JSON.stringify(data))
             $scope.newquestion = "";
             window.location.reload();
@@ -163,7 +163,28 @@ angular.module('module', ['ngRoute'])
         showQuestion();
         $interval(showQuestion, 300);
         };
+    })
+
+    .filter('byConfidence', function(){
+        return function(subanswers, confidencefrom, confidenceto){
+            if (!confidencefrom && !confidenceto){
+                return subanswers;
+            }
+            else if (!confidencefrom){
+                return subanswers.filter(function (subanswer){
+                     return subanswer.confidence < confidenceto;
+                })
+            }
+            else if (!confidenceto){
+                return subanswers.filter(function (subanswer){
+                     return subanswer.confidence > confidencefrom;
+                })
+            }
+            else{
+                return subanswers.filter(function (subanswer){
+                      return subanswer.confidence > confidencefrom && subanswer.confidence < confidenceto;
+                })
+            }
+        }
     });
-
-
 

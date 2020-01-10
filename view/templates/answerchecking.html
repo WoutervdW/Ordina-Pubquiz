@@ -9,7 +9,37 @@
 {% extends "base.html" %}
 {% block content %}
 <div class = "container"  ng-app = "module" ng-controller = "controller">
-    Filter: <input type = "text" ng-model = "searchfilter">
+     Filter:
+    <select ng-model="searchin">
+        <option value = 'everything'>Alles</option>
+        <option value = 'team'>Team</option>
+        <option value = 'question'>Vraag</option>
+        <option value = 'correct'>Correct</option>
+        <option value = 'answeredby'>Laatst nagekeken door</option>
+        <option value = 'confidence'>Zekerheid systeem</option>
+    </select>
+
+
+    <input type = "text" data-ng-model = "searchfilter.$" ng-show = "searchin=='everything'">
+    <select data-ng-model = "searchfilter.answered_by.teamname" ng-show = "searchin=='team'">
+        <option ng-repeat = "team in teams">//team.teamname//</option>
+    </select>
+    <select data-ng-model = "searchfilter.corr_question.question" ng-show = "searchin=='question'">
+        <option ng-repeat = "question in questions" ng-value="question.question">//question.id// //question.question//</option>
+    </select>
+    <select data-ng-model = "searchfilter.correct" ng-show="searchin=='correct'">
+        <option ng-value=true>Ja</option>
+        <option ng-value=false>Nee</option>
+    </select>
+    <select ng-model = "searchfilter.checkedby.personname" ng-show = "searchin=='answeredby'">
+        <option  ng-repeat = "person in persons">//person.personname//</option>
+    </select>
+    <label ng-show="searchin=='confidence'">Van</label>
+    <input type = "text" ng-model = "confidencefrom" ng-show = "searchin=='confidence'">
+    <label ng-show="searchin=='confidence'">Tot</label>
+    <input type = "text" ng-model = "confidenceto" ng-show = "searchin=='confidence'">
+    <label ng-show="searchin=='confidence'">%</label>
+
     <div class = "table-responsive" ng-hide = "checkinganswers">
         <table class="table table-hover table-sm table-fixed">
             <thead class = "header">
@@ -25,7 +55,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="subanswergiven in subanswers | orderBy:propertyName:reverse | filter : searchfilter">
+                <tr ng-repeat="subanswergiven in subanswers | orderBy:propertyName:reverse | filter: searchfilter | byConfidence:confidencefrom:confidenceto">
                     <td>//subanswergiven.answered_by.teamname//</td>
                     <td>//subanswergiven.corr_question.question//</td>
                      <td>
