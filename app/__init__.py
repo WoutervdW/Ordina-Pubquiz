@@ -21,8 +21,8 @@ from view.models import Question
 from view.models import Variant
 from view.config import InputConfig
 import numpy as np
-# import pytesseract
-# pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+import pytesseract
+pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
 line_number = 0
 
@@ -51,17 +51,14 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         multiply_factor = original_height / resized_height
         # After the resizing, the size of the number box will always be around this value.
         number_box_size = 66
-        line = prepare_image(line, resized_height, number_box_size)
+        print("prepare the image of a line for word segmentation")
+        line = prepare_image(line, resized_height, number_box_size)[0]
+        print("done with preparation, now do the actual segmentation")
         # TODO test out the theta and min_area parameter changes if the results are not good.
         res = word_segmentation(line, kernel_size=25, sigma=11, theta=7, min_area=100)
 
-        # iterate over all segmented words
-        # print('Segmented into %d words' % len(res))
-        # if save_image:
-        #     save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, number_box_size)
-        # #
-        # We can now examine each word.
-        # answersheet_detail = InputConfig.page_lines[1]
+        # Determine the question number
+        # Here we determine the question number using configuration
         line_detail = InputConfig.quiz[line_number]
         if str(line_detail).isdigit():
             question_id = line_detail

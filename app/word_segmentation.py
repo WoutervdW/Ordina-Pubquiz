@@ -249,9 +249,12 @@ def prepare_image(img, height, number_box_size):
     h = img.shape[0]
     factor = height / h
     resized = cv2.resize(img, dsize=None, fx=factor, fy=factor)
-    without_bars = resized[:, number_box_size:]
+    without_bars = resized
+    number_image = resized
+    without_bars = without_bars[:, number_box_size:]
+    number_image = number_image[:, :number_box_size]
     # We will remove the left part, which always has the same size and is never needed
-    return without_bars
+    return without_bars, number_image
 
 
 def create_kernel(kernel_size, sigma, theta):

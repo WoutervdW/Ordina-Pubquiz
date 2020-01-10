@@ -15,10 +15,10 @@ def show_image(img):
 
 
 if __name__ == "__main__":
-    print("Hello World")
-    img = cv2.imread('line_13.png')
+    image_name = "question_number_6.png"
+    img = cv2.imread(image_name)
     show_image(img)
 
     # print(pytesseract.image_to_string(img))
-    print(pytesseract.image_to_string(Image.open('line_13.png')))
+    print(pytesseract.image_to_string(img, config="--psm 13"))
 
