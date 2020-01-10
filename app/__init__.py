@@ -18,6 +18,7 @@ from view.models import Team
 from view.models import SubAnswerGiven
 from view.models import SubAnswer
 from view.models import Question
+from view.models import QuestionNumber
 from view.models import Variant
 from view.config import InputConfig
 import numpy as np
@@ -68,12 +69,31 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
                 prev_question = question_id
                 subanswer_number = 0
 
+        question_width = len(question_image)
+        question_height = len(question_image[0])
+
         # We create a binary image of the question number so the number can be read more easily.
         ret, thresh1 = cv2.threshold(question_image, 200, 255, cv2.THRESH_BINARY)
         # Read the number from the number box. After that we remove any non numbers (in case of lines)
         question_number = pytesseract.image_to_string(thresh1, config="--psm 13")
         question_number = re.sub("[^0-9]", "", question_number)
         print("the question number that is read: " + str(question_number) + " the number of the question: " + str(line_detail))
+
+        q_image = question_image.tostring()
+
+        if db is not None:
+            print("save question number to database with width %s and height %s" % (question_width, question_height))
+            # TODO fill in the other details as well! (not just the image)
+            question_recognized = QuestionNumber(
+                question_number=question_number,
+                question_image=q_image,
+                image_width=question_width,
+                image_height=question_height
+            )
+            # add the object to the database session
+            db.session.add(question_recognized)
+            # commit the session so that the image is stored in the database
+            db.session.commit()
 
         save_word_details(line_image, multiply_factor, res, number_box_size, db, model, answersheet_id, line_number, subanswer_number)
 

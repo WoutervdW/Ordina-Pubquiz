@@ -194,6 +194,7 @@ class Line(db.Model):
 
 class QuestionNumber(db.Model):
     """ A word object, corresponding to words in a line. """
+    __tablename__ = 'questionnumber'
     id = db.Column(db.Integer, primary_key=True)
     question_number = db.Column(db.String(255))
     question_image = db.Column(db.LargeBinary)
