@@ -68,10 +68,12 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
                 prev_question = question_id
                 subanswer_number = 0
 
+        # We create a binary image of the question number so the number can be read more easily.
+        ret, thresh1 = cv2.threshold(question_image, 200, 255, cv2.THRESH_BINARY)
         # Read the number from the number box. After that we remove any non numbers (in case of lines)
-        question_number = pytesseract.image_to_string(question_image, config="--psm 13")
+        question_number = pytesseract.image_to_string(thresh1, config="--psm 13")
         question_number = re.sub("[^0-9]", "", question_number)
-        print("the question number that is read: " + str(question_number))
+        print("the question number that is read: " + str(question_number) + " the number of the question: " + str(line_detail))
 
         save_word_details(line_image, multiply_factor, res, number_box_size, db, model, answersheet_id, line_number, subanswer_number)
 
