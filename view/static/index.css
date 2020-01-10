@@ -8,6 +8,10 @@ thead, tbody tr {
     table-layout:fixed;
 }
 
+.answerimage:hover{
+    width:500%;
+}
+
 .header {
     top: 50px;
     background-color: #F07D00;
