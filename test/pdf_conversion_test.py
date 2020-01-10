@@ -25,12 +25,12 @@ class PdfConversionTest(unittest.TestCase):
         self.assertEqual(len(answer_sheet_image[0][0]), 3)
 
     def test_multiple_pdf_pages(self):
-        file_name = "Template_4"
+        file_name = "Template_Teamprints"
         path = '../original_scan/'
         pubquiz_answer_sheet = path + file_name + '.pdf'
         answer_sheets_image = convert_pdf_to_image(pubquiz_answer_sheet)
 
-        self.assertEqual(len(answer_sheets_image), 2)
+        self.assertEqual(len(answer_sheets_image), 10)
 
         # If the test is successful we save the the images if the folder is empty so we can use these in the next tests
         path = 'test_files/image_files/'
