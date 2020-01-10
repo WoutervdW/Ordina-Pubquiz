@@ -43,19 +43,10 @@ def update_question():
     if post.get('active') is not None:
         questionactive = post.get('active')
         q.active = questionactive
-
+    
     if post.get('questionnumber').isdigit():
         questionnumber = int(post.get('questionnumber'))
-        while True:
-            qtemp = Question.query.filter_by(questionnumber=questionnumber).first()
-            if qtemp is None:
-                q.questionnumber = questionnumber
-                break
-            else:
-                if qtemp.id == id:
-                    break
-            questionnumber = questionnumber + 1
-            q.questionnumber = questionnumber
+        q.questionnumber = calcQuestionNumber(questionnumber, id)
     else:
         q.questionnumber = None
     db.session.commit()
@@ -78,6 +69,12 @@ def remove_question():
 @view.route('/api/v1.0/newquestion', methods=['POST'])
 def add_question():
     post = request.get_json()
+    newquestionnumber = post.get('questionnumber')
+    if newquestionnumber.isdigit():
+        newquestionnumber = int(newquestionnumber)
+        newquestionnumber = calcQuestionNumber(newquestionnumber, None)
+    else:
+        newquestionnumber = None
     newquestion = post.get('question')
     newsubanswers = post.get('subanswers')
     subanswers = []
@@ -97,10 +94,21 @@ def add_question():
 
     newquestionperson_id = session['userid']
     newquestionactive = post.get('active')
-    q = Question(question=newquestion, questioncategory=category,
+    q = Question(questionnumber=newquestionnumber, question=newquestion, questioncategory=category,
         person_id=newquestionperson_id, active=newquestionactive, subanswers=subanswers)
     db.session.add(q)
     db.session.commit()
     return 'OK'
 
 
+def calcQuestionNumber(questionnumber, id):
+    while True:
+        qtemp = Question.query.filter_by(questionnumber=questionnumber).first()
+        if qtemp is None:
+            return questionnumber
+            break
+        else:
+            if qtemp.id == id:
+                break
+        questionnumber = questionnumber + 1
+        return questionnumber

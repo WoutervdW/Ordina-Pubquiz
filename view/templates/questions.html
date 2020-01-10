@@ -45,14 +45,16 @@
             </tbody>
            <thead>
                 <tr>
-                    <td></td>
+                    <td><input type = "text" class = "form-control" ng-model = "newquestionnumber"></td>
                     <td><input type = "text" class = "form-control" ng-model = "newquestion"></td>
                     <td style="white-space:nowrap;">
                         <table class = "table table-borderless">
                             <tbody>
                                 <tr ng-repeat="newsubanswer in newsubanswers">
-                                    <td><input type = "text" class = "form-control" ng-model = "newsubanswer.value" style="width: 80%; display: inline-block;"></td>
-                                    <td><button class = "btn btn-primary" ng-click="addField()" ng-if="$last">+</button></td>
+                                    <td><input type = "text" class = "form-control" ng-model = "newsubanswer.value"></td>
+                                </tr>
+                                <tr>
+                                    <td><button class = "btn btn-primary" ng-click="addField()" >+</button></td>
                                 </tr>
                             </tbody>
                         </table>

@@ -15,14 +15,14 @@
     </select>
     Vraag:<select data-ng-model = "searchfilter.corr_question.question">
         <option ng-value="">Alle vragen</option>
-        <option ng-repeat = "question in questions" ng-value="question.question">//question.id// //question.question//</option>
+        <option ng-repeat = "question in questions" ng-value="question.question">//question.questionnumber// //question.question//</option>
     </select>
     Correct: <select data-ng-model = "searchfilter.correct">
         <option ng-value="">Alles</option>
         <option ng-value=true>Ja</option>
         <option ng-value=false>Nee</option>
     </select>
-    Nagekeken door: <select ng-model = "searchfilter.checkedby.personname">
+    Laatst nagekeken door: <select ng-model = "searchfilter.checkedby.personname">
         <option ng-value="">Iedereen</option>
         <option  ng-repeat = "person in persons">//person.personname//</option>
     </select>
@@ -36,13 +36,13 @@
         <table class="table table-hover table-sm table-fixed">
             <thead class = "header">
                 <tr>
-                    <th scope = "col" ng-click = "sortBy('team_id')">Team</th>
-                    <th scope = "col" ng-click = "sortBy('question_id')">Vraag</th>
+                    <th scope = "col" ng-click = "sortBy('answered_by.teamname')">Team</th>
+                    <th scope = "col" ng-click = "sortBy('corr_question.questionnumber')">Vraag</th>
                     <th scope = "col">Correct Antwoord</th>
-                    <th scope = "col" ng-click = "sortBy('answer_given')" >Gegeven Antwoord</th>
+                    <th scope = "col" ng-click = "sortBy('answer_given')">Gegeven Antwoord</th>
+                    <th scope = "col"> Afbeelding</th>
                     <th scope = "col" ng-click = "sortBy('correct')">Correct</th>
-                    <th scope = "col" ng-click = "sortBy('answer_image')">Afbeelding</th>
-                    <th scope = "col" ng-click = "sortBy('person_id')">Laatst nagekeken door</th>
+                    <th scope = "col" ng-click = "sortBy('checkedby.personname')">Laatst nagekeken door</th>
                     <th scope = "col" ng-click = "sortBy('confidence')">Zekerheid systeem</th>
                 </tr>
             </thead>
@@ -50,7 +50,7 @@
                 <tr ng-repeat="subanswergiven in subanswers | orderBy:propertyName:reverse | filter: searchfilter  | byConfidence:confidencefrom:confidenceto">
                     <td>//subanswergiven.answered_by.teamname//</td>
                     <td><h3>//subanswergiven.corr_question.questionnumber//</h3> //subanswergiven.corr_question.question//</td>
-                     <td>
+                    <td>
                         <table class = "table table-borderless">
                             <tbody>
                                 <tr ng-repeat = "subanswer in subanswergiven.corr_question.subanswers">
@@ -60,14 +60,15 @@
                         </table>
                      </td>
                      <td>//subanswergiven.answer_given//</td>
+                    <td>
+                         <img class="answerimage" width = "100%" src="lines/load/line_//subanswergiven.line.id//">
+                     </td>
                      {% if session['logged_in'] == True %}
                      <td><label class="switch"><input type="checkbox" ng-model="subanswergiven.correct" ng-change="updateAnswerCheck(subanswergiven)"><span class="slider round"></span></label></td>
                      {% else %}
                      <td><label class="switch"><input type="checkbox" ng-model="subanswergiven.correct" ng-disabled="true"><span class="slider round"></span></label></td>
                      {% endif %}
-                     <td>
-                         <img width=200% src="lines/load/line_//subanswergiven.line.id//">
-                     </td>
+
                      <td>//subanswergiven.checkedby.personname//</td>
                      <td>//subanswergiven.confidence//%</td>
                 </tr>
