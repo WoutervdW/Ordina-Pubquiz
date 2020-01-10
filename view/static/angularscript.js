@@ -114,6 +114,7 @@ angular.module('module', ['ngRoute'])
         $scope.showloadingsheetsbar = function(){
             $scope.loadingsheets = true;
         }
+
     })
 
     .controller('revealcontroller', function($scope, $http, $interval, $filter){
