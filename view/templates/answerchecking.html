@@ -15,14 +15,14 @@
     </select>
     Vraag:<select data-ng-model = "searchfilter.corr_question.question">
         <option ng-value="">Alle vragen</option>
-        <option ng-repeat = "question in questions" ng-value="question.question">//question.id// //question.question//</option>
+        <option ng-repeat = "question in questions" ng-value="question.question">//question.questionnumber// //question.question//</option>
     </select>
     Correct: <select data-ng-model = "searchfilter.correct">
         <option ng-value="">Alles</option>
         <option ng-value=true>Ja</option>
         <option ng-value=false>Nee</option>
     </select>
-    Nagekeken door: <select ng-model = "searchfilter.checkedby.personname">
+    Laatst nagekeken door: <select ng-model = "searchfilter.checkedby.personname">
         <option ng-value="">Iedereen</option>
         <option  ng-repeat = "person in persons">//person.personname//</option>
     </select>
