@@ -37,6 +37,13 @@ angular.module('module', ['ngRoute'])
         }).then(function (response){
             $scope.subanswers = response.data;
         });
+        $scope.currentPage = 0;
+        $scope.pageSize = 10;
+        $scope.data = [];
+        $scope.q = '';
+        $scope.numberOfPages = function(){
+            return Math.ceil($scope.subanswers.length / $scope.pageSize);
+        }
 
         $scope.newsubanswers = [{}];
         $scope.addField=function(){
@@ -187,6 +194,12 @@ angular.module('module', ['ngRoute'])
                       return subanswer.confidence > confidencefrom && subanswer.confidence < confidenceto;
                 })
             }
+        }
+    })
+    .filter('startFrom', function() {
+        return function(input, start) {
+            start = +start;
+            return input.slice(start);
         }
     });
 
