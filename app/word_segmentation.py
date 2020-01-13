@@ -55,7 +55,7 @@ def read_word_from_image(image_to_read, model):
     return results
 
 
-def save_word_details(line_image, multiply_factor, res, number_box_size, db=None, model=None, answersheet_id=None, line_number=-1, subanswer_number=-1):
+def save_word_details(line_image, multiply_factor, res, number_box_size, db=None, model=None, answersheet_id=None, line_number=-1, question_number=0, subanswer_number=-1):
     words = []
     index = 0
     predicted_line = ""
@@ -99,16 +99,8 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
         index += 1
 
     if db is not None:
-        print("answersheet number " + str(answersheet_id))
-        line_detail = InputConfig.quiz[line_number]
-        print("line detail " + str(line_detail))
-        if str(line_detail).isdigit():
+        if question_number != 0:
             print("This line is a valid question")
-            # If it's a digit we know it is a correct question, so we can start finding the question details
-            # TODO @Sander: find correct question id (possibly configuration)
-            # We assume the configuration is always correct. It returns a question id and a subanswer id
-            # question_id = InputConfig.question_to_id.get(str(line_detail))
-            question_number = InputConfig.quiz[line_number]
             # We assume there is exactly 1 question for the given question number
             question = Question.query.filter_by(questionnumber=question_number).first()
             question_id = question.id
