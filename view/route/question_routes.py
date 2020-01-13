@@ -43,14 +43,20 @@ def update_question():
     if post.get('active') is not None:
         questionactive = post.get('active')
         q.active = questionactive
-    
     if post.get('questionnumber').isdigit():
         questionnumber = int(post.get('questionnumber'))
-        q.questionnumber = calcQuestionNumber(questionnumber, id)
+        qtemp = Question.query.filter_by(questionnumber=questionnumber).first()
+        if qtemp is None:
+            q.questionnumber = questionnumber
+        else:
+            if qtemp.id != id:
+                return 'Er is al een vraag met dit nummer'
+            else:
+                q.questionnumber = questionnumber
     else:
         q.questionnumber = None
     db.session.commit()
-    return 'OK'
+    return
 
 
 @view.route('/api/v1.0/removequestion', methods=['POST'])
@@ -72,7 +78,7 @@ def add_question():
     newquestionnumber = post.get('questionnumber')
     if newquestionnumber.isdigit():
         newquestionnumber = int(newquestionnumber)
-        newquestionnumber = calcQuestionNumber(newquestionnumber, None)
+
     else:
         newquestionnumber = None
     newquestion = post.get('question')
@@ -101,14 +107,4 @@ def add_question():
     return 'OK'
 
 
-def calcQuestionNumber(questionnumber, id):
-    while True:
-        qtemp = Question.query.filter_by(questionnumber=questionnumber).first()
-        if qtemp is None:
-            return questionnumber
-            break
-        else:
-            if qtemp.id == id:
-                break
-        questionnumber = questionnumber + 1
-        return questionnumber
+
