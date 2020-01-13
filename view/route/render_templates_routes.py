@@ -16,9 +16,7 @@ def questions():
 
 @view.route('/answerchecking')
 def answers():
-    page = request.args.get('page', 1, type=int)
-    answers = SubAnswerGiven.query.paginate(page, view.config['ANSWERS_PER_PAGE'], False)
-    return render_template('answerchecking.html', subanswers=answers)
+    return render_template('answerchecking.html')
 
 
 @view.route('/uploadsheets')
