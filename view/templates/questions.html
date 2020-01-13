@@ -27,7 +27,7 @@
             </thead>
             <tbody>
                 <tr ng-repeat ="question in questions | orderBy:propertyName:reverse" >
-                    <td><input type = "text" class = "form-control" ng-model="question.questionnumber" ng-change="updateQuestionNumber(question)"></td>
+                    <td><input type = "text" class = "form-control" ng-model="question.questionnumber" ng-blur="updateQuestionNumber(question)"></td>
                     <td>//question.question//</td>
                     <td>
                         <table class = "table table-borderless">
