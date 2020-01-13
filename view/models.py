@@ -191,3 +191,13 @@ class Line(db.Model):
     image_width = db.Column(db.Integer)
     image_height = db.Column(db.Integer)
 
+
+class QuestionNumber(db.Model):
+    """ A word object, corresponding to words in a line. """
+    __tablename__ = 'questionnumber'
+    id = db.Column(db.Integer, primary_key=True)
+    question_number = db.Column(db.String(255))
+    question_image = db.Column(db.LargeBinary)
+    image_width = db.Column(db.Integer)
+    image_height = db.Column(db.Integer)
+
