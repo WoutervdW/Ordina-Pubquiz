@@ -81,7 +81,7 @@ class WordRecognitionTest(unittest.TestCase):
 
     def test_test_word(self):
         model = Model(open('../model/charList.txt').read(), "../model/")
-        path = "test_words/B.PNG"
+        path = "test_words/test_1.PNG"
 
         word = cv2.imread(path)
         show_image(word)

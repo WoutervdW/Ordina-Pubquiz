@@ -15,7 +15,7 @@
     {% for question in questions %}
     <div>
         <a>
-            <img width=50% src="{{ url_for('load_question_id', question_id=question.id) }}">
+            <img width=10% src="{{ url_for('load_question_id', question_id=question.id) }}">
             {{question.question_number}}
         </a>
     </div>
