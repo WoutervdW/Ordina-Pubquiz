@@ -47,7 +47,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="subanswergiven in subanswers | orderBy:propertyName:reverse | filter: searchfilter  | byConfidence:confidencefrom:confidenceto">
+                <tr ng-repeat="subanswergiven in subanswers | orderBy:propertyName:reverse | filter: searchfilter  | byConfidence:confidencefrom:confidenceto | startFrom:currentPage*pageSize | limitTo:pageSize">
                     <td>//subanswergiven.answered_by.teamname//</td>
                     <td><h3>//subanswergiven.corr_question.questionnumber//</h3> //subanswergiven.corr_question.question//</td>
                     <td>
@@ -68,20 +68,29 @@
                      {% else %}
                      <td><label class="switch"><input type="checkbox" ng-model="subanswergiven.correct" ng-disabled="true"><span class="slider round"></span></label></td>
                      {% endif %}
-
                      <td>//subanswergiven.checkedby.personname//</td>
                      <td>//subanswergiven.confidence//%</td>
                 </tr>
             </tbody>
         </table>
-        {% if session['logged_in'] == True %}
-        <button class="btn btn-primary" ng-click = "deleteAllAnswers()">Verwijder alle antwoorden</button>
-        <button class="btn btn-primary" ng-click = "checkAllAnswers()">Kijk antwoorden na</button>
-        {% endif %}
+        <div class = 'wrapperhorizontal'>
+             <button class = 'btn btn-primary' ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
+            Previous
+            </button>
+            <label>//currentPage+1// / //numberOfPages()//</label>
+            <button class = 'btn btn-primary' ng-disabled="currentPage >= subanswers.length/pageSize - 1" ng-click="currentPage=currentPage+1">
+            Next
+            </button>
+        </div>
+        <div>
+            {% if session['logged_in'] == True %}
+            <button class="btn btn-primary" ng-click = "deleteAllAnswers()">Verwijder alle antwoorden</button>
+            <button class="btn btn-primary" ng-click = "checkAllAnswers()">Kijk antwoorden na</button>
+            {% endif %}
+        </div>
     </div>
     <div class="col-sm-3 col-sm-offset-4"  ng-show="checkinganswers">Moment geduld aub.. Antwoorden worden nagekeken ...</div>
 </div>
-
 {%endblock%}
 </body>
 </html>

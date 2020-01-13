@@ -116,3 +116,18 @@ input:checked + .slider:before {
   padding: 20px;
 }
 
+.wrapperhorizontal {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  min-height: 100%;
+}
+
+.wrapperhorizontal button {
+    margin: 20px;
+}
+
+.wrapper button {
+    margin: 20px;
+}
