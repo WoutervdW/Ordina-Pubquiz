@@ -8,7 +8,7 @@
 <body>
 {% extends "base.html" %}
 {% block content %}
-<div  ng-app = "module" ng-controller = "controller">
+<div class="container"  ng-app = "module" ng-controller = "controller">
     Team:<select data-ng-model = "searchfilter.answered_by.teamname">
         <option ng-value="">Alle teams</option>
         <option ng-repeat = "team in teams">//team.teamname//</option>
@@ -42,8 +42,8 @@
                     <th scope = "col" ng-click = "sortBy('answer_given')">Gegeven Antwoord</th>
                     <th scope = "col"> Afbeelding</th>
                     <th scope = "col" ng-click = "sortBy('correct')">Correct</th>
-                    <th scope = "col" ng-click = "sortBy('checkedby.personname')">Laatst nagekeken door</th>
-                    <th scope = "col" ng-click = "sortBy('confidence')">Zekerheid systeem</th>
+                 <!--   <th scope = "col" ng-click = "sortBy('checkedby.personname')">Laatst nagekeken door</th>
+                    <th scope = "col" ng-click = "sortBy('confidence')">Zekerheid systeem</th> -->
                 </tr>
             </thead>
             <tbody>
@@ -68,18 +68,18 @@
                      {% else %}
                      <td><label class="switch"><input type="checkbox" ng-model="subanswergiven.correct" ng-disabled="true"><span class="slider round"></span></label></td>
                      {% endif %}
-                     <td>//subanswergiven.checkedby.personname//</td>
-                     <td>//subanswergiven.confidence//%</td>
+                     <!--<td>//subanswergiven.checkedby.personname//</td>
+                     <td>//subanswergiven.confidence//%</td>-->
                 </tr>
             </tbody>
         </table>
         <div class = 'wrapperhorizontal'>
              <button class = 'btn btn-primary' ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
-            Previous
+            Vorige
             </button>
             <label>//currentPage+1// / //numberOfPages()//</label>
             <button class = 'btn btn-primary' ng-disabled="currentPage >= subanswers.length/pageSize - 1" ng-click="currentPage=currentPage+1">
-            Next
+            Volgende
             </button>
         </div>
         <div>

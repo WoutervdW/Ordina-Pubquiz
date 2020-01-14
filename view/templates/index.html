@@ -14,6 +14,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class = "container"  ng-app = "module" ng-controller = "controller">
+    //editteam//
     <div class = "table-responsive">
         <table class="table table-hover table-sm table-fixed">
             <thead class = "header">
@@ -27,8 +28,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="team in teams | orderBy:propertyName:reverse">
-                    <td>//team.teamname//</td>
+                <tr ng-click = "editteam=true" ng-repeat="team in teams | orderBy:propertyName:reverse">
+                    <td ng-hide="editteam">//team.teamname//</td><td><input type="text" ng-blur="updateTeam(team); editteam=false" ng-model="team.teamname" ng-show="editteam"></td>
                     <td>//team.score//</td>
                     {% if session['logged_in'] == True %}
                     <td><button type="button" class = "btn btn-danger" ng-click="removeTeam(team)"><span class="glyphicon glyphicon-remove"></span></button></td>
