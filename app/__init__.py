@@ -27,19 +27,22 @@ import re
 import app.save_to_database
 
 line_number = 0
+team_id = -1
 
 
-def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan", db=None, team_id=None, answersheet_id=None):
+def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan", db=None, answersheet_id=None):
     global line_number
-    # gray = cv2.cvtColor(answer_sheet_image, cv2.COLOR_BGR2GRAY)
-    # Now we have the answer sheet in image form and we can move on to the line segmentation
-    output_folder = "out/"
-    lines = line_segmentation(answer_sheet_image, save_image, output_folder, sheet_name, db, answersheet_id)
+    global team_id
 
     # We keep track of which question is being handled, because 1 question can have multiple lines
     prev_question = -1
     subanswer_number = 0
     question_id = 0
+
+    # Now we have the answer sheet in image form and we can move on to the line segmentation
+    output_folder = "out/"
+    lines = line_segmentation(answer_sheet_image, save_image, output_folder, sheet_name, db, answersheet_id)
+
     # The first line of the answersheet can be the team name. We will check if this is indeed the name
     # We choose 130 as the bound for the left box length
     team_name_image = lines[0][0]
@@ -51,10 +54,15 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         name_of_team = team_name.split("NAAM:")[1]
         name_of_team = name_of_team.lstrip()
         team_id = save_to_database.save_team_database(db, name_of_team)
+        # Now that we have a new team, we will also reset the line number counter
+        line_number = 0
         print("the team name is: " + name_of_team)
         print("the team id is: " + str(team_id))
 
-    save_to_database.update_team_answersheet(db, answersheet_id, team_id)
+    # If no team name is found it should use it's previously found team_id
+    if not save_to_database.update_team_answersheet(db, answersheet_id, team_id):
+        # We choose to continue and only print a logging for now
+        print("there was a problem linking the team to the answersheet")
 
     for line_image in lines:
         line_number += 1
@@ -99,19 +107,16 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
             # commit the session so that the image is stored in the database
             db.session.commit()
 
-        # line_detail = InputConfig.quiz[line_number]
         if question_number != "":
             question_id = int(question_number)
+            subanswer_number = 0
             # If the line detail is a number, this corresponds to the question
-            print("processing question: " + str(question_id))
-            if question_id == prev_question:
-                subanswer_number += 1
-            else:
-                prev_question = question_id
-                subanswer_number = 0
+        else:
+            # If the question number was empty it is the same question as before, so we increase the subanswer id.
+            subanswer_number += 1
 
-        print("the question number that is read: " + str(question_id) + " the number of the question: " + str(InputConfig.quiz[line_number]))
-        save_word_details(line_image, multiply_factor, res, number_box_size, db, model, answersheet_id, line_number, question_id, subanswer_number)
+        print("the question number that is read: " + str(question_id))
+        save_word_details(line_image, multiply_factor, res, number_box_size, db, model, team_id, question_id, subanswer_number)
 
 
 def run_program(pubquiz_answer_sheets, save_image=False, db=None):
@@ -119,6 +124,7 @@ def run_program(pubquiz_answer_sheets, save_image=False, db=None):
     model = Model(open('model/charList.txt').read())
 
     answersheet_id = -1
+    global team_id
     team_id = -1
     for answer_sheets in pubquiz_answer_sheets:
         # The pdf file. We can it and it returns 1 to multiple answer pages
@@ -137,7 +143,8 @@ def run_program(pubquiz_answer_sheets, save_image=False, db=None):
                 print("something went wrong, no answersheet id present")
                 exit()
             else:
-                process_sheet(pages[p], model, save_image, sheet_name, db, team_id, answersheet_id)
+                print("start processing answersheet with id " + str(answersheet_id))
+                process_sheet(pages[p], model, save_image, sheet_name, db, answersheet_id)
 
     global line_number
     line_number = 0

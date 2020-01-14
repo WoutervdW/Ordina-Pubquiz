@@ -159,6 +159,9 @@ class Answersheet(db.Model):
     image_width = db.Column(db.Integer)
     image_height = db.Column(db.Integer)
 
+    def set_team_id(self, team_id):
+        self.team_id = team_id
+
     def get_team_id(self):
         return self.team_id
 
