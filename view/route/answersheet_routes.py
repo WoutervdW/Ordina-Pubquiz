@@ -4,6 +4,7 @@ from view.models import Line
 from view.models import Word
 from view.models import SubAnswerGiven
 from view.models import QuestionNumber
+from view.models import Team
 from flask import request
 from flask import make_response
 from flask import render_template
@@ -75,5 +76,9 @@ def nuke_all():
     QuestionNumber.query.delete()
     db.session.commit()
     db.engine.execute('alter sequence questionnumber_id_seq RESTART with 1')
+
+    Team.query.delete()
+    db.session.commit()
+    db.engine.execute('alter sequence team_id_seq RESTART with 1')
     return 'database images cleared'
 

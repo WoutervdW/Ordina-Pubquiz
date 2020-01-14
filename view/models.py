@@ -154,10 +154,13 @@ class Answersheet(db.Model):
     """ image of complete answersheet (handwritten) """
     __tablename__ = 'answersheet'
     id = db.Column(db.Integer, primary_key=True)
-    team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
+    team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=True)
     answersheet_image = db.Column(db.LargeBinary)
     image_width = db.Column(db.Integer)
     image_height = db.Column(db.Integer)
+
+    def set_team_id(self, team_id):
+        self.team_id = team_id
 
     def get_team_id(self):
         return self.team_id
