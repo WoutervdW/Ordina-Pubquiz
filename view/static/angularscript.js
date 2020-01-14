@@ -42,7 +42,7 @@ angular.module('module', ['ngRoute'])
         $scope.data = [];
         $scope.q = '';
         $scope.numberOfPages = function(){
-            return Math.ceil($scope.subanswers.length / $scope.pageSize);
+            return Math.ceil($scope.filteredsubanswers.length / $scope.pageSize);
         }
 
         $scope.newsubanswers = [{}];

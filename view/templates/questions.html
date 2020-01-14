@@ -47,7 +47,7 @@
            <tbody>
                 <tr>
                     <td><input type = "text" class = "form-control" ng-model = "newquestionnumber"></td>
-                    <td><input type = "text" class = "form-control" ng-model = "newquestion"></td>
+                    <td><textarea cols="40" rows="5" class = "form-control" ng-model = "newquestion"></textarea></td>
                     <td style="white-space:nowrap;">
                         <table class = "table table-borderless">
                             <tbody>
@@ -55,7 +55,7 @@
                                     <td><input type = "text" class = "form-control" ng-model = "newsubanswer.value"></td>
                                 </tr>
                                 <tr>
-                                    <td><button class = "btn btn-primary" ng-click="addField()" >+</button></td>
+                                    <td><button class = "btn btn-primary" ng-click="addField()" >Extra subantwoord</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -69,7 +69,7 @@
                     </td>
 
                  <!--   <td><label class="switch"><input type="checkbox" ng-model = "newquestionactive"  ng-init="newquestionactive=true"><span class="slider round"></span></label></td> -->
-                    <td><button class="btn btn-primary" ng-click = "addQuestion()">Voeg toe</button></td>
+                    <td><button class="btn btn-primary" ng-click = "addQuestion()">Voeg nieuwe vraag toe</button></td>
                 </tr>
            </tbody>
         </table>
