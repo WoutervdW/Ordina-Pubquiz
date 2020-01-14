@@ -116,3 +116,25 @@ input:checked + .slider:before {
   padding: 20px;
 }
 
+.filter-container{
+    Width: 30%;
+}
+
+.filter-dropdown{
+    Width: 80%;
+}
+
+.input-holder {
+    border: 1px solid #cccccc;
+    display: inline-block;
+    padding: 5px;
+}
+.input-holder > input {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    outline:none;
+}
+.input-holder:after {
+    content: '%';
+}
