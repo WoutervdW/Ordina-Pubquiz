@@ -50,7 +50,7 @@ def update_question():
             q.questionnumber = questionnumber
         else:
             if qtemp.id != id:
-                return 'Er is al een vraag met dit nummer'
+                return 'De vraag kan niet worden aangepast. Er is al een vraag met dit nummer.'
             else:
                 q.questionnumber = questionnumber
     else:
@@ -78,7 +78,9 @@ def add_question():
     newquestionnumber = post.get('questionnumber')
     if newquestionnumber.isdigit():
         newquestionnumber = int(newquestionnumber)
-
+        qtemp = Question.query.filter_by(questionnumber=newquestionnumber).first()
+        if qtemp is not None:
+            return 'De vraag kan niet worden toegevoegd. Er is al een vraag met dit nummer.'
     else:
         newquestionnumber = None
     newquestion = post.get('question')
@@ -104,7 +106,7 @@ def add_question():
         person_id=newquestionperson_id, active=newquestionactive, subanswers=subanswers)
     db.session.add(q)
     db.session.commit()
-    return 'OK'
+    return
 
 
 
