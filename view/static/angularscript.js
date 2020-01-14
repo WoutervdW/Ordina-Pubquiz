@@ -118,10 +118,14 @@ angular.module('module', ['ngRoute'])
         }
         $scope.removeTeams = function(){
             $http.post("/api/v1.0/removeteams")
-            window.location.reload();
+            window.location.reload()
+        }
+        $scope.updateTeam = function(team){
+            var data = {"id": team.id, "teamname": team.teamname}
+            $http.post("/api/v1.0/updateteam", JSON.stringify(data))
         }
         $scope.updateAnswerLabel = function(){
-            $scope.answersheetform.label = "adsf";
+            $scope.answersheetform.label = "adsf"
         }
         $scope.showloadingsheetsbar = function(){
             $scope.loadingsheets = true;
