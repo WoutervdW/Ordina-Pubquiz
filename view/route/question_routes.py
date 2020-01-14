@@ -40,10 +40,7 @@ def update_question():
     post = request.get_json()
     id = post.get('id')
     q = Question.query.filter_by(id=id).first()
-    if post.get('active') is not None:
-        questionactive = post.get('active')
-        q.active = questionactive
-    if post.get('questionnumber').isdigit():
+    if str(post.get('questionnumber')).isdigit():
         questionnumber = int(post.get('questionnumber'))
         qtemp = Question.query.filter_by(questionnumber=questionnumber).first()
         if qtemp is None:
@@ -55,8 +52,10 @@ def update_question():
                 q.questionnumber = questionnumber
     else:
         q.questionnumber = None
+    q.question = post.get('question')
+    print(q.question)
     db.session.commit()
-    return
+    return 'OK'
 
 
 @view.route('/api/v1.0/removequestion', methods=['POST'])
