@@ -28,11 +28,11 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-click = "editteam=true" ng-repeat="team in teams | orderBy:propertyName:reverse">
+                <tr ng-click = "editteam=true" ng-mouseEnter="showremovebutton=true" ng-mouseLeave = "showremovebutton=false" ng-repeat="team in teams | orderBy:propertyName:reverse">
                     <td ng-hide="editteam">//team.teamname//</td><td ng-show="editteam"><input type="text" ng-blur="updateTeam(team); editteam=false" ng-model="team.teamname" ></td>
                     <td>//team.score//</td>
                     {% if session['logged_in'] == True %}
-                    <td><button type="button" class = "btn btn-danger" ng-click="removeTeam(team)"><span class="glyphicon glyphicon-remove"></span></button></td>
+                    <td><button type="button" class = "btn btn-danger" ng-click="removeTeam(team)" ng-show="showremovebutton"><span class="glyphicon glyphicon-remove"></span></button></td>
                     {% endif %}
                 </tr>
                   {% if session['logged_in'] == True %}
