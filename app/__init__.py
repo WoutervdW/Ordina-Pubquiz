@@ -51,7 +51,7 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
     if "Naam:" in team_name:
         print("new team!")
         # We take the name of the team and remove leading whitespaces
-        name_of_team = team_name.split("NAAM:")[1]
+        name_of_team = team_name.split("Naam:")[1]
         name_of_team = name_of_team.lstrip()
         team_id = save_to_database.save_team_database(db, name_of_team)
         # Now that we have a new team, we will also reset the line number counter
