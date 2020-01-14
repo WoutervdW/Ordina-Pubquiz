@@ -48,7 +48,7 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
     team_name_image = lines[0][0]
     team_name_image = team_name_image[:, 130:(len(team_name_image[0]))]
     team_name = pytesseract.image_to_string(team_name_image).replace("\n", " ")
-    if "NAAM:" in team_name:
+    if "Naam:" in team_name:
         print("new team!")
         # We take the name of the team and remove leading whitespaces
         name_of_team = team_name.split("NAAM:")[1]
