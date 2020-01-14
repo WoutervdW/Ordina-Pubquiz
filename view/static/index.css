@@ -24,11 +24,34 @@ thead, tbody tr {
     height:600px;
     width:100%;
     overflow:auto;
+    border-collapse: collapse solid;
+    border-bottom: 50px;
+    margin-top: 0 !important;
+}
+
+
+.table-fixed tr{
+    margin-top: 0 !important;
+}
+
+
+.table-fixed td{
+    margin-top: 0 !important;
+}
+
+.table-borderless th{
+    display:none !important;
+
 }
 
 .table-borderless tbody {
     height: auto;
     width: 100%;
+    border: 0 !important;
+}
+
+.table-borderless td{
+    border: 0 !important;
 }
 
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
@@ -36,6 +59,9 @@ thead, tbody tr {
     color: white;
 }
 
+.table-hover tbody input{
+    color: black;
+}
 
 .table-responsive {
     position: relative;
@@ -83,6 +109,15 @@ thead, tbody tr {
   transition: .2s;
 }
 
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
 input:checked + .slider {
   background-color: green;
 }
@@ -97,15 +132,6 @@ input:checked + .slider:before {
   transform: translateX(13px);
 }
 
-/* Rounded sliders */
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
-
 .wrapper {
   display: flex;
   align-items: center;
@@ -115,6 +141,27 @@ input:checked + .slider:before {
   min-height: 100%;
   padding: 20px;
 }
+.filter-container{
+    Width: 30%;
+}
+
+.filter-dropdown{
+    Width: 80%;
+}
+
+.input-holder {
+    border: 1px solid #cccccc;
+    display: inline-block;
+    padding: 5px;
+}
+.input-holder > input {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    outline:none;
+}
+.input-holder:after {
+    content: '%';
 
 .wrapperhorizontal {
   display: flex;

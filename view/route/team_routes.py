@@ -43,3 +43,15 @@ def remove_teams():
     Team.query.delete()
     db.session.commit()
     return 'OK'
+
+
+@view.route('/api/v1.0/updateteam', methods=['POST'])
+def edit_team():
+   post = request.get_json()
+   id = post.get('id')
+   teamname = post.get('teamname')
+   team = Team.query.filter_by(id=id).first()
+   team.teamname = teamname
+   db.session.commit()
+   return 'OK'
+
