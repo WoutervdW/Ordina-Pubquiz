@@ -21,7 +21,7 @@
             <label>Vraag:</label>
             <select class="filter-dropdown" data-ng-model = "searchfilter.corr_question.question">
                 <option ng-value="">Alle vragen</option>
-                <option ng-repeat="question in questions" ng-value="question.question">//question.questionnumber// //question.question//</option>
+                <option ng-repeat="question in questions | orderBy:'questionnumber'" ng-value="question.question">//question.questionnumber// //question.question//</option>
             </select>
         </div>
         <div>
