@@ -66,7 +66,7 @@ thead, tbody tr {
 .table-responsive {
     position: relative;
     margin-top: 35px;
-}
+ }
 
 
 /* The switch - the box around the slider */
@@ -132,6 +132,12 @@ input:checked + .slider:before {
   transform: translateX(13px);
 }
 
+.checkinganswers{
+    float:left;
+    width:75%;
+
+}
+
 .wrapper {
   display: flex;
   align-items: center;
@@ -155,7 +161,9 @@ input:checked + .slider:before {
 }
 
 .filter-container{
-    Width: 30%;
+    Width: 15%;
+    float:left;
+    margin-left:2%;
 }
 
 .filter-dropdown{
