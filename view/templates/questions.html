@@ -55,9 +55,9 @@
                     <td ng-hide="editquestion">//question.questioncategory.name//</td>
                     <td ng-show="editquestion">
                         <label>
-                            <input class="form-control" list="categories" ng-model="question.category">
+                            <input class="form-control" list="categoriesedit" ng-model="question.questioncategory" ng-value="question.questioncategory.name">
                         </label>
-                        <datalist>
+                        <datalist id = "categoriesedit">
                             <option ng-repeat="category in categories" ng-value="category.name">//category.name//</button></option>
                         </datalist>
                     </td>
