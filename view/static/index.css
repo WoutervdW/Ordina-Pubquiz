@@ -141,8 +141,23 @@ input:checked + .slider:before {
   min-height: 100%;
   padding: 20px;
 }
+
+.wrapperhorizontal {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  min-height: 100%;
+}
+
+.wrapperhorizontal button {
+    margin: 20px;
+}
+
 .filter-container{
-    Width: 30%;
+    Width: 15%;
+    float:left;
+    margin-left:2%;
 }
 
 .filter-dropdown{

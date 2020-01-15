@@ -1,4 +1,5 @@
 // define angular interpolationtags as //
+
 angular.module('module', ['ngRoute'])
     .config(function ($interpolateProvider) {
         $interpolateProvider.startSymbol('//');
@@ -40,9 +41,10 @@ angular.module('module', ['ngRoute'])
         $scope.pageSize = 10;
         $scope.data = [];
         $scope.q = '';
-        $scope.numberOfPages = function () {
-            return Math.ceil($scope.subanswers.length / $scope.pageSize);
+        $scope.numberOfPages = function(){
+            return Math.ceil($scope.filteredsubanswers.length / $scope.pageSize);
         }
+
         $scope.newsubanswers = [{}];
         $scope.addField = function () {
             $scope.newsubanswers.push({});
@@ -83,16 +85,14 @@ angular.module('module', ['ngRoute'])
             $http.post("/api/v1.0/removequestion", JSON.stringify(data))
             window.location.reload();
         }
-        $scope.updateQuestionActive = function (question) {
-            var data = {"id": question.id, "active": question.active}
+        $scope.updateQuestion = function(question){
+            var data = {"id":question.id, "questionnumber": question.questionnumber, "question": question.question}
             $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
-        }
-        $scope.updateQuestionNumber = function (question) {
-            var data = {"id": question.id, "questionnumber": question.questionnumber}
-            $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
-                .then(function (response) {
+            .then(function(response) {
+                if(response.data != 'OK'){
                     alert(response.data)
-                })
+                }
+            })
         }
         $scope.updateAnswerCheck = function (answer) {
             var data = {"id": answer.id, "correct": answer.correct}
