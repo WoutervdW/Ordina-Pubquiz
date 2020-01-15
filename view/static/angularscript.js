@@ -1,72 +1,41 @@
 // define angular interpolationtags as //
 
 angular.module('module', ['ngRoute'])
-<<<<<<< HEAD
     .config(function($interpolateProvider){
         $interpolateProvider.startSymbol('//')
         $interpolateProvider.endSymbol('//')
-=======
-    .config(function ($interpolateProvider) {
-        $interpolateProvider.startSymbol('//');
-        $interpolateProvider.endSymbol('//');
->>>>>>> 277ff31adf2661ec724c4695a99a4473400575ef
     })
     //controller
     .controller('controller', function ($scope, $http, $location, $window) {
         $http({
             method: "GET",
             url: "/api/v1.0/teams"
-<<<<<<< HEAD
-        }).then(function (response){
-            $scope.teams = response.data
-=======
         }).then(function (response) {
             $scope.teams = response.data;
->>>>>>> 277ff31adf2661ec724c4695a99a4473400575ef
         });
         $http({
             method: "GET",
             url: "/api/v1.0/questions"
-<<<<<<< HEAD
-        }).then(function (response){
-            $scope.questions = response.data
-=======
         }).then(function (response) {
             $scope.questions = response.data;
->>>>>>> 277ff31adf2661ec724c4695a99a4473400575ef
         });
         $http({
             method: "GET",
             url: "/api/v1.0/categories"
-<<<<<<< HEAD
-        }).then(function (response){
-            $scope.categories = response.data
-=======
         }).then(function (response) {
             $scope.categories = response.data;
->>>>>>> 277ff31adf2661ec724c4695a99a4473400575ef
         });
         $http({
             method: "GET",
             url: "/api/v1.0/persons"
-<<<<<<< HEAD
-        }).then(function (response){
-            $scope.persons = response.data
-=======
         }).then(function (response) {
             $scope.persons = response.data;
->>>>>>> 277ff31adf2661ec724c4695a99a4473400575ef
         });
         $http({
             method: "GET",
             url: "/api/v1.0/subanswers"
-<<<<<<< HEAD
-        }).then(function (response){
-            $scope.subanswers = response.data
-=======
         }).then(function (response) {
             $scope.subanswers = response.data;
->>>>>>> 277ff31adf2661ec724c4695a99a4473400575ef
         });
         $scope.currentPage = 0
         $scope.pageSize = 10
@@ -77,7 +46,6 @@ angular.module('module', ['ngRoute'])
         }
 
         $scope.newsubanswers = [{}];
-<<<<<<< HEAD
         $scope.addField=function(list){
               list.push({});
         }
@@ -109,35 +77,6 @@ angular.module('module', ['ngRoute'])
             }
             $scope.newsubanswers = [{}]
             var data = {"questionnumber": $scope.newquestionnumber, "question": $scope.newquestion, "subanswers": subanswers, "category": $scope.newquestioncategory, "active": $scope.newquestionactive}
-=======
-        $scope.addField = function () {
-            $scope.newsubanswers.push({});
-        }
-        $scope.sortBy = function sortBy(propertyName) {
-            $scope.reverse = $scope.propertyName === propertyName ? !$scope.reverse : false;
-            $scope.propertyName = propertyName;
-        }
-        $scope.addQuestion = function (category_id) {
-            var newvariants = [];
-            var subanswers = [];
-            for (i = 0; i < $scope.newsubanswers.length; i++) {
-                subanswer = $scope.newsubanswers[i].value;
-                variants = subanswer.split('/');
-                for (j = 0; j < variants.length; j++) {
-                    newvariants.push({"answer": variants[j]});
-                }
-                subanswers.push({"variants": newvariants});
-                newvariants = [];
-            }
-            $scope.newsubanswers = [{}];
-            var data = {
-                "questionnumber": $scope.newquestionnumber,
-                "question": $scope.newquestion,
-                "subanswers": subanswers,
-                "category": $scope.newquestioncategory,
-                "active": $scope.newquestionactive
-            };
->>>>>>> 277ff31adf2661ec724c4695a99a4473400575ef
             $http.post("/api/v1.0/newquestion", JSON.stringify(data))
                 .then(function (response) {
                     alert(response.data)
@@ -169,19 +108,11 @@ angular.module('module', ['ngRoute'])
         $scope.checkAllAnswers = function () {
             $scope.checkinganswers = true;
             $http
-<<<<<<< HEAD
-            .post("/api/v1.0/checkanswers")
-            .then(function (response) {
-                $scope.checkinganswers = false
-                window.location.reload()
-            })
-=======
                 .post("/api/v1.0/checkanswers")
                 .then(function (response) {
                     $scope.checkinganswers = false;
                     window.location.reload();
                 })
->>>>>>> 277ff31adf2661ec724c4695a99a4473400575ef
         }
         $scope.addTeam = function (team) {
             var data = {"teamname": $scope.newteam}
@@ -204,13 +135,8 @@ angular.module('module', ['ngRoute'])
         $scope.updateAnswerLabel = function () {
             $scope.answersheetform.label = "adsf"
         }
-<<<<<<< HEAD
-        $scope.showloadingsheetsbar = function(){
-            $scope.loadingsheets = true
-=======
         $scope.showloadingsheetsbar = function () {
             $scope.loadingsheets = true;
->>>>>>> 277ff31adf2661ec724c4695a99a4473400575ef
         }
         var modal = document.getElementById("myModal");
 
@@ -222,7 +148,6 @@ angular.module('module', ['ngRoute'])
             modal.style.display = "none";
         }
     })
-
     .controller('revealcontroller', function ($scope, $http, $interval, $filter) {
         $http({
             method: "GET",
@@ -233,15 +158,6 @@ angular.module('module', ['ngRoute'])
         });
         $scope.i = 0
         $scope.revealteams = []
-
-<<<<<<< HEAD
-        $interval( function(){
-        $scope.time = $scope.time + 1000
-            if ($scope.i < $scope.teams.length){
-                $scope.revealteams.push({"teamname": $scope.teams[$scope.i].teamname, "score":$scope.teams[$scope.i].score})
-                $scope.revealteams = $filter('orderBy')($scope.revealteams, 'score', true)
-                $scope.i =  $scope.i + 1
-=======
         $interval(function () {
             $scope.time = $scope.time + 1000;
             if ($scope.i < $scope.teams.length) {
@@ -251,7 +167,6 @@ angular.module('module', ['ngRoute'])
                 });
                 $scope.revealteams = $filter('orderBy')($scope.revealteams, 'score', true)
                 $scope.i = $scope.i + 1;
->>>>>>> 277ff31adf2661ec724c4695a99a4473400575ef
             }
         }, 4000)
     })
@@ -259,25 +174,6 @@ angular.module('module', ['ngRoute'])
         $http({
             method: "GET",
             url: "/api/v1.0/questions"
-<<<<<<< HEAD
-        }).then(function (response){
-            $scope.questions = response.data
-            $scope.questions = $scope.questions.filter(q => q.questionnumber  > 0)
-            $scope.questions = $filter('orderBy')($scope.questions, 'questionnumber', false)
-            showQuestions()
-        });
-
-        function showQuestions(){
-        i = 0
-            var showQuestion = function(){
-                if (i < $scope.questions.length){
-                $scope.displayedquestion = $scope.questions[i]
-                i =  i + 1
-                }
-                else{
-                    $scope.displayedquestion.questionnumber = ""
-                    $scope.displayedquestion.question = "einde pubquiz"
-=======
         }).then(function (response) {
             $scope.questions = response.data;
             $scope.questions = $scope.questions.filter(q => q.questionnumber > 0
@@ -296,8 +192,6 @@ angular.module('module', ['ngRoute'])
                 } else {
                     $scope.displayedquestion.questionnumber = "";
                     $scope.displayedquestion.question = "einde pubquiz";
->>>>>>> 277ff31adf2661ec724c4695a99a4473400575ef
-
                 }
             }
             showQuestion();
@@ -305,26 +199,6 @@ angular.module('module', ['ngRoute'])
         };
     })
 
-<<<<<<< HEAD
-    .filter('byConfidence', function(){
-        return function(subanswers, confidencefrom, confidenceto){
-            if (!confidencefrom && !confidenceto){
-                return subanswers
-            }
-            else if (!confidencefrom){
-                return subanswers.filter(function (subanswer){
-                     return subanswer.confidence <= confidenceto
-                })
-            }
-            else if (!confidenceto){
-                return subanswers.filter(function (subanswer){
-                     return subanswer.confidence >= confidencefrom
-                })
-            }
-            else{
-                return subanswers.filter(function (subanswer){
-                      return subanswer.confidence >= confidencefrom && subanswer.confidence <= confidenceto
-=======
     .filter('byConfidence', function () {
         return function (subanswers, confidencefrom, confidenceto) {
             if (!confidencefrom && !confidenceto) {
@@ -340,22 +214,14 @@ angular.module('module', ['ngRoute'])
             } else {
                 return subanswers.filter(function (subanswer) {
                     return subanswer.confidence > confidencefrom && subanswer.confidence < confidenceto;
->>>>>>> 277ff31adf2661ec724c4695a99a4473400575ef
                 })
             }
         }
     })
-<<<<<<< HEAD
-    .filter('startFrom', function() {
-        return function(input, start) {
-            start = +start
-            return input.slice(start)
-=======
     .filter('startFrom', function () {
         return function (input, start) {
             start = +start;
             return input.slice(start);
->>>>>>> 277ff31adf2661ec724c4695a99a4473400575ef
         }
     });
 
