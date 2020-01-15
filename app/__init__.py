@@ -86,13 +86,17 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
 
         # Read the number from the number box. After that we remove any non numbers (in case of lines)
         # The configuration is to only read numbers and to look for 1 word
-        question_number = pytesseract.image_to_string(question_image, config='--psm 10 --oem 3 -c tessedit_char_whitelist=0123456789')
+        # TODO @Sander: explain why this pre-processing is done.
+        resized_question_number = cv2.resize(question_image, (0, 0), fx=5, fy=5)
+        ret, thresh1 = cv2.threshold(resized_question_number, 180, 255, cv2.THRESH_BINARY)
+        blur2 = cv2.blur(thresh1, (10, 10))
+        question_number = pytesseract.image_to_string(blur2, config='--psm 10 --oem 3 -c tessedit_char_whitelist=0123456789')
         question_number = re.sub("[^0-9]", "", question_number)
 
-        q_image = question_image.tostring()
+        q_image = blur2.tostring()
 
-        question_width = len(question_image)
-        question_height = len(question_image[0])
+        question_width = len(blur2)
+        question_height = len(blur2[0])
         if db is not None:
             print("save question number to database with width %s and height %s" % (question_width, question_height))
             # TODO fill in the other details as well! (not just the image)

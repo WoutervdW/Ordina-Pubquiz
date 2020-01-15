@@ -56,17 +56,7 @@ def load_question_id(question_id):
 
 @view.route("/questions/load", methods=['GET', 'POST'])
 def questions_all():
-    page = request.args.get('page', 1, type=int)
-    question_list = QuestionNumber.query.paginate(page, view.config['QUESTIONS_PER_PAGE'], False)
-    print(len(question_list.items))
+    question_list = QuestionNumber.query.order_by(QuestionNumber.question_number.asc())
 
-    next_url = None
-    if question_list.has_next:
-        next_url = url_for('questions_all', page=question_list.next_num)
-
-    prev_url = None
-    if question_list.has_prev:
-        prev_url = url_for('questions_all', page=question_list.prev_num)
-
-    return render_template("question_numbers.html", questions=question_list.items, next_url=next_url, prev_url=prev_url)
+    return render_template("question_numbers.html", questions=question_list, next_url=None, prev_url=None)
 
