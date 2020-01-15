@@ -26,7 +26,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-click="editquestion=true" ng-mouseEnter="showremovebutton=true" ng-mouseLeave="showremovebutton=false" ng-repeat ="question in questions | orderBy:propertyName:reverse" ng-blur="updateQuestion(question); editquestion=false">
+                <tr ng-click="editquestion=true" ng-mouseEnter="showremovebutton=true" ng-mouseLeave="showremovebutton=false" ng-repeat ="question in questions | orderBy:propertyName:reverse">
                     <td ng-hide="editquestion">//question.questionnumber//</td>
                     <td ng-show="editquestion"><input type="text" class="form-control" ng-model="question.questionnumber"></td>
                     <td ng-hide="editquestion">//question.question//</td>
@@ -64,7 +64,11 @@
                     </td>
                  <!--   <td>//question.createdby.personname//</td>
                     <td><label class="switch"><input type="checkbox" ng-model="question.active" ng-change="updateQuestionActive(question)"><span class="slider round"></span></label></td> -->
-                    <td><button type="button" class="btn btn-danger" ng-click="removeQuestion(question)" ng-show="showremovebutton"><span class="glyphicon glyphicon-remove"></span></button></td>
+                    <td>
+
+                        <button type="button" class="btn" ng-click="updateQuestion(question); editquestion=false" ng-show="editquestion"><span class="glyphicon glyphicon-ok"></span></button>
+                        <button type="button" class="btn btn-danger" ng-click="removeQuestion(question)" ng-show="showremovebutton"><span class="glyphicon glyphicon-remove"></span></button>
+                    </td>
                 </tr>
             </tbody>
            <tbody>

@@ -53,8 +53,23 @@ def update_question():
     else:
         q.questionnumber = None
     q.question = post.get('question')
-    q.category = post.get('category')
-    print(q.question)
+    newsubanswers = post.get('subanswers')
+    subanswers = []
+    variants = []
+    for i in range(0, len(newsubanswers)):
+        for j in range(0, len(newsubanswers[i]['variants'])):
+            variant = Variant(answer=newsubanswers[i]['variants'][j]['answer'])
+            variants.append(variant);
+        subanswer = SubAnswer(variants=variants)
+        subanswers.append(subanswer)
+        variants = []
+    q.subanswers = subanswers
+    newcategory = post.get('category')
+    category = Category.query.filter(Category.name == newcategory).first()
+    if category is None:
+        category = Category(name=newcategory)
+    q.questioncategory = category
+    print(q)
     db.session.commit()
     return 'OK'
 
@@ -96,7 +111,6 @@ def add_question():
         variants = []
     newquestioncategory = post.get('category')
     category = Category.query.filter(Category.name == newquestioncategory).first()
-    print(category)
     if category is None:
         category = Category(name=newquestioncategory)
 
