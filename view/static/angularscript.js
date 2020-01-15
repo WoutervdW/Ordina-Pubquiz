@@ -42,12 +42,14 @@ angular.module('module', ['ngRoute'])
         $scope.data = []
         $scope.q = ''
         $scope.numberOfPages = function(){
-            return Math.ceil($scope.filteredsubanswers.length / $scope.pageSize);
+            if($scope.filteredsubanswers){
+                return Math.ceil($scope.filteredsubanswers.length / $scope.pageSize);
+            }
         }
 
         $scope.newsubanswers = [{}];
         $scope.addField=function(list){
-              list.push({});
+            list.push({});
         }
          $scope.removeField=function(list, obj){
             index = list.indexOf(obj)
@@ -60,13 +62,13 @@ angular.module('module', ['ngRoute'])
             return variantsInString;
         }
         $scope.sortBy = function sortBy(propertyName){
-              $scope.reverse = $scope.propertyName === propertyName ? !$scope.reverse : false
-              $scope.propertyName = propertyName
+            $scope.reverse = $scope.propertyName === propertyName ? !$scope.reverse : false
+            $scope.propertyName = propertyName
         }
         $scope.addQuestion = function(category_id){
-          var newvariants = []
-          var subanswers = []
-          for (i = 0; i < $scope.newsubanswers.length; i++){
+            var newvariants = []
+            var subanswers = []
+            for (i = 0; i < $scope.newsubanswers.length; i++){
                 subanswer = $scope.newsubanswers[i].value
                 variants = subanswer.split('/')
                 for (j = 0; j < variants.length; j++){
@@ -91,6 +93,7 @@ angular.module('module', ['ngRoute'])
         }
         $scope.updateQuestion = function(question){
             var data = {"id":question.id, "questionnumber": question.questionnumber, "question": question.question, "subanswers": question.subanswers, "category": question.questioncategory}
+            console.log(question.subanswers)
             $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
             .then(function(response) {
                 if(response.data != 'OK'){
@@ -220,8 +223,10 @@ angular.module('module', ['ngRoute'])
     })
     .filter('startFrom', function () {
         return function (input, start) {
-            start = +start;
-            return input.slice(start);
+            if(input){
+                start = +start;
+                return input.slice(start);
+            }
         }
     });
 
