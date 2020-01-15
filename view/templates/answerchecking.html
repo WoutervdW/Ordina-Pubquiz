@@ -57,8 +57,8 @@
                     <th scope="col" ng-click="sortBy('answer_given')">Gegeven Antwoord</th>
                     <th scope="col"> Afbeelding</th>
                     <th scope="col" ng-click="sortBy('correct')">Correct</th>
-                   <!-- <th scope="col" ng-click = "sortBy('checkedby.personname')">Laatst nagekeken door</th>
-                    <th scope="col" ng-click = "sortBy('confidence')">Zekerheid systeem</th> -->
+                   <!-- <th scope="col" ng-click = "sortBy('checkedby.personname')">Laatst nagekeken door</th> -->
+                    <th scope="col" ng-click = "sortBy('confidence')">Zekerheid systeem</th>
                 </tr>
             </thead>
             <tbody>
@@ -83,8 +83,8 @@
                      {% else %}
                      <td><label class="switch"><input type="checkbox" ng-model="subanswergiven.correct" ng-disabled="true"><span class="slider round"></span></label></td>
                      {% endif %}
-                    <!-- <td>//subanswergiven.checkedby.personname//</td>
-                     <td>//subanswergiven.confidence//%</td> -->
+                    <!-- <td>//subanswergiven.checkedby.personname//</td> -->
+                     <td>//subanswergiven.confidence//%</td>
                 </tr>
             </tbody>
         </table>

@@ -53,6 +53,7 @@ def update_question():
     else:
         q.questionnumber = None
     q.question = post.get('question')
+    q.category = post.get('category')
     print(q.question)
     db.session.commit()
     return 'OK'
