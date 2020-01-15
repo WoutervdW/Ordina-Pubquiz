@@ -8,41 +8,49 @@
 <body>
 {% extends "base.html" %}
 {% block content %}
-<div ng-app="module" ng-controller ="controller">
-    <div class="filter-container">
-        <div>
-            <label>Team:</label>
-            <select class="filter-dropdown" data-ng-model="searchfilter.answered_by.teamname">
-                <option ng-value="">Alle teams</option>
-                <option ng-repeat="team in teams">//team.teamname//</option>
-            </select>
-        </div>
-        <div>
-            <label>Vraag:</label>
-            <select class="filter-dropdown" data-ng-model = "searchfilter.corr_question.question">
-                <option ng-value="">Alle vragen</option>
-                <option ng-repeat="question in questions | orderBy:'questionnumber'" ng-value="question.question">//question.questionnumber// //question.question//</option>
-            </select>
-        </div>
-        <div>
-            <label>Correct:</label>
-            <select class="filter-dropdown" data-ng-model="searchfilter.correct">
-                <option ng-value="">Alles</option>
-                <option ng-value=true>Ja</option>
-                <option ng-value=false>Nee</option>
-            </select>
-        </div>
-        <div>
-            <label>Laatst nagekeken door:</label>
-            <select class="filter-dropdown" ng-model = "searchfilter.checkedby.personname">
-                <option ng-value="">Iedereen</option>
-                <option ng-repeat="person in persons">//person.personname//</option>
-            </select>
-        </div>
-        <div>
-            <label>Zekerheid:</label>
-            <span class="valuePadding input-holder"><input placeholder="Van" type="number" min="0" max="100" value="5" ng-model="confidencefrom" style="text-align:left;"></span>
-            <span class="valuePadding input-holder"><input placeholder="Tot" type="number" min="0" max="100" value="5" ng-model="confidenceto" style="text-align:left;"></span>
+<div  ng-app="module" ng-controller ="controller">
+    <button id="myBtn">Filter</button>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div>
+                <label>Team:</label>
+                <select class="filter-dropdown" data-ng-model="searchfilter.answered_by.teamname">
+                    <option ng-value="">Alle teams</option>
+                    <option ng-repeat="team in teams">//team.teamname//</option>
+                </select>
+            </div>
+            <div>
+                <label>Vraag:</label>
+                <select class="filter-dropdown" data-ng-model = "searchfilter.corr_question.question">
+                    <option ng-value="">Alle vragen</option>
+                    <option ng-repeat="question in questions" ng-value="question.question">//question.questionnumber// //question.question//</option>
+                </select>
+            </div>
+            <div>
+                <label>Correct:</label>
+                <select class="filter-dropdown" data-ng-model="searchfilter.correct">
+                    <option ng-value="">Alles</option>
+                    <option ng-value=true>Ja</option>
+                    <option ng-value=false>Nee</option>
+                </select>
+            </div>
+            <div>
+                <label>Laatst nagekeken door:</label>
+                <select class="filter-dropdown" ng-model = "searchfilter.checkedby.personname">
+                    <option ng-value="">Iedereen</option>
+                    <option ng-repeat="person in persons">//person.personname//</option>
+                </select>
+            </div>
+            <div>
+                <label>Zekerheid:</label>
+                <span class="valuePadding input-holder"><input placeholder="Van" type="number" value="5" step="5" ng-model="confidencefrom" style="text-align:left;"></span>
+                <span class="valuePadding input-holder"><input placeholder="Tot" type="number" value="5" step="5" ng-model="confidenceTO" style="text-align:left;"></span>
+            </div>
         </div>
 
     </div>
