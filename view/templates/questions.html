@@ -44,7 +44,8 @@
                         <table class="table table-borderless">
                             <tbody>
                                 <tr ng-repeat="subanswer in question.subanswers">
-                                    <td><input type="text" class="form-control" ng-model="variantsfromsubanswer(subanswer)"></td>
+                                    <td width="30%"><input type="text" class="form-control" ng-model="variantsfromsubanswer(subanswer)"></td>
+                                     <td width="10%"><button type="button" class="btn btn-danger" ng-click="removeField(question.subanswers, subanswer)"><span class="glyphicon glyphicon-remove"></span></button></td>
                                 </tr>
                                 <tr>
                                     <td><button class="btn btn-primary" ng-click="addField(question.subanswers)">Extra subantwoord</button></td>
@@ -74,7 +75,8 @@
                         <table class="table table-borderless">
                             <tbody>
                                 <tr ng-repeat="newsubanswer in newsubanswers">
-                                    <td><input type="text" class="form-control" ng-model="newsubanswer.value"></td>
+                                    <td width="30%"><input type="text" class="form-control" ng-model="newsubanswer.value"></td>
+                                    <td width="10%"><button type="button" class="btn btn-danger" ng-click="removeField(newsubanswers, newsubanswer)"><span class="glyphicon glyphicon-remove"></span></button></td>
                                 </tr>
                                 <tr>
                                     <td><button class="btn btn-primary" ng-click="addField(newsubanswers)" >Extra subantwoord</button></td>

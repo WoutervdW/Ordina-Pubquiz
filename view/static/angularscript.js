@@ -49,6 +49,11 @@ angular.module('module', ['ngRoute'])
         $scope.addField=function(list){
               list.push({});
         }
+         $scope.removeField=function(list, obj){
+            index = list.indexOf(obj)
+            console.log(list)
+            list.splice(index,1)
+        }
         $scope.variantsfromsubanswer = function(subanswer){
             variants = subanswer.variants.map(s => s.answer)
             variantsInString = variants.join(" / ")
