@@ -79,11 +79,14 @@ def remove_question():
     post = request.get_json()
     id = post.get('id')
     subanswers = SubAnswer.query.filter_by(question_id=id).all()
-    for subanswer in subanswers:
-        Variant.query.filter_by(subanswer_id=subanswer.id).delete()
-    SubAnswer.query.filter_by(question_id=id).delete()
-    Question.query.filter_by(id=id).delete()
-    db.session.commit()
+    try:
+        for subanswer in subanswers:
+            Variant.query.filter_by(subanswer_id=subanswer.id).delete()
+        SubAnswer.query.filter_by(question_id=id).delete()
+        Question.query.filter_by(id=id).delete()
+        db.session.commit()
+    except:
+        return 'Vraag kan niet verwijderd worden. Er zijn nog antwoorden gekoppeld aan deze vraag'
     return 'OK'
 
 

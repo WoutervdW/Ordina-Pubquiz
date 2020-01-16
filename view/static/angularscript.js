@@ -92,6 +92,11 @@ angular.module('module', ['ngRoute'])
         $scope.removeQuestion = function (question) {
             var data = {"id": question.id}
             $http.post("/api/v1.0/removequestion", JSON.stringify(data))
+                .then (function (response) {
+                    if(response.data != 'OK'){
+                        alert(response.data)
+                    }
+                })
             window.location.reload()
         }
         $scope.updateQuestion = function(question){
