@@ -95,29 +95,23 @@ angular.module('module', ['ngRoute'])
             window.location.reload()
         }
         $scope.updateQuestion = function(question){
-            console.log("aantal subantwoorden: ", question.subanswers.length)
             for (i = 0; i < question.subanswers.length; i++){
                 subanswer = question.subanswers[i].variantsintext
-                console.log("subantwoord volledig: ", subanswer)
                 if(subanswer){
                     question.subanswers[i].variants=[];
                     newvariants=[]
                     variants = subanswer.split('/')
-                    console.log("varianten gesplitst: ", variants)
-                    console.log("Er zijn zoveel varianten: ", variants.length)
                     for (j = 0; j < variants.length; j++){
                         newvariants.push({"answer": variants[j]})
                     }
-                    console.log("Dit zijn de varianten zoals in de database", newvariants)
                     question.subanswers[i].variants = newvariants
-                    console.log("Alle subantwoorden van de vraag zijn nu:", question.subanswers)
                 }
             }
-
             var data = {"id":question.id, "questionnumber": question.questionnumber, "question": question.question, "subanswers": question.subanswers, "category": question.questioncategory.name}
             $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
             .then(function(response) {
                 if(response.data != 'OK'){
+                    question.editquestion=true
                     alert(response.data)
                 }
             })

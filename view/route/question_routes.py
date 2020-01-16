@@ -51,7 +51,8 @@ def update_question():
             else:
                 q.questionnumber = questionnumber
     else:
-        q.questionnumber = None
+        return 'De vraag kan niet worden aangepast. Er is geen geldig vraagnummer ingevoerd'
+
     q.question = post.get('question')
     newsubanswers = post.get('subanswers')
     variants = []
@@ -96,7 +97,7 @@ def add_question():
         if qtemp is not None:
             return 'De vraag kan niet worden toegevoegd. Er is al een vraag met dit nummer.'
     else:
-        newquestionnumber = None
+        return 'De vraag kan niet worden toegevoegd. Er is geen geldig vraagnummer ingevoerd'
     newquestion = post.get('question')
     newsubanswers = post.get('subanswers')
     subanswers = []
