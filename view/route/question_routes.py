@@ -113,7 +113,6 @@ def add_question():
     category = Category.query.filter(Category.name == newquestioncategory).first()
     if category is None:
         category = Category(name=newquestioncategory)
-
     newquestionperson_id = session['userid']
     newquestionactive = post.get('active')
     q = Question(questionnumber=newquestionnumber, question=newquestion, questioncategory=category,

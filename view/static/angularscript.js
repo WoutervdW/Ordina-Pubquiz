@@ -92,8 +92,7 @@ angular.module('module', ['ngRoute'])
             window.location.reload()
         }
         $scope.updateQuestion = function(question){
-            var data = {"id":question.id, "questionnumber": question.questionnumber, "question": question.question, "subanswers": question.subanswers, "category": question.questioncategory}
-            console.log(question.subanswers)
+            var data = {"id":question.id, "questionnumber": question.questionnumber, "question": question.question, "subanswers": question.subanswers, "category": question.questioncategory.name}
             $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
             .then(function(response) {
                 if(response.data != 'OK'){

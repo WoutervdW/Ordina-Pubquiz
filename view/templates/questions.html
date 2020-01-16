@@ -26,12 +26,12 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-click="editquestion=true" ng-mouseEnter="showremovebutton=true" ng-mouseLeave="showremovebutton=false" ng-repeat ="question in questions | orderBy:propertyName:reverse">
-                    <td ng-hide="editquestion">//question.questionnumber//</td>
-                    <td ng-show="editquestion"><input type="text" class="form-control" ng-model="question.questionnumber"></td>
-                    <td ng-hide="editquestion">//question.question//</td>
-                    <td ng-show="editquestion"><textarea cols="40" rows="5" class="form-control" ng-model="question.question"></textarea></td>
-                    <td ng-hide="editquestion">
+                <tr ng-init="question.editquestion=false" ng-mouseEnter = "showButtons=true" ng-mouseLeave="showButtons=false" ng-repeat ="question in questions | orderBy:propertyName:reverse">
+                    <td ng-hide="question.editquestion">//question.questionnumber//</td>
+                    <td ng-show="question.editquestion"><input type="text" class="form-control" ng-model="question.questionnumber"></td>
+                    <td ng-hide="question.editquestion">//question.question//</td>
+                    <td ng-show="question.editquestion"><textarea cols="40" rows="5" class="form-control" ng-model="question.question"></textarea></td>
+                    <td ng-hide="question.editquestion">
                         <table class="table table-borderless">
                             <tbody>
                                 <tr ng-repeat="subanswer in question.subanswers" ng-if="subanswer">
@@ -40,7 +40,7 @@
                             </tbody>
                         </table>
                     </td>
-                    <td ng-show="editquestion" style="white-space:nowrap;">
+                    <td ng-show="question.editquestion" style="white-space:nowrap;">
                        <!-- <table class="table table-borderless">
                             <tbody>
                                 <tr ng-repeat="subanswer in question.subanswers">
@@ -53,10 +53,10 @@
                             </tbody>
                         </table> -->
                     </td>
-                    <td ng-hide="editquestion">//question.questioncategory.name//</td>
-                    <td ng-show="editquestion">
+                    <td ng-hide="question.editquestion" ng-model="question.questioncategory.name">//question.questioncategory.name//</td>
+                    <td ng-show="question.editquestion">
                         <label>
-                            <input class="form-control" list="categoriesedit" ng-model="question.questioncategory" ng-value="question.questioncategory.name">
+                            <input class="form-control" list="categoriesedit" ng-model="question.questioncategory.name" ng-value="question.questioncategory.name">
                         </label>
                         <datalist id = "categoriesedit">
                             <option ng-repeat="category in categories" ng-value="category.name">//category.name//</button></option>
@@ -65,9 +65,9 @@
                  <!--   <td>//question.createdby.personname//</td>
                     <td><label class="switch"><input type="checkbox" ng-model="question.active" ng-change="updateQuestionActive(question)"><span class="slider round"></span></label></td> -->
                     <td>
-
-                        <button type="button" class="btn" ng-click="updateQuestion(question); editquestion=false" ng-show="editquestion"><span class="glyphicon glyphicon-ok"></span></button>
-                        <button type="button" class="btn btn-danger" ng-click="removeQuestion(question)" ng-show="showremovebutton"><span class="glyphicon glyphicon-remove"></span></button>
+                        <button type="button" class="btn btn-primary" ng-show="!question.editquestion && showButtons" ng-click="question.editquestion=true">Wijzig</button>
+                        <button type="button" class="btn btn-primary" ng-show="question.editquestion && showButtons" ng-click="question.editquestion=false; updateQuestion(question)">Opslaan</button>
+                        <button type="button" class="btn btn-danger" ng-show="showButtons" ng-click="removeQuestion(question)">Verwijder</button>
                     </td>
                 </tr>
             </tbody>
