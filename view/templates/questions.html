@@ -70,8 +70,8 @@
                         <button type="button" class="btn btn-danger" ng-show="showButtons" ng-click="removeQuestion(question)">Verwijder</button>
                     </td>
                 </tr>
-            </tbody>
-           <tbody>
+                </tbody>
+                <thead>
                 <tr>
                     <td><input type="text" class="form-control" ng-model="newquestionnumber"></td>
                     <td><textarea cols="40" rows="5" class="form-control" ng-model="newquestion"></textarea></td>
@@ -100,12 +100,16 @@
                  <!--   <td><label class="switch"><input type="checkbox" ng-model="newquestionactive"  ng-init="newquestionactive=true"><span class="slider round"></span></label></td> -->
                     <td><button class="btn btn-primary" ng-click="addQuestion()">Voeg nieuwe vraag toe</button></td>
                 </tr>
-           </tbody>
+           </thead>
         </table>
+    </div>
+    <div>
+    <button class="btn btn-primary" ng-click = "resetQuestionNumbers()">Reset vraagnummers</button>
+    <button class="btn btn-primary" ng-click = "deleteAllQuestions()">Verwijder alle vragen</button>
     </div>
 </div>
 
-<div id="bottom" name="bottom"></div>
+
 
 </section>
 
