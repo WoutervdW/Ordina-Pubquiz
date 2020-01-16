@@ -138,8 +138,11 @@ def resetnumbers():
 def deletequestions():
     try:
         Variant.query.delete()
+        db.engine.execute('alter sequence variant_id_seq RESTART with 1')
         SubAnswer.query.delete()
+        db.engine.execute('alter sequence subanswer_id_seq RESTART with 1')
         Question.query.delete()
+        db.engine.execute('alter sequence question_id_seq RESTART with 1')
         db.session.commit()
     except:
         return 'Vragen kunnen niet verwijderd worden. Er zijn nog antwoorden gekoppeld aan tenminste een vraag'
