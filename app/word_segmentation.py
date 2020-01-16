@@ -99,7 +99,7 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
         index += 1
 
     if db is not None:
-        if question_number != 0:
+        if question_number > 0:
             print("This line is a valid question")
             # We assume there is exactly 1 question for the given question number
             question = Question.query.filter_by(questionnumber=question_number).first()
@@ -111,9 +111,9 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
             sub_answer = sub_answers.first()
             for s in sub_answers:
                 print('subanswer id ' + str(s.id))
-                sub_answer_index += 1
                 if subanswer_number == sub_answer_index:
                     sub_answer = s
+                sub_answer_index += 1
             print("the total number of subanswers for question %s is %s" % (question_number, sub_answer_index))
             print("saving the line on question %s with variant with subanswerid %s" % (question_number, str(sub_answer.id)))
 

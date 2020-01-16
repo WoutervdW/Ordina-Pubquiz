@@ -38,6 +38,7 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
     prev_question = -1
     subanswer_number = 0
     question_id = 0
+    previous_question = -1
 
     # Now we have the answer sheet in image form and we can move on to the line segmentation
     output_folder = "out/"
@@ -113,11 +114,18 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
 
         if question_number != "":
             question_id = int(question_number)
-            subanswer_number = 0
-            # If the line detail is a number, this corresponds to the question
+            if question_id == previous_question:
+                # If this question has the same number as before we should find a variant, because it will have
+                # several subanswers associated with it
+                subanswer_number += 1
+            else:
+                subanswer_number = 0
+            previous_question = question_id
         else:
-            # If the question number was empty it is the same question as before, so we increase the subanswer id.
-            subanswer_number += 1
+            # If the question number was empty this should be ignored.
+            print("ignore this line")
+            # We turn the question_id to 0. This means it will be ignored.
+            question_id = 0
 
         print("the question number that is read: " + str(question_id))
         save_word_details(line_image, multiply_factor, res, number_box_size, db, model, team_id, question_id, subanswer_number)
