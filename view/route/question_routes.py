@@ -54,8 +54,8 @@ def update_question():
         q.questionnumber = None
     q.question = post.get('question')
     newsubanswers = post.get('subanswers')
-    subanswers = []
     variants = []
+    subanswers=[]
     for i in range(0, len(newsubanswers)):
         for j in range(0, len(newsubanswers[i]['variants'])):
             variant = Variant(answer=newsubanswers[i]['variants'][j]['answer'])
@@ -69,7 +69,6 @@ def update_question():
     if category is None:
         category = Category(name=newcategory)
     q.questioncategory = category
-    print(q)
     db.session.commit()
     return 'OK'
 
