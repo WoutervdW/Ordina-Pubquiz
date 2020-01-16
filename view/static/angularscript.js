@@ -84,10 +84,15 @@ angular.module('module', ['ngRoute'])
             var data = {"questionnumber": $scope.newquestionnumber, "question": $scope.newquestion, "subanswers": subanswers, "category": $scope.newquestioncategory, "active": $scope.newquestionactive}
             $http.post("/api/v1.0/newquestion", JSON.stringify(data))
                 .then(function (response) {
+                if(response.data != 'OK'){
                     alert(response.data)
-                })
-            $scope.newquestion = "";
-            window.location.reload()
+                }
+                else{
+                    $scope.newquestion = "";
+                    window.location.reload()
+                }
+            })
+
         }
         $scope.removeQuestion = function (question) {
             var data = {"id": question.id}
@@ -206,6 +211,7 @@ angular.module('module', ['ngRoute'])
             }
         }, 4000)
     })
+
     .controller('pubquizcontroller', function ($scope, $http, $filter, $interval) {
         $http({
             method: "GET",
