@@ -125,4 +125,27 @@ def add_question():
     return
 
 
+@view.route('/api/v1.0/resetquestionnumbers', methods=['POST'])
+def resetnumbers():
+    questions = Question.query.all()
+    for question in questions:
+        question.questionnumber = None
+    db.session.commit()
+    return 'OK'
+
+
+@view.route('/api/v1.0/deleteallquestions', methods=['POST'])
+def deletequestions():
+    try:
+        Variant.query.delete()
+        SubAnswer.query.delete()
+        Question.query.delete()
+        db.session.commit()
+    except:
+        return 'Vragen kunnen niet verwijderd worden. Er zijn nog antwoorden gekoppeld aan tenminste een vraag'
+    return 'OK'
+
+
+
+
 

@@ -121,6 +121,19 @@ angular.module('module', ['ngRoute'])
                 }
             })
         }
+        $scope.resetQuestionNumbers = function(){
+            $http.post("/api/v1.0/resetquestionnumbers")
+            window.location.reload()
+        }
+        $scope.deleteAllQuestions = function(){
+            $http.post("/api/v1.0/deleteallquestions")
+             .then(function(response) {
+                if(response.data != 'OK'){
+                    alert(response.data)
+                }
+            })
+            window.location.reload()
+        }
         $scope.updateAnswerCheck = function (answer) {
             var data = {"id": answer.id, "correct": answer.correct}
             $http.post("/api/v1.0/updateanswer", JSON.stringify(data))
