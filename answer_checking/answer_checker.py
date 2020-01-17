@@ -27,8 +27,13 @@ def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect
     # number_correct has to be True if the number exists and is correct, False if the number exists but isn't
     # correct and None if no number exists
     for correct_answer_variant in correct_answer_variants:
-        if len(correct_answer_variant) / len(answer) >= 2:
+        # TODO: Create categories for these special cases
+        # check if given answer is too short
+        if len(correct_answer_variant) / len(answer) >= 2:  # Will never be divided by zero bc that's already checked
             return False, 100
+        # If correct answer is only 1 symbol, take only the last symbol in the given answer
+        if len(correct_answer_variant) == 0:
+            answer = answer[-1]
 
         correct_ratio, confidence = check_numerical_values(answer, correct_answer_variant,
                                                            threshold, max_conf_incorrect,
