@@ -17,7 +17,6 @@ import time
 def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect, max_conf_correct):
     """
 
-
     :param answer: string of given answer
     :param correct_answer_variants: list of strings: variants of correct answer
     :param threshold: The threshold of similarity that must be reached in order to be correct
@@ -28,6 +27,9 @@ def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect
     # number_correct has to be True if the number exists and is correct, False if the number exists but isn't
     # correct and None if no number exists
     for correct_answer_variant in correct_answer_variants:
+        if len(correct_answer_variant) / len(answer) >= 2:
+            return False, 100
+
         correct_ratio, confidence = check_numerical_values(answer, correct_answer_variant,
                                                            threshold, max_conf_incorrect,
                                                            max_conf_correct)  # Compare numbers in the answer
@@ -155,7 +157,6 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
                 # TODO @wouter: remember checked answers! If an answer occurs twice, the second instance should not be
                 #  correct (If the same answer twice is correct, than the "correct answers" should contain two of the
                 #  same answer). So, all variants of the first instance should be removed (locally).
-
                 correct, confidence = check_correct(subanswer_given.answer_given,
                                                     variants,
                                                     threshold,
@@ -181,5 +182,3 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
     print("aantal nagekeken subantwoorden: " + str(checked_answers))
     end = time.time()
     print("time elapsed: " + str(end - start))
-
-    # TODO @wouter: change correct / incorrect buttons automatically live in view
