@@ -33,9 +33,9 @@ angular.module('module', ['ngRoute'])
         });
         $http({
             method: "GET",
-            url: "/api/v1.0/subanswers"
+            url: "/api/v1.0/answers"
         }).then(function (response) {
-            $scope.subanswers = response.data;
+            $scope.answers = response.data;
         });
         $scope.currentPage = 0
         $scope.pageSize = 10
@@ -145,6 +145,7 @@ angular.module('module', ['ngRoute'])
         }
         $scope.deleteAllAnswers = function () {
             $http.post("/api/v1.0/reset")
+            window.location.reload()
         }
         $scope.checkAllAnswers = function () {
             $scope.checkinganswers = true;

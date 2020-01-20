@@ -1,6 +1,6 @@
 from view import view, db
 from flask import request, session, jsonify, url_for, flash
-from view.models import Question, QuestionSchema, SubAnswer, Variant, Category, CategorySchema, Person, PersonSchema, SubAnswerGiven, SubAnswerGivenSchema
+from view.models import Question, QuestionSchema, SubAnswer, Variant, Category, CategorySchema, Person, PersonSchema, AnswerGiven, AnswerGivenSchema
 
 
 @view.route('/api/v1.0/questions', methods=['GET'])
@@ -27,10 +27,10 @@ def get_persons():
     return jsonify(result)
 
 
-@view.route('/api/v1.0/subanswers', methods=['GET'])
+@view.route('/api/v1.0/answers', methods=['GET'])
 def get_answers():
-    answers_schema = SubAnswerGivenSchema(many=True)
-    allanswers = SubAnswerGiven.query.all()
+    answers_schema = AnswerGivenSchema(many=True)
+    allanswers = AnswerGiven.query.all()
     result = answers_schema.dump(allanswers)
     return jsonify(result)
 
@@ -122,7 +122,7 @@ def add_question():
         person_id=newquestionperson_id, active=newquestionactive, subanswers=subanswers)
     db.session.add(q)
     db.session.commit()
-    return
+    return 'OK'
 
 
 @view.route('/api/v1.0/resetquestionnumbers', methods=['POST'])

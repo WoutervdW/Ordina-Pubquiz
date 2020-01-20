@@ -12,7 +12,7 @@
 <div class="container"  ng-app="module" ng-controller ="controller">
     <div id="myModal" class="modal">
         <!-- Modal content -->
-        <div id="marijnsTeringzooi" class="modal-content">
+        <div class="modal-content">
             <span class="close" ng-click="closeModal()">&times;</span>
             <div>
                 <label>Team:</label>
@@ -66,29 +66,60 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="subanswergiven in filteredsubanswers = (subanswers | orderBy:propertyName:reverse | filter: searchfilter  | byConfidence:confidencefrom:confidenceto) | startFrom:currentPage*pageSize | limitTo:pageSize">
-                    <td>//subanswergiven.answered_by.teamname//</td>
-                    <td><h3>//subanswergiven.corr_question.questionnumber//</h3> //subanswergiven.corr_question.question//</td>
+                <tr ng-repeat="answergiven in filteredanswers = (answers | orderBy:propertyName:reverse | filter: searchfilter  | byConfidence:confidencefrom:confidenceto) | startFrom:currentPage*pageSize | limitTo:pageSize">
+                    <td>//answergiven.answered_by.teamname//</td>
+                    <td><h3>//answergiven.question.questionnumber//</h3> //answergiven.question.question//</td>
                     <td>
                         <table class="table table-borderless">
                             <tbody>
-                                <tr ng-repeat="subanswer in subanswergiven.corr_question.subanswers">
+                                <tr ng-repeat="subanswer in answergiven.question.subanswers">
                                     <td ng-repeat="variant in subanswer.variants">//variant.answer//</td>
                                 </tr>
                             </tbody>
                         </table>
-                     </td>
-                     <td>//subanswergiven.answer_given//</td>
+                    </td>
                     <td>
-                         <img class="answerimage" width="100%" src="lines/load/line_//subanswergiven.line.id//">
-                     </td>
-                     {% if session['logged_in'] == True %}
-                     <td><label class="switch"><input type="checkbox" ng-model="subanswergiven.correct" ng-change="updateAnswerCheck(subanswergiven)"><span class="slider round"></span></label></td>
-                     {% else %}
-                     <td><label class="switch"><input type="checkbox" ng-model="subanswergiven.correct" ng-disabled="true"><span class="slider round"></span></label></td>
-                     {% endif %}
-                    <!-- <td>//subanswergiven.checkedby.personname//</td> -->
-                     <td>//subanswergiven.confidence//%</td>
+                         <table class="table table-borderless">
+                            <tbody>
+                                <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
+                                    <td>//subanswergiven.read_answer//</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>
+                       <table class="table table-borderless">
+                            <tbody>
+                                <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
+                                    <td>
+                                        <img width="100%" src="lines/load/line_//subanswergiven.line.id//">
+                                    </td>
+                                </tr>
+                            </tbody>
+                       </table>
+                    </td>
+                    <td>
+                        <table class="table table-borderless">
+                                <tbody>
+                                    <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
+                                        <td>
+                                            <label class="switch"><input type="checkbox" ng-model="subanswergiven.correct" ng-change="updateAnswerCheck(subanswergiven)"><span class="slider round"></span></label>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                        </table>
+                    </td>
+                    <td>
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
+                                    <td>
+                                        <td>//subanswergiven.confidence//%</td>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
                 </tr>
             </tbody>
         </table>
