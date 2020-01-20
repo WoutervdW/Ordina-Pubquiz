@@ -8,7 +8,7 @@ thead, tbody tr {
     table-layout:fixed;
 }
 
-.answerimage:hover{
+#answerimage:hover{
     width:500%;
 }
 

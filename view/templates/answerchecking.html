@@ -58,17 +58,17 @@
                     <th scope="col" ng-click="sortBy('answered_by.teamname')">Team</th>
                     <th scope="col" ng-click="sortBy('corr_question.questionnumber')">Vraag</th>
                     <th scope="col">Correct Antwoord</th>
-                    <th scope="col" ng-click="sortBy('answer_given')">Gegeven Antwoord</th>
-                    <th scope="col"> Afbeelding</th>
-                    <th scope="col" ng-click="sortBy('correct')">Correct</th>
-                    <th scope="col" ng-click = "sortBy('confidence')">Zekerheid systeem</th>
-                    <th scope="col" ng-click = "sortBy('checkedby.personname')">Laatst nagekeken door</th>
+                    <th scope="col">Gegeven Antwoord</th>
+                    <th scope="col">Afbeelding</th>
+                    <th scope="col">Correct</th>
+                    <th scope="col">Zekerheid systeem</th>
+                   <!-- <th scope="col" ng-click = "sortBy('checkedby.personname')">Laatst nagekeken door</th> -->
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="answergiven in filteredanswers = (answers | orderBy:propertyName:reverse | filter: searchfilter  | byConfidence:confidencefrom:confidenceto) | startFrom:currentPage*pageSize | limitTo:pageSize">
                     <td>//answergiven.answered_by.teamname//</td>
-                    <td><h3>//answergiven.question.questionnumber//</h3> //answergiven.question.question//</td>
+                    <td><b>//answergiven.question.questionnumber//</b> //answergiven.question.question//</td>
                     <td>
                         <table class="table table-borderless">
                             <tbody>
@@ -89,7 +89,7 @@
                     </td>
                     <td>
                        <table class="table table-borderless">
-                            <tbody>
+                            <tbody  id="answerimage">
                                 <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
                                     <td>
                                         <img width="100%" src="lines/load/line_//subanswergiven.line.id//">
@@ -120,7 +120,7 @@
                             </tbody>
                         </table>
                     </td>
-                    <td>
+                   <!-- <td>
                         <table class="table table-borderless">
                             <tbody>
                                 <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
@@ -130,7 +130,7 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </td>
+                    </td> -->
                 </tr>
             </tbody>
         </table>
