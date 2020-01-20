@@ -131,13 +131,13 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
         area = cv2.contourArea(c)
         # Area is about 100000 with the line we defined
         # TODO Fix magic numbers We chose these area numbers to be the area size of the contours found left and right
-        if 8000 < area < 13000:
+        if 8000 < area < 15000:
             left_block_contours.append(c)
 
     cv2.drawContours(left_side_img, left_block_contours, -1, (255, 0, 0), thickness=10)
     # show_image(left_side_img)
 
-    # cv2.imwrite(image_name + "_left.png", left_side_img)
+    cv2.imwrite(image_name + "_left.png", left_side_img)
     right_side_img = right_side.copy()
 
     # We draw a fake line over the image, this is so we can find the corners by finding areas with a certain size
@@ -153,7 +153,7 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
     for c in contours_right_side:
         area = cv2.contourArea(c)
         # Area is about 60000 with the line we defined
-        if 2000 < area < 5000:
+        if 1000 < area < 6000:
             right_block_contours.append(c)
 
     cv2.drawContours(right_side_img, right_block_contours, -1, (255, 0, 0), thickness=10)
