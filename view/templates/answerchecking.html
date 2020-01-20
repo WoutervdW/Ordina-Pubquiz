@@ -16,37 +16,37 @@
             <span class="close" ng-click="closeModal()">&times;</span>
             <div>
                 <label>Team:</label>
-                <select class="filter-dropdown" data-ng-model="searchfilter.answered_by.teamname">
+                <select class="filter-dropdown" ng-model="filteredTeam">
                     <option ng-value="">Alle teams</option>
                     <option ng-repeat="team in teams">//team.teamname//</option>
                 </select>
             </div>
             <div>
                 <label>Vraag:</label>
-                <select class="filter-dropdown" data-ng-model = "searchfilter.corr_question.question">
+                <select class="filter-dropdown" ng-model="filteredQuestion">
                     <option ng-value="">Alle vragen</option>
-                    <option ng-repeat="question in questions" ng-value="question.question">//question.questionnumber// //question.question//</option>
+                    <option ng-repeat="question in questions" ng-value="question">//question.questionnumber// //question.question//</option>
                 </select>
             </div>
             <div>
                 <label>Correct:</label>
-                <select class="filter-dropdown" data-ng-model="searchfilter.correct">
-                    <option ng-value="">Alles</option>
+                <select class="filter-dropdown" ng-model="correctfilter">
+                    <option ng-value=''>Alles</option>
                     <option ng-value=true>Ja</option>
                     <option ng-value=false>Nee</option>
                 </select>
             </div>
             <div>
                 <label>Laatst nagekeken door:</label>
-                <select class="filter-dropdown" ng-model = "searchfilter.checkedby.personname">
+                <select class="filter-dropdown" ng-model = "checkedbyfilter">
                     <option ng-value="">Iedereen</option>
                     <option ng-repeat="person in persons">//person.personname//</option>
                 </select>
             </div>
             <div>
                 <label>Zekerheid:</label>
-                <span class="valuePadding input-holder"><input placeholder="Van" type="number" value="5" step="5" ng-model="confidencefrom" style="text-align:left;"></span>
-                <span class="valuePadding input-holder"><input placeholder="Tot" type="number" value="5" step="5" ng-model="confidenceTO" style="text-align:left;"></span>
+                <span class="valuePadding input-holder"><input placeholder="Van" type="number"  ng-model="confidencefrom" style="text-align:left;"></span>
+                <span class="valuePadding input-holder"><input placeholder="Tot" type="number"  ng-model="confidenceto" style="text-align:left;"></span>
             </div>
         </div>
     </div>
@@ -56,7 +56,7 @@
             <thead class="header">
                 <tr>
                     <th scope="col" ng-click="sortBy('answered_by.teamname')">Team</th>
-                    <th scope="col" ng-click="sortBy('corr_question.questionnumber')">Vraag</th>
+                    <th scope="col" ng-click="sortBy('question.questionnumber')">Vraag</th>
                     <th scope="col">Correct Antwoord</th>
                     <th scope="col">Gegeven Antwoord</th>
                     <th scope="col">Afbeelding</th>
@@ -66,7 +66,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="answergiven in filteredanswers = (answers | orderBy:propertyName:reverse | filter: searchfilter  | byConfidence:confidencefrom:confidenceto) | startFrom:currentPage*pageSize | limitTo:pageSize">
+                <tr ng-repeat="answergiven in filteredanswers = (answers | orderBy:propertyName:reverse | byTeam:filteredTeam | byQuestion:filteredQuestion)  | startFrom:currentPage*pageSize | limitTo:pageSize">
+
                     <td>//answergiven.answered_by.teamname//</td>
                     <td><b>//answergiven.question.questionnumber//</b> //answergiven.question.question//</td>
                     <td>
@@ -81,7 +82,7 @@
                     <td>
                          <table class="table table-borderless">
                             <tbody>
-                                <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
+                                <tr ng-repeat="subanswergiven in answergiven.subanswersgiven | byConfidence:confidencefrom:confidenceto | byCorrect:correctfilter | byChecked:checkedbyfilter">
                                     <td>//subanswergiven.read_answer//</td>
                                 </tr>
                             </tbody>
@@ -90,7 +91,7 @@
                     <td>
                        <table class="table table-borderless">
                             <tbody  id="answerimage">
-                                <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
+                                <tr ng-repeat="subanswergiven in answergiven.subanswersgiven | byConfidence:confidencefrom:confidenceto | byCorrect:correctfilter | byChecked:checkedbyfilter">
                                     <td>
                                         <img width="100%" src="lines/load/line_//subanswergiven.line.id//">
                                     </td>
@@ -101,7 +102,7 @@
                     <td>
                         <table class="table table-borderless">
                                 <tbody>
-                                    <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
+                                    <tr ng-repeat="subanswergiven in answergiven.subanswersgiven | byConfidence:confidencefrom:confidenceto | byCorrect:correctfilter | byChecked:checkedbyfilter">
                                         <td>
                                             <label class="switch"><input type="checkbox" ng-model="subanswergiven.correct" ng-change="updateAnswerCheck(subanswergiven)"><span class="slider round"></span></label>
                                         </td>
@@ -112,7 +113,7 @@
                     <td>
                         <table class="table table-borderless">
                             <tbody>
-                                <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
+                                <tr ng-repeat="subanswergiven in answergiven.subanswersgiven | byConfidence:confidencefrom:confidenceto | byCorrect:correctfilter | byChecked:checkedbyfilter">
                                     <td>
                                         <td>//subanswergiven.confidence//%</td>
                                     </td>

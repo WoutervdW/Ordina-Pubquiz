@@ -53,7 +53,6 @@ angular.module('module', ['ngRoute'])
         }
          $scope.removeField=function(list, obj){
             index = list.indexOf(obj)
-            console.log(list)
             list.splice(index,1)
         }
         $scope.variantsfromsubanswer = function(subanswer){
@@ -241,7 +240,30 @@ angular.module('module', ['ngRoute'])
             $interval(showQuestion, 300);
         };
     })
-
+    .filter('byTeam', function() {
+        return function(answers, team){
+            if(answers){
+                return answers.filter(function(answer){
+                    if(team){
+                        return answer.answered_by.teamname == team;
+                    }
+                    return answer
+                })
+            }
+        }
+    })
+    .filter('byQuestion', function() {
+        return function(answers, question){
+            if(answers){
+                return answers.filter(function(answer){
+                    if(question){
+                        return answer.question.question == question.question && answer.question.questionnumber == question.questionnumber;
+                    }
+                    return answer
+                })
+            }
+        }
+    })
     .filter('byConfidence', function () {
         return function (subanswers, confidencefrom, confidenceto) {
             if (!confidencefrom && !confidenceto) {
@@ -261,6 +283,33 @@ angular.module('module', ['ngRoute'])
             }
         }
     })
+    .filter('byCorrect', function () {
+        return function (subanswers, correctfilter) {
+            return subanswers.filter(function (subanswer){
+                if(correctfilter==true){
+                    return subanswer.correct;
+                }
+                else if(correctfilter==false){
+                    return !subanswer.correct;
+                }
+                else{
+                    return subanswer;
+                }
+            })
+        }
+    })
+    .filter('byChecked', function () {
+        return function (subanswers, checkedfilter) {
+            return subanswers.filter(function (subanswer){
+                if(checkedfilter){
+                    return subanswer.checkedby.personname==checkedfilter;
+                }
+                else{
+                    return subanswer;
+                }
+            })
+        }
+    })
     .filter('startFrom', function () {
         return function (input, start) {
             if(input){
@@ -269,4 +318,5 @@ angular.module('module', ['ngRoute'])
             }
         }
     });
+
 
