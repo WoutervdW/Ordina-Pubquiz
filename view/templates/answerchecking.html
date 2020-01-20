@@ -61,8 +61,8 @@
                     <th scope="col" ng-click="sortBy('answer_given')">Gegeven Antwoord</th>
                     <th scope="col"> Afbeelding</th>
                     <th scope="col" ng-click="sortBy('correct')">Correct</th>
-                   <!-- <th scope="col" ng-click = "sortBy('checkedby.personname')">Laatst nagekeken door</th> -->
                     <th scope="col" ng-click = "sortBy('confidence')">Zekerheid systeem</th>
+                    <th scope="col" ng-click = "sortBy('checkedby.personname')">Laatst nagekeken door</th>
                 </tr>
             </thead>
             <tbody>
@@ -115,6 +115,17 @@
                                 <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
                                     <td>
                                         <td>//subanswergiven.confidence//%</td>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
+                                    <td>
+                                        <td>//subanswergiven.checkedby.personname//</td>
                                     </td>
                                 </tr>
                             </tbody>

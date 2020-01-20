@@ -2,7 +2,7 @@ from fuzzywuzzy import fuzz, process
 import re
 from view.models import SubAnswerGiven
 from view.models import SubAnswer
-from view.models import Variant, Person
+from view.models import Variant, Person, AnswerGiven
 from view import db
 
 import time
@@ -131,14 +131,15 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
         if subanswer_given.checkedby.personname == 'nog niet nagekeken':
             checked_answers += 1
 
-            print("Given answer: " + subanswer_given.answer_given)
-            if len(subanswer_given.answer_given) == 0:  # Any other reasons to immediately see the answer as False?
+            print("Given answer: " + subanswer_given.read_answer)
+            if len(subanswer_given.read_answer) == 0:  # Any other reasons to immediately see the answer as False?
                 print("incorrect")
                 subanswer_given.correct = False
                 subanswer_given.confidence = 100
             else:
                 # Get the list of all correct subanswers that belong to the same question as the given subanswer
-                question_id = subanswer_given.question_id
+                answergiven = AnswerGiven.query.filter_by(id=subanswer_given.answergiven_id).first()
+                question_id = answergiven.question_id
                 subanswers = SubAnswer.query.filter_by(question_id=question_id).all()
 
                 # Get all variants for each subanswer and append them into a usable list
@@ -156,7 +157,7 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
                 #  correct (If the same answer twice is correct, than the "correct answers" should contain two of the
                 #  same answer). So, all variants of the first instance should be removed (locally).
 
-                correct, confidence = check_correct(subanswer_given.answer_given,
+                correct, confidence = check_correct(subanswer_given.read_answer,
                                                     variants,
                                                     threshold,
                                                     max_conf_incorrect,
