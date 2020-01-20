@@ -38,12 +38,12 @@ angular.module('module', ['ngRoute'])
             $scope.answers = response.data;
         });
         $scope.currentPage = 0
-        $scope.pageSize = 10
+        $scope.pageSize = 5
         $scope.data = []
         $scope.q = ''
         $scope.numberOfPages = function(){
-            if($scope.filteredsubanswers){
-                return Math.ceil($scope.filteredsubanswers.length / $scope.pageSize);
+            if($scope.filteredanswers){
+                return Math.ceil($scope.filteredanswers.length / $scope.pageSize);
             }
         }
 
