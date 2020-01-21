@@ -6,7 +6,7 @@ angular.module('module', ['ngRoute'])
         $interpolateProvider.endSymbol('//')
     })
     //controller
-    .controller('controller', function ($scope, $http, $location, $window) {
+    .controller('controller', function ($scope, $http, $location, $window, $filter) {
         $http({
             method: "GET",
             url: "/api/v1.0/teams"
@@ -37,13 +37,13 @@ angular.module('module', ['ngRoute'])
         }).then(function (response) {
             $scope.answers = response.data;
         });
-        $scope.currentPage = 0
-        $scope.pageSize = 5
+        $scope.pageNum = 0
+        $scope.perPage = 5
         $scope.data = []
         $scope.q = ''
         $scope.numberOfPages = function(){
             if($scope.filteredanswers){
-                return Math.ceil($scope.filteredanswers.length / $scope.pageSize);
+                return Math.ceil($scope.filteredanswers.length / $scope.perPage);
             }
         }
 
@@ -268,7 +268,6 @@ angular.module('module', ['ngRoute'])
         return function(answers, confidencefrom, confidenceto, correct, checkedby){
             if(answers){
                 return answers.filter(function(answer) {
-                    console.log("ANSWER AT START", answer)
                     filter=false;
                     filteredanswer = answer.subanswersgiven;
                     if(confidencefrom){
@@ -354,11 +353,10 @@ angular.module('module', ['ngRoute'])
             })
         }
     })
-    .filter('startFrom', function () {
-        return function (input, start) {
+    .filter('pagination', function () {
+        return function (input, page, perPage) {
             if(input){
-                start = +start;
-                return input.slice(start);
+                return input.slice(page*perPage, (page+1) * perPage);
             }
         }
     });

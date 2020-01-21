@@ -134,7 +134,7 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
             #     answered_by=answered_by,
             #     confidence=words_results[1],
             checkedby = Person.query.filter_by(personname="nog niet nagekeken").first()
-            answergiven = AnswerGiven.query.filter_by(question_id=question.id).first()
+            answergiven = AnswerGiven.query.filter_by(question_id=question.id).filter_by(team_id=team.id).first()
             if answergiven is None:
                 answergiven = AnswerGiven(
                     question_id=question.id,
