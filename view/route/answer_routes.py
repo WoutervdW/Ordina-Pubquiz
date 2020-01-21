@@ -11,7 +11,7 @@ def update_answer():
     post = request.get_json()
     id = post.get('id')
     answercorrect = post.get('correct')
-    person_id = session['userid']
+    person_id = '2'
     sa = SubAnswerGiven.query.filter_by(id=id).first()
     sa.correct = answercorrect
     print(answercorrect)
