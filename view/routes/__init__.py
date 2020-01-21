@@ -40,3 +40,8 @@ from view.routes.team_routes import remove_team
 from view.routes.team_routes import remove_teams
 
 from view.routes.upload_routes import upload
+
+from view.routes.question_number_routes import questions_all
+from view.routes.question_number_routes import load_questions
+from view.routes.question_number_routes import load_question_id
+from view.routes.question_number_routes import nuke_all_questions
