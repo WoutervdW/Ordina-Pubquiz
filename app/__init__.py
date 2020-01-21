@@ -81,7 +81,6 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         # Now that we have a new team, we will also reset the line number counter
         line_number = 0
         print("the team name is: " + name_of_team)
-        print("the team id is: " + str(team_id))
 
     # If no team name is found it should use it's previously found team_id
     if not save_to_database.update_team_answersheet(db, answersheet_id, team_id):
@@ -90,7 +89,6 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
 
     for line_image in lines:
         line_number += 1
-        print("processing line: " + str(line_number))
         line = line_image[0]
         # -kernelSize: size of filter kernel (odd integer)
         # -sigma: standard deviation of Gaussian function used for filter kernel
@@ -122,7 +120,6 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         question_width = len(blur2)
         question_height = len(blur2[0])
         if db is not None:
-            print("save question number to database with width %s and height %s" % (question_width, question_height))
             # TODO fill in the other details as well! (not just the image)
             question_recognized = QuestionNumber(
                 question_number=question_number,
@@ -145,8 +142,6 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
                 subanswer_number = 0
             previous_question = question_id
         else:
-            # If the question number was empty this should be ignored.
-            print("ignore this line")
             # We turn the question_id to 0. This means it will be ignored.
             question_id = 0
 
@@ -178,7 +173,6 @@ def run_program(pubquiz_answer_sheets, save_image=False, db=None):
                 print("something went wrong, no answersheet id present")
                 exit()
             else:
-                print("start processing answersheet with id " + str(answersheet_id))
                 process_sheet(pages[p], model, save_image, sheet_name, db, answersheet_id)
 
     global line_number
