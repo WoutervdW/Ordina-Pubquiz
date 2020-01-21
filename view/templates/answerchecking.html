@@ -71,13 +71,15 @@
                     <td>//answergiven.answered_by.teamname//</td>
                     <td><b>//answergiven.question.questionnumber//</b> //answergiven.question.question//</td>
                     <td>
-                        <table class="table table-borderless">
-                            <tbody>
-                                <tr ng-repeat="subanswer in answergiven.question.subanswers">
-                                    <td ng-repeat="variant in subanswer.variants">//variant.answer//</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div id = 'subanswerintable'>
+                            <table class="table table-borderless">
+                                <tbody>
+                                    <tr ng-repeat="subanswer in answergiven.question.subanswers">
+                                        <td ng-repeat="variant in subanswer.variants">//variant.answer//</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </td>
                     <td>
                          <table class="table table-borderless">

@@ -29,29 +29,32 @@ thead, tbody tr {
     margin-top: 0 !important;
 }
 
-
 .table-fixed tr{
     margin-top: 0 !important;
 }
 
-
 .table-fixed td{
     margin-top: 0 !important;
+    max-width: 500px !important;
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    overflow-x: auto;
 }
 
 .table-borderless th{
     display:none !important;
-
 }
 
 .table-borderless tbody {
     height: auto;
-    width: 100%;
     border: 0 !important;
 }
 
 .table-borderless td{
     border: 0 !important;
+    padding: 0 !important;
+    margin-left: 5px !important;
 }
 
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
@@ -177,6 +180,7 @@ input:checked + .slider:before {
     padding: 0;
     outline:none;
 }
+
 .input-holder:after {
     content: '%';
 }
