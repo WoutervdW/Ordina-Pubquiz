@@ -11,6 +11,8 @@ from view.models import SubAnswer
 from view.models import Question
 from view.models import Variant
 from view.models import Answersheet
+from view.models import AnswerGiven
+from view.models import Person
 from view.models import Team
 from app.DataLoader import Batch
 from view.config import InputConfig
@@ -131,14 +133,24 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
             # corr_answer = variant.get_answer(),
             #     answered_by=answered_by,
             #     confidence=words_results[1],
+            checkedby = Person.query.filter_by(personname="nog niet nagekeken").first()
+            answergiven = AnswerGiven.query.filter_by(question_id=question.id).first()
+            if answergiven is None:
+                answergiven = AnswerGiven(
+                    question_id=question.id,
+                    team_id=team.id
+                )
+                db.session.add(answergiven)
+                db.session.commit()
+            print("ANSWERGIVEN:")
+            print(answergiven.question_id)
             sub_answer_given = SubAnswerGiven(
-                question_id=question.id,
-                team_id=team_id,
+                answergiven_id=answergiven.id,
                 corr_answer_id=sub_answer.id,
-                person_id=2,
+                person_id=checkedby.id,
                 correct=False,
                 line_id=line_image[2],
-                answer_given=predicted_line
+                read_answer=predicted_line
             )
             db.session.add(sub_answer_given)
             db.session.commit()

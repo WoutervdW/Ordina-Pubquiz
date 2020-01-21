@@ -89,6 +89,12 @@ class SubAnswerSchema(ma.Schema):
     variants = ma.Nested(VariantSchema(many=True))
 
 
+class LineSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('id', 'answersheet_id', 'image_width', 'image_height', 'image')
+
+
 class Question(db.Model):
     __tablename__ = 'question'
     id = db.Column(db.Integer, primary_key=True)
@@ -118,36 +124,43 @@ class SubAnswerGiven(db.Model):
     """ A answer can consist of multiple lines, this indicates a single line of an answer. """
     __tablename__ = 'subanswergiven'
     id = db.Column(db.Integer, primary_key=True)
-    question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable=False)
-    corr_question = db.relationship('Question')
-    team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
-    answered_by = db.relationship('Team')
     corr_answer_id = db.Column(db.Integer, db.ForeignKey('subanswer.id'), nullable=False)
     corr_answer = db.relationship('SubAnswer')
-    answer_given = db.Column(db.String(255))
+    read_answer = db.Column(db.String(255))
     correct = db.Column(db.Boolean)
     confidence = db.Column(db.Float)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
     checkedby = db.relationship('Person')
     line_id = db.Column(db.Integer, db.ForeignKey('line.id'), nullable=False)
     line = db.relationship('Line')
-
-
-class LineSchema(ma.Schema):
-    class Meta:
-        # Fields to expose
-        fields = ('id', 'answersheet_id', 'image_width', 'image_height', 'image')
+    answergiven_id = db.Column(db.Integer, db.ForeignKey('answergiven.id'), nullable=False)
 
 
 class SubAnswerGivenSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('id', 'question', 'answered_by', 'corr_question', 'corr_answer', 'answer_given', 'correct', 'person_id', 'checkedby', 'confidence', 'line')
+        fields = ('id', 'corr_answer_id', 'corr_answer', 'read_answer', 'correct', 'person_id', 'checkedby', 'confidence', 'line', 'answergiven_id')
     checkedby = ma.Nested(PersonSchema)
-    corr_question = ma.Nested(QuestionSchema)
     corr_answer = ma.Nested(SubAnswerSchema)
-    answered_by = ma.Nested(TeamSchema)
     line = ma.Nested(LineSchema)
+
+
+class AnswerGiven(db.Model):
+    __tablename__ = 'answergiven'
+    id = db.Column(db.Integer, primary_key=True)
+    question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable=False)
+    question = db.relationship('Question')
+    team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
+    answered_by = db.relationship('Team')
+    subanswersgiven = db.relationship('SubAnswerGiven')
+
+
+class AnswerGivenSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'question_id', 'question', 'team_id', 'answered_by', 'subanswersgiven')
+    question = ma.Nested(QuestionSchema)
+    answered_by = ma.Nested(TeamSchema)
+    subanswersgiven = ma.Nested(SubAnswerGivenSchema, many=True)
 
 
 class Answersheet(db.Model):
