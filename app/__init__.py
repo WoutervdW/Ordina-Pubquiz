@@ -25,9 +25,29 @@ import numpy as np
 import pytesseract
 import re
 import app.save_to_database
+from fuzzywuzzy import fuzz, process
 
 line_number = 0
 team_id = -1
+
+
+def check_team_name(name_of_team):
+    """
+    We compare the given team with all the teams that are cooperating in the quiz.
+    The team that has the most simolarities will be the team that is chosen.
+    This is because there can be a mistake with reading the team names
+    """
+
+    all_teams = Team.query.all()
+    higest_ration = 0
+    team_result = name_of_team
+    for t in all_teams:
+        t_name = t.get_team_name()
+        correct_ratio = fuzz.WRatio(name_of_team, t_name)
+        if correct_ratio > higest_ration:
+            higest_ration = correct_ratio
+            team_result = t_name
+    return team_result
 
 
 def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan", db=None, answersheet_id=None):
@@ -54,6 +74,9 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         # We take the name of the team and remove leading whitespaces
         name_of_team = team_name.split("Naam:")[1]
         name_of_team = name_of_team.lstrip()
+
+        name_of_team = check_team_name(name_of_team)
+
         team_id = save_to_database.save_team_database(db, name_of_team)
         # Now that we have a new team, we will also reset the line number counter
         line_number = 0
