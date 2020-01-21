@@ -66,7 +66,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="answergiven in filteredanswers = (answers | orderBy:propertyName:reverse | byTeam:filteredTeam | byQuestion:filteredQuestion)  | startFrom:currentPage*pageSize | limitTo:pageSize">
+                <tr ng-repeat="answergiven in filteredanswers = (answers | orderBy:propertyName:reverse | byTeam:filteredTeam | byQuestion:filteredQuestion | bySubanswers:confidencefrom:confidenceto:correctfilter:checkedbyfilter)   | startFrom:currentPage*pageSize | limitTo:pageSize">
 
                     <td>//answergiven.answered_by.teamname//</td>
                     <td><b>//answergiven.question.questionnumber//</b> //answergiven.question.question//</td>

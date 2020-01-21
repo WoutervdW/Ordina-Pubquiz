@@ -264,6 +264,50 @@ angular.module('module', ['ngRoute'])
             }
         }
     })
+    .filter('bySubanswers', function() {
+        return function(answers, confidencefrom, confidenceto, correct, checkedby){
+            if(answers){
+                return answers.filter(function(answer) {
+                    console.log("ANSWER AT START", answer)
+                    filter=false;
+                    filteredanswer = answer.subanswersgiven;
+                    if(confidencefrom){
+                        filter = true;
+                        filteredanswer = filteredanswer.filter(function(subanswer){
+                            return subanswer.confidence > confidencefrom;
+                        })
+                    }
+                    if(confidenceto){
+                        filter = true;
+                        filteredanswer = filteredanswer.filter(function(subanswer){
+                            return subanswer.confidence < confidenceto;
+                        })
+                    }
+                    if(correct==true){
+                        filter = true;
+                        filteredanswer = filteredanswer.filter(function(subanswer){
+                            return subanswer.correct == true;
+                        })
+                    }
+                    if(correct==false){
+                        filter = true;
+                        filteredanswer = filteredanswer.filter(function(subanswer){
+                            return subanswer.correct == false;
+                        })
+                    }
+                    if(checkedby){
+                        filter = true;
+                        filteredanswer = filteredanswer.filter(function(subanswer){
+                            return subanswer.checkedby.personname == checkedby;
+                        })
+                    }
+                    if(filteredanswer.length>0){
+                        return answer;
+                    }
+                })
+            }
+        }
+    })
     .filter('byConfidence', function () {
         return function (subanswers, confidencefrom, confidenceto) {
             if (!confidencefrom && !confidenceto) {
