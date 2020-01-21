@@ -12,7 +12,7 @@
 <div class="container"  ng-app="module" ng-controller ="controller">
     <div id="myModal" class="modal">
         <!-- Modal content -->
-        <div class="modal-content">
+        <div class="modal-content" ng-mouseLeave="closeModal()">
             <span class="close" ng-click="closeModal()">&times;</span>
             <div>
                 <label>Team:</label>
@@ -50,7 +50,7 @@
             </div>
         </div>
     </div>
-    <button id="myBtn" ng-click="showModal()">Filter</button>
+    <button class = 'btn btn-primary' id="myBtn" ng-click="showModal()">Filter</button>
     <div class = "checkinganswers" ng-hide="checkinganswers">
         <table class="table table-hover table-sm table-fixed">
             <thead class="header">
