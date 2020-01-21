@@ -3,8 +3,8 @@ import json
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-#models for database
-#schema exposes fields to expose
+# models for database
+# schema exposes fields to expose
 
 
 class Person(db.Model):
@@ -56,6 +56,19 @@ class CategorySchema(ma.Schema):
         fields = ('id', 'name')
 
 
+class Type(db.Model):
+    """ type of question (e.g. multiple choice) """
+    __tablename__ = 'type'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255))
+
+
+class TypeSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('id', 'name')
+
+
 class Variant(db.Model):
     """ for some questions, multiple answers (variants) are correct """
     __tablename__ = 'variant'
@@ -86,6 +99,7 @@ class SubAnswerSchema(ma.Schema):
     class Meta:
         # Fields to expose
         fields = ('id', 'question_id', 'variants')
+
     variants = ma.Nested(VariantSchema(many=True))
 
 
@@ -103,6 +117,8 @@ class Question(db.Model):
     createdby = db.relationship('Person')
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     questioncategory = db.relationship('Category')
+    type_id = db.Column(db.Integer, db.ForeignKey('type.id'))
+    questiontype = db.relationship('Type')
     question = db.Column(db.String(255))
     subanswers = db.relationship('SubAnswer')
     active = db.Column(db.Boolean)
@@ -114,9 +130,13 @@ class Question(db.Model):
 class QuestionSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('id', 'questionnumber', 'person_id', 'category_id', 'question', 'active', 'subanswers', 'questioncategory', 'createdby')
+        fields = (
+            'id', 'questionnumber', 'person_id', 'category_id', 'question', 'active', 'subanswers', 'questioncategory',
+            'createdby', 'type_id', 'questiontype')
+
     subanswers = ma.Nested(SubAnswerSchema(many=True))
     questioncategory = ma.Nested(CategorySchema)
+    questiontype = ma.Nested(TypeSchema)
     createdby = ma.Nested(PersonSchema)
 
 
@@ -139,7 +159,11 @@ class SubAnswerGiven(db.Model):
 class SubAnswerGivenSchema(ma.Schema):
     class Meta:
         # Fields to expose
-        fields = ('id', 'corr_answer_id', 'corr_answer', 'read_answer', 'correct', 'person_id', 'checkedby', 'confidence', 'line', 'answergiven_id')
+        fields = (
+            'id', 'corr_answer_id', 'corr_answer', 'read_answer', 'correct', 'person_id', 'checkedby', 'confidence',
+            'line',
+            'answergiven_id')
+
     checkedby = ma.Nested(PersonSchema)
     corr_answer = ma.Nested(SubAnswerSchema)
     line = ma.Nested(LineSchema)
@@ -158,6 +182,7 @@ class AnswerGiven(db.Model):
 class AnswerGivenSchema(ma.Schema):
     class Meta:
         fields = ('id', 'question_id', 'question', 'team_id', 'answered_by', 'subanswersgiven')
+
     question = ma.Nested(QuestionSchema)
     answered_by = ma.Nested(TeamSchema)
     subanswersgiven = ma.Nested(SubAnswerGivenSchema, many=True)
@@ -216,4 +241,3 @@ class QuestionNumber(db.Model):
     question_image = db.Column(db.LargeBinary)
     image_width = db.Column(db.Integer)
     image_height = db.Column(db.Integer)
-
