@@ -66,7 +66,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="answergiven in filteredanswers = (answers | orderBy:propertyName:reverse | byTeam:filteredTeam | byQuestion:filteredQuestion | bySubanswers:confidencefrom:confidenceto:correctfilter:checkedbyfilter) | pagination:pageNum:perPage">
+                <tr ng-repeat="answergiven in filteredanswers = (answers | orderBy:propertyName:reverse | byTeam:filteredTeam | byQuestion:filteredQuestion | bySubanswers:confidencefrom:confidenceto:correctfilter:checkedbyfilter)">
 
                     <td>//answergiven.answered_by.teamname//</td>
                     <td><b>//answergiven.question.questionnumber//</b> //answergiven.question.question//</td>
@@ -137,6 +137,7 @@
                 </tr>
             </tbody>
         </table>
+        <!--
         <div class = 'wrapperhorizontal'>
              <button class = 'btn btn-primary' ng-disabled="pageNum== 0" ng-click="pageNum=pageNum-1">
             Vorige
@@ -146,6 +147,7 @@
             Volgende
             </button>
         </div>
+        -->
         <div>
             {% if session['logged_in'] == True %}
             <button class="btn btn-primary" ng-click = "deleteAllAnswers()">Verwijder alle antwoorden</button>
