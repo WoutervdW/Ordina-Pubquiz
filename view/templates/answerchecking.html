@@ -59,14 +59,14 @@
                     <th scope="col" ng-click="sortBy('question.questionnumber')">Vraag</th>
                     <th scope="col">Correct Antwoord</th>
                     <th scope="col">Gegeven Antwoord</th>
-                    <th scope="col">Afbeelding</th>
-                    <th scope="col">Correct</th>
-                    <th scope="col">Zekerheid systeem</th>
+                    <th scope="col" style="width:300px;">Afbeelding</th>
+                    <th scope="col" style="width:60px;">Correct</th>
+                    <th scope="col" style="width:100px;">Zekerheid systeem</th>
                    <!-- <th scope="col" ng-click = "sortBy('checkedby.personname')">Laatst nagekeken door</th> -->
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="answergiven in filteredanswers = (answers | orderBy:propertyName:reverse | byTeam:filteredTeam | byQuestion:filteredQuestion | bySubanswers:confidencefrom:confidenceto:correctfilter:checkedbyfilter)   | startFrom:currentPage*pageSize | limitTo:pageSize">
+                <tr ng-repeat="answergiven in filteredanswers = (answers | orderBy:propertyName:reverse | byTeam:filteredTeam | byQuestion:filteredQuestion | bySubanswers:confidencefrom:confidenceto:correctfilter:checkedbyfilter)">
 
                     <td>//answergiven.answered_by.teamname//</td>
                     <td><b>//answergiven.question.questionnumber//</b> //answergiven.question.question//</td>
@@ -90,9 +90,9 @@
                             </tbody>
                         </table>
                     </td>
-                    <td>
+                    <td style="width:300px;">
                        <table class="table table-borderless">
-                            <tbody  id="answerimage">
+                            <tbody>
                                 <tr ng-repeat="subanswergiven in answergiven.subanswersgiven | byConfidence:confidencefrom:confidenceto | byCorrect:correctfilter | byChecked:checkedbyfilter">
                                     <td>
                                         <img width="100%" src="lines/load/line_//subanswergiven.line.id//">
@@ -101,7 +101,7 @@
                             </tbody>
                        </table>
                     </td>
-                    <td>
+                    <td style="width:60px;">
                         <table class="table table-borderless">
                                 <tbody>
                                     <tr ng-repeat="subanswergiven in answergiven.subanswersgiven | byConfidence:confidencefrom:confidenceto | byCorrect:correctfilter | byChecked:checkedbyfilter">
@@ -112,7 +112,7 @@
                                 </tbody>
                         </table>
                     </td>
-                    <td>
+                    <td style="width:100px;">
                         <table class="table table-borderless">
                             <tbody>
                                 <tr ng-repeat="subanswergiven in answergiven.subanswersgiven | byConfidence:confidencefrom:confidenceto | byCorrect:correctfilter | byChecked:checkedbyfilter">
@@ -137,15 +137,17 @@
                 </tr>
             </tbody>
         </table>
+        <!--
         <div class = 'wrapperhorizontal'>
-             <button class = 'btn btn-primary' ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
+             <button class = 'btn btn-primary' ng-disabled="pageNum== 0" ng-click="pageNum=pageNum-1">
             Vorige
             </button>
-            <label>//currentPage+1// / //numberOfPages()//</label>
-            <button class = 'btn btn-primary' ng-disabled="currentPage >= filteredanswers.length/pageSize - 1" ng-click="currentPage=currentPage+1">
+            <label>//pageNum+1// / //numberOfPages()//</label>
+            <button class = 'btn btn-primary' ng-disabled="pageNum >= filteredanswers.length/perPage - 1" ng-click="pageNum=pageNum+1">
             Volgende
             </button>
         </div>
+        -->
         <div>
             {% if session['logged_in'] == True %}
             <button class="btn btn-primary" ng-click = "deleteAllAnswers()">Verwijder alle antwoorden</button>

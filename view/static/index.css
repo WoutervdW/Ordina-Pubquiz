@@ -38,7 +38,6 @@ thead, tbody tr {
     max-width: 500px !important;
     border-collapse: collapse;
     border-spacing: 0;
-    width: 100%;
     overflow-x: auto;
 }
 
@@ -202,6 +201,6 @@ input:checked + .slider:before {
 }
 
 
-.modal-content{
+/*.modal-content{
     width: 200px;
-}
+}*/
