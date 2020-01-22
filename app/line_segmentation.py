@@ -104,6 +104,10 @@ def find_corners_center(corners_left, corners_right):
     return corners_full
 
 
+def line_segmentation_new(answer_image_original):
+    print("Hello World")
+
+
 def line_segmentation(answer_image_original, save_image=False, image_path="lines/", image_name="scan", db=None, answersheet_id=None):
     # New strategy. First find the points on the left side and then on the right side.
     # Than take the points together and find the lines.
