@@ -27,8 +27,6 @@ import re
 import app.save_to_database
 from fuzzywuzzy import fuzz, process
 
-line_number = 0
-
 
 def check_team_name(name_of_team):
     """
@@ -50,7 +48,6 @@ def check_team_name(name_of_team):
 
 
 def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan", db=None, answersheet_id=None):
-    global line_number
 
     # We keep track of which question is being handled, because 1 question can have multiple lines
     sub_answer_number = 0
@@ -76,8 +73,6 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         name_of_team = check_team_name(name_of_team)
 
         team_id = save_to_database.save_team_database(db, name_of_team)
-        # Now that we have a new team, we will also reset the line number counter
-        line_number = 0
         print("the team name is: " + name_of_team)
     else:
         print("failed!")
@@ -88,7 +83,6 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         print("there was a problem linking the team to the answersheet")
 
     for line_image in lines:
-        line_number += 1
         line = line_image[0]
         # -kernelSize: size of filter kernel (odd integer)
         # -sigma: standard deviation of Gaussian function used for filter kernel
@@ -109,9 +103,9 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         # Read the number from the number box. After that we remove any non numbers (in case of lines)
         # The configuration is to only read numbers and to look for 1 word
         # TODO @Sander: explain why this pre-processing is done.
-        resized_question_number = cv2.resize(question_image, (0, 0), fx=5, fy=5)
+        resized_question_number = cv2.resize(question_image, (0, 0), fx=3, fy=3)
         ret, thresh1 = cv2.threshold(resized_question_number, 180, 255, cv2.THRESH_BINARY)
-        blur2 = cv2.blur(thresh1, (10, 10))
+        blur2 = cv2.blur(thresh1, (8, 8))
         question_number = pytesseract.image_to_string(blur2, config='--psm 10 --oem 3 -c tessedit_char_whitelist=0123456789')
         question_number = re.sub("[^0-9]", "", question_number)
 
@@ -172,9 +166,6 @@ def run_program(pubquiz_answer_sheets, save_image=False, db=None):
                 exit()
             else:
                 process_sheet(pages[p], model, save_image, sheet_name, db, answersheet_id)
-
-    global line_number
-    line_number = 0
 
 
 def save_answersheet():
