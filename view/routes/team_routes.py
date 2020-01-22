@@ -1,20 +1,23 @@
 from view import view, db
 from flask import jsonify, request
-from sqlalchemy import func
-from view.models import SubAnswerGiven, Team, TeamSchema
+from sqlalchemy import func, inspect
+from view.models import SubAnswerGiven, Team, TeamSchema, AnswerGiven
+
+
+def object_as_dict(obj):
+    return {c.key: getattr(obj, c.key)
+            for c in inspect(obj).mapper.column_attrs}
 
 
 @view.route('/api/v1.0/teams', methods=['GET'])
 def get_teams():
-    #scores = db.session.query(SubAnswerGiven.team_id, func.count(SubAnswerGiven.id).label('score')).group_by(SubAnswerGiven.team_id).filter(SubAnswerGiven.correct).all()
+    results = db.session.query(Team, func.count(SubAnswerGiven.id) .label('score')).group_by(Team.id).filter(SubAnswerGiven.correct).filter(SubAnswerGiven.answergiven_id == AnswerGiven.id).filter(Team.id == AnswerGiven.team_id).all()
     teams = Team.query.all()
     teams_schema = TeamSchema(many=True)
-    for team in teams:
-        team.score = 0
-     #   for i in range(0, len(scores)):
-     #       teamid = scores[i][0]
-      #      if team.id == teamid:
-       #         team.score = scores[i][1]
+    for i in range(0, len(results)):
+        teamid = results[i][0].id
+        team = Team.query.filter_by(id=teamid).first()
+        team.score = results[i][1]
     result = teams_schema.dump(teams)
     return jsonify(result)
 
