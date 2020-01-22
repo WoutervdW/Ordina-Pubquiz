@@ -43,14 +43,13 @@ def save_team_database(db, team_name):
 
 
 def update_team_answersheet(db, answersheet_id, team_id):
-    print("linking team %s with answersheet %s" % (team_id, answersheet_id))
     answersheet = Answersheet.query.filter_by(id=answersheet_id).first()
     if answersheet is None:
-        print("this should not happen!")
+        print("failed!")
         return False
     team = Team.query.filter_by(id=team_id).first()
     if team is None:
-        print("this should not happen!")
+        print("failed!")
         return False
     answersheet.set_team_id(team_id)
     db.session.add(answersheet)

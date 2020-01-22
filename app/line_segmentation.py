@@ -196,7 +196,6 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
         answer = without_bars.tostring()
 
         if db is not None:
-            print("save line to database with width %s and height %s" % (line_width, line_height))
             # TODO fill in the other details as well! (not just the image)
             new_line = Line(
                 answersheet_id=answersheet_id,

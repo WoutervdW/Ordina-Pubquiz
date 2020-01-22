@@ -55,7 +55,7 @@ def read_word_from_image(image_to_read, model):
     return results
 
 
-def save_word_details(line_image, multiply_factor, res, number_box_size, db=None, model=None, team_id=None, question_number=0, subanswer_number=-1):
+def save_word_details(line_image, multiply_factor, res, number_box_size, db=None, model=None, team_id=None, question_number=0, sub_answer_number=-1):
     words = []
     index = 0
     predicted_line = ""
@@ -105,14 +105,9 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
             sub_answer_index = 0
             sub_answer = sub_answers.first()
             for s in sub_answers:
-                if subanswer_number == sub_answer_index:
+                if sub_answer_number == sub_answer_index:
                     sub_answer = s
                 sub_answer_index += 1
-
-            variant = Variant.query.filter_by(subanswer_id=sub_answer.id).first()
-
-            team = Team.query.filter_by(id=team_id).first()
-            answered_by = team.get_team_name()
             # correct is always false at first and can be set to True later
             # TODO @Sander: person_id is now always the same, how will this be determined?
             #     checkedby="answerchecker",
