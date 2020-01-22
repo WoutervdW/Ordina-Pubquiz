@@ -169,6 +169,10 @@ angular.module('module', ['ngRoute'])
             $http.post("/api/v1.0/removeteams")
             window.location.reload()
         }
+        $scope.removeOtherStuff = function () {
+            $http.post("/api/v1.0/nuke/all")
+            window.location.reload()
+        }
         $scope.updateTeam = function (team) {
             var data = {"id": team.id, "teamname": team.teamname}
             $http.post("/api/v1.0/updateteam", JSON.stringify(data))
