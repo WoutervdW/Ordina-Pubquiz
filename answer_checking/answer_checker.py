@@ -155,7 +155,7 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
 
     # check correctness per given answer
     for subanswer_given in all_subanswers_given:
-        if subanswer_given.checkedby.personname == 'systeem':  # 'nog niet nagekeken'
+        if subanswer_given.checkedby.personname == 'nog niet nagekeken':  # 'nog niet nagekeken'
 
             answer_given = AnswerGiven.query.filter_by(id=subanswer_given.answergiven_id).first()
             variant_lists = get_variant_lists(answer_given)
