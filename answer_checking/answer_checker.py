@@ -43,7 +43,7 @@ def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect
             # No number in given answer, check correctness based on string comparison
             correct_ratio, confidence = check_string(answer, correct_answer_variant, threshold, max_conf_incorrect,
                                                      max_conf_correct)
-            return correct_ratio > threshold, confidence
+            return correct_ratio >= threshold, confidence
 
         elif correct_ratio >= threshold:
             # Number correct, see if the rest of the string is also correct.
@@ -66,6 +66,8 @@ def check_numerical_values(answer, correct_answer_variant, threshold, max_conf_i
     answer_values = all_digits_pattern.findall(answer)  # Find all numbers in the answer
     correct_answer_values = all_digits_pattern.findall(correct_answer_variant)  # Find all numbers in the correct answer
 
+    # TODO: if the answer (or probably better: the correct answer!) contains both letters and numbers, do letter-based
+    #  comparison
     # TODO: improve structure. Still quite expansive for clarity in case of possible functionality changes
     if len(correct_answer_values) == 0:  # no number found in correct_answer
         if len(answer_values) == 0:  # no number found in given_answer
@@ -107,9 +109,10 @@ def preprocess_string(answer):
     # lower & upper case is handled by fuzz.WRatio
     answer = answer.lower()
     # answer = answer.strip()
+
     # remove all but \w
-    all_word_chars_pattern = re.compile(r'\w+')  # get all individual numbers
-    answer = all_word_chars_pattern.findall(answer)
+    all_word_chars_pattern = re.compile(r'\w+')
+    answer = all_word_chars_pattern.findall(answer) # get all individual letters and numbers sequences
     answer = ''.join(map(str, answer))
     return answer
 
@@ -155,21 +158,25 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
 
     # check correctness per given answer
     for subanswer_given in all_subanswers_given:
-        if subanswer_given.checkedby.personname == 'nog niet nagekeken':  # 'nog niet nagekeken'
+        correct = False
+        confidence_true = 0
+        confidence_false = 0
 
+        if subanswer_given.checkedby.personname == 'nog niet nagekeken':  # 'nog niet nagekeken'
             answer_given = AnswerGiven.query.filter_by(id=subanswer_given.answergiven_id).first()
+
+            # this list is constructed for every subanswer! relevant for double-checking the same answers
             variant_lists = get_variant_lists(answer_given)
             question = Question.query.filter_by(id=answer_given.question_id).first()
 
-            print("Question: " + question.question)
-            print("Given answer: '" + subanswer_given.read_answer + "'")
+            print("Question: '" + question.question + "'")
             print("Correct answer options: " + str(variant_lists))
+            print("Given answer: '" + subanswer_given.read_answer + "'")
 
             # empty answers are incorrect
             if len(subanswer_given.read_answer) == 0:  # Any other reasons to immediately see the answer as False?
                 print("No answer; incorrect")
-                subanswer_given.correct = False
-                subanswer_given.confidence = 100
+                confidence_false = max_conf_incorrect
             # not empty:
             else:
                 for variants in variant_lists:
@@ -177,26 +184,32 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
                     #  be correct (If the same answer twice is correct, than the "correct answers" should contain two of
                     #  the same answer). So, all variants of the first instance should be removed (locally).
 
-                    correct, confidence = check_correct(subanswer_given.read_answer,
-                                                        variants,
-                                                        threshold,
-                                                        max_conf_incorrect,
-                                                        max_conf_correct)
+                    # check if current answer is similar
+                    correct_temp, confidence_temp = check_correct(subanswer_given.read_answer,
+                                                                  variants,
+                                                                  threshold,
+                                                                  max_conf_incorrect,
+                                                                  max_conf_correct)
 
-                    variant_lists.remove(variants)
-                    if correct:
+                    if correct_temp:
                         print("Found similar answer in: " + str(variants))
-                        subanswer_given.correct = True
-                        subanswer_given.confidence = confidence
-                        break
+                        correct = True
+                        if confidence_temp > confidence_true:
+                            confidence_true = confidence_temp
                     else:
                         # print("Not similar to: " + str(variants))
-                        subanswer_given.correct = False
-                        subanswer_given.confidence = confidence
-            if subanswer_given.correct:
-                print("correct")
+                        if confidence_temp < confidence_false:
+                            confidence_false = confidence_temp
+                        # confidence should be equal to lowest confidence
+
+            if correct:
+                subanswer_given.confidence = confidence_true
+                print("Correct!")
             else:
-                print("no similar answer found")
+                subanswer_given.confidence = confidence_false
+                print("No similar answer found.")
+
+            subanswer_given.correct = correct
             subanswer_given.checkedby = checker
         print("")
     db.session.commit()
