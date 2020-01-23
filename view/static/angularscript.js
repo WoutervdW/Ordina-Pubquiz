@@ -72,26 +72,27 @@ angular.module('module', ['ngRoute'])
             var subanswers = []
             for (i = 0; i < $scope.newsubanswers.length; i++){
                 subanswer = $scope.newsubanswers[i].value
-                variants = subanswer.split('/')
-                for (j = 0; j < variants.length; j++){
-                    newvariants.push({"answer": variants[j]})
-                }
+                if(subanswer)
+                    variants = subanswer.split('/')
+                    for (j = 0; j < variants.length; j++){
+                        newvariants.push({"answer": variants[j]})
+                    }
                 subanswers.push({"variants" : newvariants})
                 newvariants = []
             }
-            $scope.newsubanswers = [{}]
-            var data = {"questionnumber": $scope.newquestionnumber, "question": $scope.newquestion, "subanswers": subanswers, "category": $scope.newquestioncategory, "active": $scope.newquestionactive}
+            var data = {"questionnumber": $scope.newquestion.questionnumber, "question": $scope.newquestion.question, "subanswers": subanswers, "category": $scope.newquestion.category}
             $http.post("/api/v1.0/newquestion", JSON.stringify(data))
                 .then(function (response) {
-                if(response.data != 'OK'){
-                    alert(response.data)
+                if(typeof response.data === 'string'){
+                    alert(response.data);
                 }
                 else{
-                    $scope.newquestion = "";
-                    window.location.reload()
+                    newq = response.data;
+                    $scope.questions.push(newq)
+                    $scope.newquestion = [];
+                    $scope.newsubanswers = [{}]
                 }
             })
-
         }
         $scope.removeQuestion = function (question) {
             var data = {"id": question.id}
@@ -100,8 +101,10 @@ angular.module('module', ['ngRoute'])
                     if(response.data != 'OK'){
                         alert(response.data)
                     }
+                    else{
+                        $scope.questions.splice($scope.questions.indexOf(question), 1 );
+                    }
                 })
-            window.location.reload()
         }
         $scope.updateQuestion = function(question){
             for (i = 0; i < question.subanswers.length; i++){
@@ -126,8 +129,11 @@ angular.module('module', ['ngRoute'])
             })
         }
         $scope.resetQuestionNumbers = function(){
+            for (i = 0; i < $scope.questions.length; i++){
+                $scope.questions[i].questionnumber = null;
+            }
             $http.post("/api/v1.0/resetquestionnumbers")
-            window.location.reload()
+
         }
         $scope.deleteAllQuestions = function(){
             $http.post("/api/v1.0/deleteallquestions")
@@ -135,8 +141,11 @@ angular.module('module', ['ngRoute'])
                 if(response.data != 'OK'){
                     alert(response.data)
                 }
+                else{
+                    $scope.questions = [];
+                }
             })
-            window.location.reload()
+
         }
         $scope.updateAnswerCheck = function (answer) {
             var data = {"id": answer.id, "correct": answer.correct}
@@ -149,7 +158,7 @@ angular.module('module', ['ngRoute'])
 
         $scope.deleteAllAnswers = function () {
             $http.post("/api/v1.0/reset")
-            window.location.reload()
+            $scope.answers = [];
         }
         $scope.checkAllAnswers = function () {
             $scope.checkinganswers = true;
