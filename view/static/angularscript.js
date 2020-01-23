@@ -140,8 +140,13 @@ angular.module('module', ['ngRoute'])
         }
         $scope.updateAnswerCheck = function (answer) {
             var data = {"id": answer.id, "correct": answer.correct}
-            $http.post("/api/v1.0/updateanswer", JSON.stringify(data))
+            $http
+                .post("/api/v1.0/updateanswer", JSON.stringify(data))
+                .then(function (response) {
+                    answer.checkedby = response.data;
+                })
         }
+
         $scope.deleteAllAnswers = function () {
             $http.post("/api/v1.0/reset")
             window.location.reload()

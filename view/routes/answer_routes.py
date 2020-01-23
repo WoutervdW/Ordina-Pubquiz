@@ -1,7 +1,7 @@
 from answer_checking import answer_checker
 from view import view, db
-from flask import request, session, render_template, redirect, url_for
-from view.models import AnswerGiven, SubAnswerGiven, Word, Line, Answersheet, QuestionNumber, Person
+from flask import request, session, render_template, redirect, url_for, jsonify
+from view.models import AnswerGiven, SubAnswerGiven, Word, Line, Answersheet, QuestionNumber, Person, PersonSchema
 import answer_checking.answer_checker
 import threading
 
@@ -12,14 +12,14 @@ def update_answer():
     id = post.get('id')
     answercorrect = post.get('correct')
     person = Person.query.filter_by(personname='admin').first()
-    print(person)
-    person_id = person.id
     sa = SubAnswerGiven.query.filter_by(id=id).first()
     sa.correct = answercorrect
-    print(answercorrect)
-    sa.person_id = person_id
+    sa.person_id = person.id
+    print("PERSON", person)
     db.session.commit()
-    return 'OK'
+    person_schema = PersonSchema()
+    result = person_schema.dump(person)
+    return jsonify(result)
 
 
 @view.route('/api/v1.0/reset', methods=['POST'])
