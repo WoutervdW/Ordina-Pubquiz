@@ -116,6 +116,7 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
             # corr_answer = variant.get_answer(),
             #     answered_by=answered_by,
             #     confidence=words_results[1],
+            team = Team.query.filter_by(id=team_id).first()
             checkedby = Person.query.filter_by(personname="nog niet nagekeken").first()
             answergiven = AnswerGiven.query.filter_by(question_id=question.id).filter_by(team_id=team.id).first()
             if answergiven is None:
