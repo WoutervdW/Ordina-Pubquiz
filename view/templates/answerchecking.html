@@ -62,7 +62,7 @@
                     <th scope="col" style="width:300px;">Afbeelding</th>
                     <th scope="col" style="width:60px;">Correct</th>
                     <th scope="col" style="width:100px;">Zekerheid systeem</th>
-                   <!-- <th scope="col" ng-click = "sortBy('checkedby.personname')">Laatst nagekeken door</th> -->
+                    <th scope="col" ng-click = "sortBy('checkedby.personname')">Laatst nagekeken door</th>
                 </tr>
             </thead>
             <tbody>
@@ -118,6 +118,17 @@
                                 <tr ng-repeat="subanswergiven in answergiven.subanswersgiven | byConfidence:confidencefrom:confidenceto | byCorrect:correctfilter | byChecked:checkedbyfilter">
                                     <td>
                                         <td>//subanswergiven.confidence//%</td>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td>
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr ng-repeat="subanswergiven in answergiven.subanswersgiven | byConfidence:confidencefrom:confidenceto | byCorrect:correctfilter | byChecked:checkedbyfilter">
+                                    <td>
+                                        <td>//subanswergiven.checkedby.personname//</td>
                                     </td>
                                 </tr>
                             </tbody>

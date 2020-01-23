@@ -1,7 +1,7 @@
 from answer_checking import answer_checker
 from view import view, db
 from flask import request, session, render_template, redirect, url_for
-from view.models import AnswerGiven, SubAnswerGiven, Word, Line, Answersheet, QuestionNumber
+from view.models import AnswerGiven, SubAnswerGiven, Word, Line, Answersheet, QuestionNumber, Person
 import answer_checking.answer_checker
 import threading
 
@@ -11,7 +11,9 @@ def update_answer():
     post = request.get_json()
     id = post.get('id')
     answercorrect = post.get('correct')
-    person_id = '2'
+    person = Person.query.filter_by(personname='admin').first()
+    print(person)
+    person_id = person.id
     sa = SubAnswerGiven.query.filter_by(id=id).first()
     sa.correct = answercorrect
     print(answercorrect)
