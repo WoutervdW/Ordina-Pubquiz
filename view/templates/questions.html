@@ -73,8 +73,8 @@
                 </tbody>
                 <thead>
                 <tr>
-                    <td><input type="text" class="form-control" ng-model="newquestionnumber"></td>
-                    <td><textarea cols="40" rows="5" class="form-control" ng-model="newquestion"></textarea></td>
+                    <td><input type="text" class="form-control" ng-model="newquestion.questionnumber"></td>
+                    <td><textarea cols="40" rows="5" class="form-control" ng-model="newquestion.question"></textarea></td>
                     <td style="white-space:nowrap;">
                         <table class="table table-borderless">
                             <tbody>
@@ -90,7 +90,7 @@
                     </td>
                     <td>
                             <label>
-                                <input class="form-control" list="categories" ng-model="newquestioncategory">
+                                <input class="form-control" list="categories" ng-model="newquestion.category">
                             </label>
                             <datalist id="categories">
                                 <option ng-repeat="category in categories" ng-value="category.name">//category.name//</button></option>

@@ -1,6 +1,6 @@
 from view import view, db
 from flask import request, session, jsonify, url_for, flash
-from view.models import Question, QuestionSchema, SubAnswer, Variant, Category, CategorySchema, Person, PersonSchema, SubAnswerGiven, SubAnswerGivenSchema
+from view.models import Question, QuestionSchema, SubAnswer, Variant, Category, CategorySchema, Person, PersonSchema, AnswerGiven, AnswerGivenSchema
 
 
 @view.route('/api/v1.0/questions', methods=['GET'])
@@ -19,6 +19,14 @@ def get_categories():
     return jsonify(result)
 
 
+@view.route('/api/v1.0/category/<string:name>', methods=['GET'])
+def get_category(name):
+    categories_schema = CategorySchema()
+    category = Category.query.filter_by(name=name).first()
+    result = categories_schema.dump(category)
+    return jsonify(result)
+
+
 @view.route('/api/v1.0/persons', methods=['GET'])
 def get_persons():
     persons_schema = PersonSchema(many=True)
@@ -27,10 +35,10 @@ def get_persons():
     return jsonify(result)
 
 
-@view.route('/api/v1.0/subanswers', methods=['GET'])
+@view.route('/api/v1.0/answers', methods=['GET'])
 def get_answers():
-    answers_schema = SubAnswerGivenSchema(many=True)
-    allanswers = SubAnswerGiven.query.all()
+    answers_schema = AnswerGivenSchema(many=True)
+    allanswers = AnswerGiven.query.all()
     result = answers_schema.dump(allanswers)
     return jsonify(result)
 
@@ -98,9 +106,9 @@ def add_question():
         newquestionnumber = int(newquestionnumber)
         qtemp = Question.query.filter_by(questionnumber=newquestionnumber).first()
         if qtemp is not None:
-            return 'De vraag kan niet worden toegevoegd. Er is al een vraag met dit nummer.'
+            return 'Fout: De vraag kan niet worden toegevoegd. Er is al een vraag met dit nummer.'
     else:
-        return 'De vraag kan niet worden toegevoegd. Er is geen geldig vraagnummer ingevoerd'
+        return 'Fout: De vraag kan niet worden toegevoegd. Er is geen geldig vraagnummer ingevoerd'
     newquestion = post.get('question')
     newsubanswers = post.get('subanswers')
     subanswers = []
@@ -122,7 +130,9 @@ def add_question():
         person_id=newquestionperson_id, active=newquestionactive, subanswers=subanswers)
     db.session.add(q)
     db.session.commit()
-    return
+    question_schema = QuestionSchema()
+    result = question_schema.dump(q)
+    return jsonify(result)
 
 
 @view.route('/api/v1.0/resetquestionnumbers', methods=['POST'])

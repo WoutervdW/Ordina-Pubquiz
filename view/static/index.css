@@ -8,7 +8,7 @@ thead, tbody tr {
     table-layout:fixed;
 }
 
-.answerimage:hover{
+#answerimage:hover{
     width:500%;
 }
 
@@ -29,29 +29,31 @@ thead, tbody tr {
     margin-top: 0 !important;
 }
 
-
 .table-fixed tr{
     margin-top: 0 !important;
 }
 
-
 .table-fixed td{
     margin-top: 0 !important;
+    max-width: 500px !important;
+    border-collapse: collapse;
+    border-spacing: 0;
+    overflow-x: auto;
 }
 
 .table-borderless th{
     display:none !important;
-
 }
 
 .table-borderless tbody {
     height: auto;
-    width: 100%;
     border: 0 !important;
 }
 
 .table-borderless td{
     border: 0 !important;
+    padding: 0 !important;
+    margin-left: 5px !important;
 }
 
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
@@ -154,6 +156,7 @@ input:checked + .slider:before {
     margin: 20px;
 }
 
+
 .filter-container{
     Width: 15%;
     float:left;
@@ -169,14 +172,17 @@ input:checked + .slider:before {
     display: inline-block;
     padding: 5px;
 }
+
 .input-holder > input {
     border: 0;
     margin: 0;
     padding: 0;
     outline:none;
 }
+
 .input-holder:after {
     content: '%';
+}
 
 .wrapperhorizontal {
   display: flex;
@@ -194,10 +200,7 @@ input:checked + .slider:before {
     margin: 20px;
 }
 
-.tryanderror{
-    color: green;
-}
 
-#myBtn{
-    width: 50%;
-}
+/*.modal-content{
+    width: 200px;
+}*/
