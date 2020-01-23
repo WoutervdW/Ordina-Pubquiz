@@ -136,6 +136,7 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
     # check correctness per given answer
     for subanswer_given in all_subanswers_given:
         if subanswer_given.checkedby.personname == 'nog niet nagekeken':
+            print("NOG NIET NAGEKEKEN")
             checked_answers += 1
             subanswer_given.checkedby = checker
 
@@ -145,7 +146,7 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
                 subanswer_given.correct = False
                 subanswer_given.confidence = 100
                 db.session.commit()
-                break
+                continue
             else:
                 # Get the list of all correct subanswers that belong to the same question as the given subanswer
                 answergiven = AnswerGiven.query.filter_by(id=subanswer_given.answergiven_id).first()
@@ -177,7 +178,7 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
                     subanswer_given.correct = True
                     subanswer_given.confidence = confidence
                     db.session.commit()
-                    break
+                    continue
                 else:
                     # print("Not similar to: " + str(variants))
                     subanswer_given.correct = False
