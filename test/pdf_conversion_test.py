@@ -14,7 +14,7 @@ class PdfConversionTest(unittest.TestCase):
         If multiple scans are read they are converted individually. This is because we will have 2 separate files
         rather than 1 pdf with 2 pages so we would need to call the function twice regardless.
         """
-        file_name = "grayscale_pubqzui"
+        file_name = "grayscale_pubquiz"
         pubquiz_answer_sheet = '../original_scan/' + file_name + '.pdf'
         answer_sheets_image = convert_pdf_to_image(pubquiz_answer_sheet)
         # For this test we only read 1 file

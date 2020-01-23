@@ -67,7 +67,7 @@ def test_single_line(scan_number, line_number, expected_word_count, configuratio
 class WordSegmentationTest(unittest.TestCase):
 
     def test_word_segmentation_scan_0_lines(self):
-        path = "test_files/line_files/Template_printsgetallen_10/"
+        path = "test_files/line_files/grayscale_pubquiz_0/"
         lines = [line for line in os.listdir(path)]
         # word_result = [1, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
         # if len(lines) != len(word_result):

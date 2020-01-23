@@ -1,7 +1,7 @@
 import unittest
 import os
 import cv2
-from app.line_segmentation import line_segmentation, line_segmentation_new
+from app.line_segmentation import line_segmentation
 
 
 def read_number_of_lines(path, file_name):
@@ -17,8 +17,8 @@ def read_number_of_lines(path, file_name):
     if len(os.listdir(path)) == 0:
         # If the directory is empty then we want to save the lines that the test finds to the folder for the next tests
         save_image = True
-    lines = line_segmentation_new(answer_sheet_image)
-    return 2
+    lines = line_segmentation(answer_sheet_image, save_image, image_path, file_name)
+    return len(lines)
 
 
 def read_line_ratios(path):
@@ -55,7 +55,7 @@ class LineSegmentationTest(unittest.TestCase):
         path = "test_files/image_files/"
         file_name = "grayscale_pubquiz_0"
         line_length = read_number_of_lines(path, file_name)
-        self.assertTrue(line_length, line_length != 0)
+        self.assertEqual(line_length, 14)
 
     def test_image_to_lines_scan_1(self):
         path = "test_files/image_files/"
