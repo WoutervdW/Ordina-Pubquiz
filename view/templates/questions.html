@@ -12,8 +12,8 @@
 <section class="">
 
 <div class="container" ng-app="module" ng-controller="controller">
-   <div class="table-responsive">
-       <table class="table table-hover table-sm table-fixed">
+   <div class="table-responsive" >
+       <table class="table table-hover table-sm table-fixed" ng-hide="showcategories">
             <thead class="header">
                <tr>
                     <th scope="col" ng-click="sortBy('questionnumber')">Vraagnummer</th>
@@ -93,7 +93,7 @@
                                 <input class="form-control" list="categories" ng-model="newquestion.category">
                             </label>
                             <datalist id="categories">
-                                <option ng-repeat="category in categories" ng-value="category.name">//category.name//</button></option>
+                                <option ng-repeat="category in categories" ng-value="category.name" ng-right-click="resetQuestionNumbers()">//category.name//</option>
                             </datalist>
                     </td>
 
@@ -103,9 +103,15 @@
            </thead>
         </table>
     </div>
+     <div ng-show="showcategories">
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat = "category in categories">//category.name// <button class="badge" ng-click="deleteCategory(category)">x</button></li>
+        </ul>
+    </div>
     <div>
-    <button class="btn btn-primary" ng-click = "resetQuestionNumbers()">Reset vraagnummers</button>
-    <button class="btn btn-primary" ng-click = "deleteAllQuestions()">Verwijder alle vragen</button>
+    <button class="btn btn-primary" ng-hide="showcategories" ng-click = "resetQuestionNumbers()">Reset vraagnummers</button>
+    <button class="btn btn-primary" ng-hide="showcategories" ng-click = "deleteAllQuestions()">Verwijder alle vragen</button>
+        <button class="btn btn-primary" ng-click = "showcategories=!showcategories"><span ng-hide="showcategories">Beheer categorieen</span><span ng-show="showcategories">Terug</span></button>
     </div>
 </div>
 
