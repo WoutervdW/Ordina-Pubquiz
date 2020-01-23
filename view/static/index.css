@@ -200,6 +200,9 @@ input:checked + .slider:before {
     margin: 20px;
 }
 
+.list-group{
+    width:50%;
+}
 
 /*.modal-content{
     width: 200px;

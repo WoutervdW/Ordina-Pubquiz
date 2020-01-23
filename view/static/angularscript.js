@@ -191,6 +191,18 @@ angular.module('module', ['ngRoute'])
             var data = {"id": team.id, "teamname": team.teamname}
             $http.post("/api/v1.0/updateteam", JSON.stringify(data))
         }
+        $scope.deleteCategory = function(category) {
+            var data = {"id": category.id}
+            $http.post("/api/v1.0/removecategory", JSON.stringify(data))
+                .then(function(response){
+                    if(response.data !== 'OK'){
+                        alert(response.data)
+                    }
+                    else{
+                        $scope.categories.splice($scope.categories.indexOf(category), 1 );
+                    }
+                })
+        }
         $scope.updateAnswerLabel = function () {
             $scope.answersheetform.label = "adsf"
         }

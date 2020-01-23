@@ -159,6 +159,15 @@ def deletequestions():
     return 'OK'
 
 
-
+@view.route('/api/v1.0/removecategory', methods=['POST'])
+def remove_category():
+    post = request.get_json()
+    id = post.get('id')
+    try:
+        Category.query.filter_by(id=id).delete()
+        db.session.commit()
+    except:
+        return 'Categorie kan niet verwijderd worden. Er zijn nog vragen gekoppeld aan deze categorie'
+    return 'OK'
 
 
