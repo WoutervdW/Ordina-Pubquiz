@@ -137,7 +137,7 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
     cv2.drawContours(left_side_img, left_block_contours, -1, (255, 0, 0), thickness=10)
     # show_image(left_side_img)
 
-    cv2.imwrite(image_name + "_left.png", left_side_img)
+    # cv2.imwrite(image_name + "_left.png", left_side_img)
     right_side_img = right_side.copy()
 
     # We draw a fake line over the image, this is so we can find the corners by finding areas with a certain size
@@ -196,7 +196,6 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
         answer = without_bars.tostring()
 
         if db is not None:
-            print("save line to database with width %s and height %s" % (line_width, line_height))
             # TODO fill in the other details as well! (not just the image)
             new_line = Line(
                 answersheet_id=answersheet_id,

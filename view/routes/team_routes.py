@@ -1,13 +1,11 @@
 from view import view, db
 from flask import jsonify, request
 from sqlalchemy import func, inspect
-from view.models import SubAnswerGiven, Team, TeamSchema, AnswerGiven
-
+from view.models import SubAnswerGiven, Team, TeamSchema, Word, Line, Answersheet, QuestionNumber, AnswerGiven
 
 def object_as_dict(obj):
     return {c.key: getattr(obj, c.key)
             for c in inspect(obj).mapper.column_attrs}
-
 
 @view.route('/api/v1.0/teams', methods=['GET'])
 def get_teams():
@@ -45,6 +43,30 @@ def remove_team():
 def remove_teams():
     Team.query.delete()
     db.session.commit()
+    return 'OK'
+
+
+@view.route('/api/v1.0/nuke/all', methods=['POST'])
+def nuke_all_button():
+    SubAnswerGiven.query.delete()
+    db.session.commit()
+    db.engine.execute('alter sequence subanswergiven_id_seq RESTART with 1')
+
+    Word.query.delete()
+    db.session.commit()
+    db.engine.execute('alter sequence word_id_seq RESTART with 1')
+
+    Line.query.delete()
+    db.session.commit()
+    db.engine.execute('alter sequence line_id_seq RESTART with 1')
+
+    Answersheet.query.delete()
+    db.session.commit()
+    db.engine.execute('alter sequence answersheet_id_seq RESTART with 1')
+
+    QuestionNumber.query.delete()
+    db.session.commit()
+    db.engine.execute('alter sequence questionnumber_id_seq RESTART with 1')
     return 'OK'
 
 

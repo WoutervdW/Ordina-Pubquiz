@@ -57,7 +57,7 @@ def read_word_from_image(image_to_read, model):
     return results
 
 
-def save_word_details(line_image, multiply_factor, res, number_box_size, db=None, model=None, team_id=None, question_number=0, subanswer_number=-1):
+def save_word_details(line_image, multiply_factor, res, number_box_size, db=None, model=None, team_id=None, question_number=0, sub_answer_number=-1):
     words = []
     index = 0
     predicted_line = ""
@@ -81,10 +81,8 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
             # TODO fill in the other details as well! (not just the image)
             word_width = len(cropped)
             word_height = len(cropped[0])
-            print("save the word to the database with width %s and height %s" % (word_width, word_height))
 
             read_results = read_word_from_image(cropped, model)
-            print("saving word with recognized word " + read_results[0][0])
             predicted_line = predicted_line + read_results[0][0] + " "
             new_word = Word(
                 line_id=line_image[2],
@@ -102,31 +100,16 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
 
     if db is not None:
         if question_number > 0:
-            print("This line is a valid question")
             # We assume there is exactly 1 question for the given question number
             question = Question.query.filter_by(questionnumber=question_number).first()
-            print("question number " + str(question_number))
 
             sub_answers = SubAnswer.query.filter_by(question_id=question.id).order_by(SubAnswer.id.asc())
-            print("the length of the subanswers for question " + str(question_number))
             sub_answer_index = 0
             sub_answer = sub_answers.first()
             for s in sub_answers:
-                print('subanswer id ' + str(s.id))
-                if subanswer_number == sub_answer_index:
+                if sub_answer_number == sub_answer_index:
                     sub_answer = s
                 sub_answer_index += 1
-            print("the total number of subanswers for question %s is %s" % (question_number, sub_answer_index))
-            print("saving the line on question %s with variant with subanswerid %s" % (question_number, str(sub_answer.id)))
-
-            variant = Variant.query.filter_by(subanswer_id=sub_answer.id).first()
-
-            print("sub_answer id " + str(sub_answer.id))
-            print("variant id " + str(variant.id))
-            team = Team.query.filter_by(id=team_id).first()
-            answered_by = team.get_team_name()
-            print("team_id  " + str(team_id))
-            print("answered_by " + str(answered_by))
             # correct is always false at first and can be set to True later
             # TODO @Sander: person_id is now always the same, how will this be determined?
             #     checkedby="answerchecker",
@@ -227,8 +210,6 @@ def word_segmentation(line_image, kernel_size=25, sigma=11, theta=7, min_area=10
         curr_img = line_image[y:y + h, x:x + w]
         res.append((curr_box, curr_img))
 
-
-    # return list of words, sorted by x-coordinate
     return sorted(res, key=lambda entry: entry[0][0])
 
 

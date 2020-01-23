@@ -38,6 +38,7 @@ from view.routes.team_routes import get_teams
 from view.routes.team_routes import addteam
 from view.routes.team_routes import remove_team
 from view.routes.team_routes import remove_teams
+from view.routes.team_routes import nuke_all_button
 
 from view.routes.upload_routes import upload
 

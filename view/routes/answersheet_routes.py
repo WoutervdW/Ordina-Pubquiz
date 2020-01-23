@@ -76,9 +76,5 @@ def nuke_all():
     QuestionNumber.query.delete()
     db.session.commit()
     db.engine.execute('alter sequence questionnumber_id_seq RESTART with 1')
-
-    Team.query.delete()
-    db.session.commit()
-    db.engine.execute('alter sequence team_id_seq RESTART with 1')
     return 'database images cleared'
 

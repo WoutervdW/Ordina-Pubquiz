@@ -29,7 +29,7 @@ def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect
     for correct_answer_variant in correct_answer_variants:
         # TODO: Create categories for these special cases
         # check if given answer is too short
-        if len(correct_answer_variant) / len(answer) >= 2:  # Will never be divided by zero bc that's already checked
+        if len(correct_answer_variant) / len(answer) >= 2:  # Will sometimes be divided by zero
             return False, 100
         # If correct answer is only 1 symbol, take only the last symbol in the given answer
         if len(correct_answer_variant) == 0:
