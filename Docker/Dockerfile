@@ -9,8 +9,13 @@ COPY . .
 # install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# tell the port number the container should expose
+# run the command
+#CMD ["python", "./app.py"]
+
+ENV FLASK_APP "app.py"
+ENV FLASK_ENV "development"
+ENV FLASK_DEBUG True
+
 EXPOSE 5000
 
-# run the command
-CMD ["python", "./app.py"]
+CMD flask run --host=0.0.0.0
