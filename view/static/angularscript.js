@@ -1,5 +1,4 @@
 // define angular interpolationtags as //
-
 angular.module('module', ['ngRoute'])
     .config(function($interpolateProvider){
         $interpolateProvider.startSymbol('//')
@@ -218,6 +217,9 @@ angular.module('module', ['ngRoute'])
         $scope.closeModal = function () {
             modal.style.display = "none";
         }
+        $scope.fileChanged = function(files) {
+             document.getElementById("custom-file-label").innerHTML = files[0].name;
+        }
     })
     .controller('revealcontroller', function ($scope, $http, $interval, $filter) {
         $http({
@@ -390,5 +392,6 @@ angular.module('module', ['ngRoute'])
             }
         }
     });
+
 
 
