@@ -164,7 +164,7 @@ input:checked + .slider:before {
 }
 
 .filter-dropdown{
-    Width: 80%;
+    Width: 50%;
 }
 
 .input-holder {
@@ -204,6 +204,12 @@ input:checked + .slider:before {
     width:50%;
 }
 
-/*.modal-content{
-    width: 200px;
-}*/
+.modal-content{
+    padding: 10px;
+}
+
+.modal{
+    width: 40%;
+    margin-left: 12%;
+    margin-top: 5%;
+}
