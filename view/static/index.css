@@ -213,3 +213,7 @@ input:checked + .slider:before {
     margin-left: 12%;
     margin-top: 5%;
 }
+
+.filter-label {
+    width: 40%;
+}

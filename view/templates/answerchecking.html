@@ -15,21 +15,21 @@
         <div class="modal-content" ng-mouseLeave="closeModal()">
             <span class="close" ng-click="closeModal()">&times;</span>
             <div>
-                <label>Team:</label>
+                <label class="filter-label">Team:</label>
                 <select class="filter-dropdown" ng-model="filteredTeam">
                     <option ng-value="">Alle teams</option>
                     <option ng-repeat="team in teams">//team.teamname//</option>
                 </select>
             </div>
             <div>
-                <label>Vraag:</label>
+                <label class="filter-label">Vraag:</label>
                 <select class="filter-dropdown" ng-model="filteredQuestion">
                     <option ng-value="">Alle vragen</option>
                     <option ng-repeat="question in questions" ng-value="question">//question.questionnumber// //question.question//</option>
                 </select>
             </div>
             <div>
-                <label>Correct:</label>
+                <label class="filter-label">Correct:</label>
                 <select class="filter-dropdown" ng-model="correctfilter">
                     <option ng-value=''>Alles</option>
                     <option ng-value=true>Ja</option>
@@ -37,14 +37,14 @@
                 </select>
             </div>
             <div>
-                <label>Laatst nagekeken door:</label>
+                <label class="filter-label">Laatst nagekeken door:</label>
                 <select class="filter-dropdown" ng-model = "checkedbyfilter">
                     <option ng-value="">Iedereen</option>
                     <option ng-repeat="person in persons">//person.personname//</option>
                 </select>
             </div>
             <div>
-                <label>Zekerheid:</label>
+                <label class="filter-label">Zekerheid:</label>
                 <span class="valuePadding input-holder"><input placeholder="Van" type="number"  ng-model="confidencefrom" style="text-align:left;"></span>
                 <span class="valuePadding input-holder"><input placeholder="Tot" type="number"  ng-model="confidenceto" style="text-align:left;"></span>
             </div>
