@@ -102,7 +102,9 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
         if question_number > 0:
             # We assume there is exactly 1 question for the given question number
             question = Question.query.filter_by(questionnumber=question_number).first()
-
+            if question is None:
+                print("The question with number %s is not found. Please configure a question for this number" % question_number)
+                return None
             sub_answers = SubAnswer.query.filter_by(question_id=question.id).order_by(SubAnswer.id.asc())
             sub_answer_index = 0
             sub_answer = sub_answers.first()
@@ -138,7 +140,6 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
             )
             db.session.add(sub_answer_given)
             db.session.commit()
-    return words
 
 
 def save_word_image(output_folder, sheet_name, line_image, multiply_factor, res, number_box_size=60):

@@ -103,16 +103,39 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         # Read the number from the number box. After that we remove any non numbers (in case of lines)
         # The configuration is to only read numbers and to look for 1 word
         # TODO @Sander: explain why this pre-processing is done.
-        resized_question_number = cv2.resize(question_image, (0, 0), fx=3, fy=3)
-        ret, thresh1 = cv2.threshold(resized_question_number, 180, 255, cv2.THRESH_BINARY)
-        blur2 = cv2.blur(thresh1, (8, 8))
-        question_number = pytesseract.image_to_string(blur2, config='--psm 10 --oem 3 -c tessedit_char_whitelist=0123456789')
-        question_number = re.sub("[^0-9]", "", question_number)
+        resized_question_number = cv2.resize(question_image, (0, 0), fx=5, fy=5)
+        ret, thresh1 = cv2.threshold(resized_question_number, 150, 255, cv2.THRESH_BINARY)
+        kernel = np.ones((5, 5), np.uint8)
+        erode = cv2.erode(thresh1, kernel, iterations=1)
+        blur2 = cv2.blur(erode, (9, 9))
 
-        q_image = blur2.tostring()
+        question_number_resized = pytesseract.image_to_string(resized_question_number,
+                                                      config='--psm 10 --oem 3 -c tessedit_char_whitelist=0123456789')
+        question_number_blur = pytesseract.image_to_string(blur2,
+                                                           config='--psm 10 --oem 3 -c tessedit_char_whitelist=0123456789')
 
-        question_width = len(blur2)
-        question_height = len(blur2[0])
+        question_number_resized = re.sub("[^0-9]", "", question_number_resized)
+        question_number_blur = re.sub("[^0-9]", "", question_number_blur)
+
+        # The accuracy with the slightly blurred image is the highest
+        # The accuracy of the resized is usually enough and it will be used as a fail safe
+        question_number = question_number_blur
+
+        # If the number found is the same or 1 higher than previous found number than it is probably correct.
+        # We do this to find the improbably innaccuracies with the slightly blurred image.
+        if question_number_resized == previous_question or question_number_resized == previous_question + 1:
+            question_number = question_number_resized
+        if question_number_blur == previous_question or question_number_blur == previous_question + 1:
+            question_number = question_number_blur
+
+        # If they both determined the same number we can say with almost certainty that this is the correct number
+        if question_number_resized == question_number_blur:
+            question_number = question_number_blur
+
+        q_image = question_image.tostring()
+
+        question_width = len(question_image)
+        question_height = len(question_image[0])
         if db is not None:
             # TODO fill in the other details as well! (not just the image)
             question_recognized = QuestionNumber(
