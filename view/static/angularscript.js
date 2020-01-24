@@ -135,15 +135,18 @@ angular.module('module', ['ngRoute'])
 
         }
         $scope.deleteAllQuestions = function(){
-            $http.post("/api/v1.0/deleteallquestions")
-             .then(function(response) {
-                if(response.data != 'OK'){
-                    alert(response.data)
-                }
-                else{
-                    $scope.questions = [];
-                }
-            })
+            r = confirm("Alle vragen zullen worden verwijderd. Dit kan niet ongedaan gemaakt worden.")
+            if (r == true){
+                $http.post("/api/v1.0/deleteallquestions")
+                 .then(function(response) {
+                    if(response.data != 'OK'){
+                        alert(response.data)
+                    }
+                    else{
+                        $scope.questions = [];
+                    }
+                })
+            }
 
         }
         $scope.updateAnswerCheck = function (answer) {
@@ -156,9 +159,13 @@ angular.module('module', ['ngRoute'])
         }
 
         $scope.deleteAllAnswers = function () {
-            $http.post("/api/v1.0/reset")
-            $scope.answers = [];
+        r = confirm("Alle antwoorden zullen worden verwijderd. Dit kan niet ongedaan gemaakt worden.")
+            if (r == true){
+                $http.post("/api/v1.0/reset")
+                $scope.answers = [];
+            }
         }
+        
         $scope.checkAllAnswers = function () {
             $scope.checkinganswers = true;
             $http
