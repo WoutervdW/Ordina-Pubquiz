@@ -7,16 +7,16 @@ class Config(object):
     # ...
     # ...
     user = os.environ.get('POSTGRES_USER') or None
-    # password = os.environ.get('POSTGRES_PASSWORD') or None
-    # host = os.environ.get('POSTGRES_HOST') or None
-    # database = os.environ.get('POSTGRES_DB') or None
-    # port = os.environ.get('POSTGRES_PORT') or None
+    password = os.environ.get('POSTGRES_PASSWORD') or None
+    host = os.environ.get('POSTGRES_HOST') or None
+    database = os.environ.get('POSTGRES_DB') or None
+    port = os.environ.get('POSTGRES_PORT') or None
 
     session_type = os.environ.get('SESSION_TYPE') or None
 
     CORS_HEADERS = 'Content-Type'
-    # SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}'
-    # SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     ANSWERSHEETS_PER_PAGE = 2
     LINES_PER_PAGE = 20

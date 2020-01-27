@@ -51,6 +51,7 @@ def logout():
 def do_login():
     username = request.form['username']
     password = request.form['password']
+    print("attempting to login with %s and %s" % (username, password))
     user = Person.query.filter_by(personname=username).first()
     if user and user.check_password(password):
         session['logged_in'] = True
