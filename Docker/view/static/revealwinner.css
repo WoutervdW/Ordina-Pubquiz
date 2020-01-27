@@ -1,0 +1,76 @@
+body{
+    margin: 0 !important;
+    background-color: #000000 !important;
+    overflow: hidden !important;
+    padding-top: 50px;
+}
+
+ul{
+    /*position: absolute;*/
+    width: 600px !important;
+    margin: 5px auto 0 !important;
+    padding: 10px !important;
+    box-sizing: border-box !important;
+    background: rgba(255, 161, 51, 1) !important;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0. 0.5) !important;
+
+}
+
+ul li{
+    display: flex !important;
+    background: rgba(240, 125, 0, 0.6) !important;
+    padding: 10px 20px !important;
+    color: #fff!important;
+    margin: 5px 0 !important;
+    transition: .5s !important;
+    font-size: 30pt !important;
+}
+
+/*
+ul li:nth-child(1){
+    background: rgba(240, 125, 0, .4) !important;
+}
+
+ul li:nth-child(2){
+    background: rgba(240, 125, 0, .2) !important;
+}
+
+ul li:nth-child(3){
+    background: rgba(240, 125, 0, .1) !important;
+}
+*/
+ul li span:nth-child(1){
+    width: 500px !important;
+}
+
+ul li span:nth-child(2){
+    width: 100px !important;
+    text-align:right !important;
+}
+
+
+@keyframes    firework-animation {
+    0% {background-color : #ff8426;}
+    25% {background-color : #fffc84;}
+    50% {background-color : #ff83f4;}
+    75% {background-color : #83b6ff;}
+    100% {background-color : #ff8426;}
+}
+@-webkit-keyframes firework-animation {
+    0% {background-color : #ff8426;}
+    25% {background-color : #fffc84;}
+    50% {background-color : #ff83f4;}
+    75% {background-color : #83b6ff;}
+    100% {background-color : #ff8426;}
+}
+.fireWorkParticle {
+    z-index : 999;
+    position: absolute;
+    height : 5px;
+    width : 5px;
+    border-radius : 5px;
+    animation-name : firework-animation;
+    animation-timing-function : linear;
+    animation-duration : 1s;
+    animation-iteration-count : infinite;
+}
