@@ -60,11 +60,12 @@ def add_team(lines, team):
     pages = math.ceil(lines / answers_per_page)
     fromquestion = 1
     subanswersfromquestion = 0
+    roundnumber = 0
     for pagenumber in range(0, pages):
-        fromquestion, subanswersfromquestion = add_page_for_team(teamname, fromquestion, subanswersfromquestion)
+        fromquestion, subanswersfromquestion, roundnumber = add_page_for_team(teamname, fromquestion, subanswersfromquestion, roundnumber)
 
 
-def add_page_for_team(teamname, fromquestion, subanswersfromquestion):
+def add_page_for_team(teamname, fromquestion, subanswersfromquestion, roundnumber):
     table = document.add_table(rows=answers_per_page+1, cols=2)
     table.style = 'TableGrid'
     table.rows[0].height = row_height
@@ -82,24 +83,49 @@ def add_page_for_team(teamname, fromquestion, subanswersfromquestion):
             s = db.session.query(func.count(SubAnswer.id)).group_by(SubAnswer.question_id).filter_by(question_id=q.id).all()
             subcount = s[0][0]
             if subcount > subanswersfromquestion:
-                subanswersfromquestion = subanswersfromquestion + 1
+
                 currentrow = table.rows[rowsfilled + 1]
                 currentrow.height = row_height
                 currentrow.cells[0].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+                currentrow.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
                 currentrow.cells[0].width = column_width_number
                 currentrow.cells[1].width = column_width_answer
-                currentrow.cells[0].text = str(q.questionnumber)
-                currentrow.cells[1].text = ""
+                if isNewCategory(q, table.rows[rowsfilled]):
+                    roundnumber += 1
+                    currentrow.cells[0].text = ""
+                    currentrow.cells[1].text = "Ronde " + str(roundnumber) + ": " + str(getCategoryNumber(q))
+                else:
+                    currentrow.cells[0].text = str(q.questionnumber)
+                    currentrow.cells[1].text = ""
+                    subanswersfromquestion = subanswersfromquestion + 1
                 currentrow.cells[0].paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
+                currentrow.cells[1].paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
                 rowsfilled = rowsfilled + 1
             else:
                 subanswersfromquestion = 0
                 fromquestion = fromquestion + 1
     title[0].paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
-    return q.questionnumber, subanswersfromquestion
+    return q.questionnumber, subanswersfromquestion, roundnumber
 
 
 def getFileName():
     now = datetime.now()
     dt_string = now.strftime("%Y-%m-%d")
     return "pubquiz" + dt_string + ".docx"
+
+
+def isNewCategory(question, previousrow):
+    if str(question.questionnumber) != str(previousrow.cells[0].text) and (previousrow.cells[0].text != "" or previousrow.cells[0].text == "Quiz"):
+        currentCat = question.category_id
+        previousQ = Question.query.filter_by(questionnumber=question.questionnumber - 1).first()
+        if previousQ:
+            previousCat = previousQ.category_id
+            if previousCat != currentCat:
+                return True
+        else:
+            return True
+    return False
+
+
+def getCategoryNumber(question):
+    return question.questioncategory.name
