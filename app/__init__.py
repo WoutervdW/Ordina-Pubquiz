@@ -174,25 +174,31 @@ def run_program(pubquiz_answer_sheets, save_image=False, db=None):
     for answer_sheets in pubquiz_answer_sheets:
         # The pdf file. We can it and it returns 1 to multiple answer pages
         pages = convert_pdf_to_image(answer_sheets)
-        for p in range(0, len(pages)):
-            # We take the name from the file. But we want it without any extension.
-            file_extension = os.path.splitext(answer_sheets)
-            sheet_name = answer_sheets
-            if file_extension[1] == ".pdf":
-                sheet_name = sheet_name[0:-4]
-            sheet_name = sheet_name + "_" + str(p)
+        if pages:
+            for p in range(0, len(pages)):
+                # We take the name from the file. But we want it without any extension.
+                file_extension = os.path.splitext(answer_sheets)
+                sheet_name = answer_sheets
+                if file_extension[1] == ".pdf":
+                    sheet_name = sheet_name[0:-4]
+                sheet_name = sheet_name + "_" + str(p)
 
-            answersheet_id = save_to_database.save_answersheet_database(db, pages[p])
+                answersheet_id = save_to_database.save_answersheet_database(db, pages[p])
 
-            if answersheet_id == -1:
-                print("something went wrong, no answersheet id present")
-                exit()
-            else:
-                process_sheet(pages[p], model, save_image, sheet_name, db, answersheet_id)
+                if answersheet_id == -1:
+                    return "Er is iets fout gegaan. Probeer opnieuw."
+
+                else:
+                    process_sheet(pages[p], model, save_image, sheet_name, db, answersheet_id)
+                    return "OK"
+        else:
+            return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
 
 
 def save_answersheet():
     pubquiz_anser_sheets = 'scan.pdf'
     pages = convert_pdf_to_image(pubquiz_anser_sheets)
     return pages
+
+
 

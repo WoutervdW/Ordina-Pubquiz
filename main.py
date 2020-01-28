@@ -13,11 +13,11 @@ def run_program(db, pubquiz_file_name):
     # We should be able to read all the files in a certain folder
     # os.listdir(input_folder) something like this.
     pubquiz_answer_sheets = [pubquiz_file_name]
-    app.run_program(pubquiz_answer_sheets, True, db)
+    message = app.run_program(pubquiz_answer_sheets, True, db)
 
     # After the files are processed we remove the file
     if os.path.exists(pubquiz_file_name):
         os.remove(pubquiz_file_name)
-    return "OK"
+    return message
 
 
