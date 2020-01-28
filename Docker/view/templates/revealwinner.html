@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Onthulling</title>
+       <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='revealwinner.css') }}">
+</head>
+
+
+<body>
+
+{% extends "base.html" %}
+{% block content %}
+<div ng-app = "module" ng-controller = "revealcontroller">
+    <div>
+        <ul ng-repeat = "team in revealteams">
+            <li>
+                <span class = "teamname">//team.teamname//</span>
+                <span class = "score">//team.score//</span>
+            </li>
+    </ul>
+    </div>
+</div>
+{% endblock %}
+
+
+</body>
+
+
+
+</html>
+

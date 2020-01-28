@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+       <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <title>Home</title>
+</head>
+<script>
+
+</script>
+<body>
+{% extends "base.html" %}
+{% block content %}
+    {% for line in lines %}
+    <div>
+        <a href="{{ url_for('get_line_words', line_id=line.id) }}">
+            <img width=50% src="{{ url_for('load_lines_id', line_id=line.id) }}">
+<!--            <img width=50% src="lines/load/line_{{line.id}}">-->
+        </a>
+    </div>
+    {% endfor %}
+    {% if prev_url %}
+        <a href="{{ prev_url }}">Newer posts</a>
+    {% endif %}
+    {% if next_url %}
+        <a href="{{ next_url }}">Older posts</a>
+    {% endif %}
+{%endblock%}
+</body>
+</html>
