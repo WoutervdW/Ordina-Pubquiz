@@ -174,6 +174,7 @@ def run_program(pubquiz_answer_sheets, save_image=False, db=None):
     for answer_sheets in pubquiz_answer_sheets:
         # The pdf file. We can it and it returns 1 to multiple answer pages
         pages = convert_pdf_to_image(answer_sheets)
+        print("KUT PROGRAMMA", pages)
         if pages:
             for p in range(0, len(pages)):
                 # We take the name from the file. But we want it without any extension.
@@ -190,7 +191,6 @@ def run_program(pubquiz_answer_sheets, save_image=False, db=None):
 
                 else:
                     process_sheet(pages[p], model, save_image, sheet_name, db, answersheet_id)
-                    return "OK"
         else:
             return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
 
