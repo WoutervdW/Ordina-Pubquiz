@@ -1,0 +1,28 @@
+# All the folders that don't need to be included in the aws enviroment.
+venv/
+test/
+__pycache__/
+migrations/
+data/
+Docker/
+docs/
+image_pre_processing/
+original_scan/
+out/
+test/
+test-images/
+venv/
+.git/
+.elasticbeanstalk/
+.idea/
+
+
+# All the files that don't need to be included.
+BroCast-backend.zip
+manage.py
+README.md
+backup_17_01_2020.sql
+demo.docx
+Dockerfile-backend
+Dockerfile-webapp
+grayscale_1.pdf
