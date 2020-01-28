@@ -29,6 +29,7 @@ def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect
     # correct and None if no number exists
     for correct_answer_variant in correct_answer_variants:
         # TODO: Create question types for these special cases
+        # TODO: don't immediately return: also check the other variants
         # check if given answer is too short
         if len(correct_answer_variant) / len(answer) >= 2:  # Will never be divided by zero bc that's already checked
             return False, 100
@@ -112,7 +113,7 @@ def preprocess_string(answer):
 
     # remove all but \w
     all_word_chars_pattern = re.compile(r'\w+')
-    answer = all_word_chars_pattern.findall(answer) # get all individual letters and numbers sequences
+    answer = all_word_chars_pattern.findall(answer)  # get all individual letters and numbers sequences
     answer = ''.join(map(str, answer))
     return answer
 
@@ -136,9 +137,9 @@ def calculate_confidence(correct_ratio, threshold, max_conf_incorrect, max_conf_
     return confidence
 
 
-def get_variant_lists(answer_given):
+def get_variant_lists(question_id):
     # Get the list of all correct subanswers that belong to the same question as the given subanswer
-    subanswers = SubAnswer.query.filter_by(question_id=answer_given.question_id).all()
+    subanswers = SubAnswer.query.filter_by(question_id=question_id).all()
 
     # Get all variants for each subanswer and append them into a usable list
     variant_lists = []
@@ -149,6 +150,42 @@ def get_variant_lists(answer_given):
         variant_lists.append(variants)
 
     return variant_lists
+
+
+def check_all_questions():
+    # check each question for its correct answers
+    print("Checking all answers")
+    questions = Question.query.all()
+    for question in questions:
+        print(question.questionnumber)
+        print(question.question)
+
+        answers_given = AnswerGiven.query.filter_by(question_id=question.id).all()  # one per team
+        subanswers = SubAnswer.query.filter_by(question_id=question.id).all()  # one set per question
+
+        # if subanswer_given.checkedby.personname == 'nog niet nagekeken':  # 'systeem'
+        for answer_given in answers_given:
+            if answer_given is None:
+                continue  # skip this answer
+            print("team: " + str(answer_given.team_id))
+            subanswers_given = answer_given.subanswersgiven  
+            for subanswer_given in subanswers_given:
+                print(subanswer_given.read_answer)
+
+                for subanswer in subanswers:
+                    variants = [variant.answer for variant in subanswer.variants]
+                    print(variants)
+
+                    correct = False
+                    confidence_true = 0
+                    confidence_false = 0
+            print("")
+        print("")
+
+        # if a subanswer is correct, it should be removed from the list
+        # get all their given answers
+        # compare all variants to the given answers
+        print("")
 
 
 def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100):
@@ -162,11 +199,11 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
         confidence_true = 0
         confidence_false = 0
 
-        if subanswer_given.checkedby.personname == 'nog niet nagekeken':  # 'nog niet nagekeken'
+        if subanswer_given.checkedby.personname == 'nog niet nagekeken':  # 'systeem'
             answer_given = AnswerGiven.query.filter_by(id=subanswer_given.answergiven_id).first()
 
             # this list is constructed for every subanswer! relevant for double-checking the same answers
-            variant_lists = get_variant_lists(answer_given)
+            variant_lists = get_variant_lists(answer_given.question_id)
             question = Question.query.filter_by(id=answer_given.question_id).first()
 
             print("Question: '" + question.question + "'")
