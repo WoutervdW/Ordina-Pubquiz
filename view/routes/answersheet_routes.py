@@ -11,6 +11,7 @@ from flask import render_template
 from flask import url_for
 import numpy as np
 import cv2
+from app import docs
 
 
 @view.route('/answersheets/nuke', methods=['GET'])
@@ -78,3 +79,8 @@ def nuke_all():
     db.engine.execute('alter sequence questionnumber_id_seq RESTART with 1')
     return 'database images cleared'
 
+
+@view.route('/api/v1.0/createdoc', methods=['POST'])
+def create_doc():
+    message = docs.create_doc()
+    return message

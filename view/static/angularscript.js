@@ -165,7 +165,7 @@ angular.module('module', ['ngRoute'])
                 $scope.answers = [];
             }
         }
-        
+
         $scope.checkAllAnswers = function () {
             $scope.checkinganswers = true;
             $http
@@ -226,6 +226,14 @@ angular.module('module', ['ngRoute'])
         }
         $scope.fileChanged = function(files) {
              document.getElementById("custom-file-label").innerHTML = files[0].name;
+        }
+        $scope.createDoc = function(){
+            $scope.creatingFile = true;
+            $http.post("/api/v1.0/createdoc")
+            .then (function (response) {
+                alert(response.data)
+                $scope.creatingFile=false;
+            })
         }
     })
     .controller('revealcontroller', function ($scope, $http, $interval, $filter) {
