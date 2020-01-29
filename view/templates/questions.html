@@ -113,9 +113,24 @@
         <button class="btn btn-primary" ng-hide="showcategories" ng-click = "resetQuestionNumbers()">Reset vraagnummers</button>
         <button class="btn btn-primary" ng-hide="showcategories" ng-click = "deleteAllQuestions()">Verwijder alle vragen</button>
         <button class="btn btn-primary" ng-click = "showcategories=!showcategories"><span ng-hide="showcategories">Beheer categorieen</span><span ng-show="showcategories">Terug</span></button>
-        <button class="btn btn-primary" ng-click="createDoc()">Maak antwoordvel</button>
     </div>
-
+    <div class="col-md-4 mb-4">
+        <label>Aantal pauzes:</label>
+        <select class="form-control" ng-model="amountOfBreaks" ng-change="updateBreaks()">
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+        </select>
+        <div ng-repeat="break in breaks">
+            <label>Pauze na vraag:</label>
+            <select class="form-control" ng-model="break.breaknumber">
+                <option ng-repeat="question in questions" ng-if="question.questionnumber">//question.questionnumber//</option>
+            </select>
+        </div>
+         <button class="btn btn-primary" ng-click="createDoc()">Maak antwoordvel</button>
+    </div>
 </div>
 
 
