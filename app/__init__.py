@@ -170,27 +170,23 @@ def run_program(pubquiz_answer_sheets, save_image=False, db=None):
     print("De officiele Ordina pub-quiz antwoord vinder")
     model = Model(open('model/charList.txt').read())
 
-    answersheet_id = -1
+    index = 0
     for answer_sheets in pubquiz_answer_sheets:
-        # The pdf file. We can it and it returns 1 to multiple answer pages
-        pages = convert_pdf_to_image(answer_sheets)
-        print("KUT PROGRAMMA", pages)
-        if pages:
-            for p in range(0, len(pages)):
-                # We take the name from the file. But we want it without any extension.
-                file_extension = os.path.splitext(answer_sheets)
-                sheet_name = answer_sheets
-                if file_extension[1] == ".pdf":
-                    sheet_name = sheet_name[0:-4]
-                sheet_name = sheet_name + "_" + str(p)
+        # Here it will yield answersheet images to be processed
+        for p in convert_pdf_to_image(answer_sheets):
+            file_extension = os.path.splitext(answer_sheets)
+            sheet_name = answer_sheets
+            if file_extension[1] == ".pdf":
+                sheet_name = sheet_name[0:-4]
+            sheet_name = sheet_name + "_" + str(index)
+            index += 1
 
-                answersheet_id = save_to_database.save_answersheet_database(db, pages[p])
+            answersheet_id = save_to_database.save_answersheet_database(db, p)
 
-                if answersheet_id == -1:
-                    return "Er is iets fout gegaan. Probeer opnieuw."
-
-                else:
-                    process_sheet(pages[p], model, save_image, sheet_name, db, answersheet_id)
+            if answersheet_id == -1:
+                return "Er is iets fout gegaan. Probeer opnieuw."
+            else:
+                process_sheet(p, model, save_image, sheet_name, db, answersheet_id)
         else:
             return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
 

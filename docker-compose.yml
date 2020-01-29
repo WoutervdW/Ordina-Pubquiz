@@ -1,13 +1,5 @@
 version: '3'
 services:
-    main:
-        container_name: ordina-pubquiz
-        build:
-            context: .
-            dockerfile: Dockerfile
-        image: ordina-pubquiz_main
-
-
     postgres:
         container_name: postgres
         image: postgres:9.6.2-alpine
@@ -25,10 +17,10 @@ services:
            - db_volume:/var/lib/postgreql
        
          
-    webapp:
+    main:
         build:
           context: .
-          dockerfile: Dockerfile-webapp
+          dockerfile: Dockerfile
         volumes:
           - "./:/usr/src/app/"
         ports:

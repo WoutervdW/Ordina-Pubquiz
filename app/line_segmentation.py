@@ -131,7 +131,7 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
         area = cv2.contourArea(c)
         # Area is about 100000 with the line we defined
         # TODO Fix magic numbers We chose these area numbers to be the area size of the contours found left and right
-        if 8000 < area < 15000:
+        if 15000 < area < 25000:
             left_block_contours.append(c)
 
     cv2.drawContours(left_side_img, left_block_contours, -1, (255, 0, 0), thickness=10)
@@ -153,12 +153,12 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
     for c in contours_right_side:
         area = cv2.contourArea(c)
         # Area is about 60000 with the line we defined
-        if 1000 < area < 6000:
+        if 8000 < area < 16000:
             right_block_contours.append(c)
 
     cv2.drawContours(right_side_img, right_block_contours, -1, (255, 0, 0), thickness=10)
     # show_image(right_side_img)
-    # cv2.imwrite("out/" + image_name + "_right.png", right_side_img)
+    # cv2.imwrite(image_name + "_right.png", right_side_img)
 
     # We assume that the answer template had the correct format so we expect that the left and right side both found
     # and equal amount of results. If this is not the case we return nothing and the program fails for this sheet.
@@ -169,6 +169,7 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
 
     lines = []
     # We traverse the lines backwards because the contours are stored from the bottom up
+    print("start saving the lines to the database")
     for x in range(len(left_block_contours)-1, -1, -1):
         corners_left = find_corners_contour(left_block_contours[x])
         corners_right = find_corners_contour(right_block_contours[x], width - offset_range, True)
