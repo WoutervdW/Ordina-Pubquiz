@@ -19,7 +19,7 @@ def convert_pdf_to_image(path):
     maxPages = 9
     # maxPages = pdf2image._page_count(path)
     print("the amount of pages is %s" % maxPages)
-    for page in range(1, maxPages, 1):
+    for page in range(1, maxPages+1, 1):
         print("going to process %s a single page." % path)
         p = convert_from_path(path, dpi=200, first_page=page, last_page=min(page + 10 - 1, maxPages))
         print("pdf converted from path")
