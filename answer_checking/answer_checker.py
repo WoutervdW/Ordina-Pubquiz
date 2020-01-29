@@ -152,39 +152,57 @@ def get_variant_lists(question_id):
     return variant_lists
 
 
-def check_all_questions():
+def check_all_questions(threshold=50, max_conf_incorrect=50, max_conf_correct=100):
     # check each question for its correct answers
     print("Checking all answers")
     questions = Question.query.all()
     for question in questions:
-        print(question.questionnumber)
-        print(question.question)
+        print("Vraag " + str(question.questionnumber) + ": " + question.question)
 
         answers_given = AnswerGiven.query.filter_by(question_id=question.id).all()  # one per team
-        subanswers = SubAnswer.query.filter_by(question_id=question.id).all()  # one set per question
+        subanswers = SubAnswer.query.filter_by(question_id=question.id).all()  # one set of subanswers per question
+        checker = Person.query.filter_by(personname="systeem").first()
 
-        # if subanswer_given.checkedby.personname == 'nog niet nagekeken':  # 'systeem'
         for answer_given in answers_given:
             if answer_given is None:
                 continue  # skip this answer
-            print("team: " + str(answer_given.team_id))
-            subanswers_given = answer_given.subanswersgiven  
+            print("Team: " + str(answer_given.team_id))
+
+            subanswers_given = answer_given.subanswersgiven
             for subanswer_given in subanswers_given:
-                print(subanswer_given.read_answer)
+                if subanswer_given.checkedby.personname != 'nog niet nagekeken':  # 'systeem'
+                    continue
+                print("Read answer: " + subanswer_given.read_answer)
+                subanswer_given.checkedby = checker
 
+                if len(subanswer_given.read_answer) == 0:  # no answer: incorrect
+                    subanswer_given.correct = False
+                    subanswer_given.confidence = 100
+                    continue
+
+                highest_confidence_correct = None
                 for subanswer in subanswers:
-                    variants = [variant.answer for variant in subanswer.variants]
-                    print(variants)
+                    variants = [variant.answer for variant in subanswer.variants]  # create usable list fo variants
+                    print("Correct answer options: " + variants)
 
-                    correct = False
-                    confidence_true = 0
-                    confidence_false = 0
+                    correct, confidence = check_correct(subanswer_given.read_answer,
+                                                        variants,
+                                                        threshold,
+                                                        max_conf_incorrect,
+                                                        max_conf_correct)
+
+                    if correct:
+                        print("Found similar answer in '" + str(variants))
+                        # If a subanswer is the same as the given answer, remove it from the subanswers list AFTER ALL ANSWERS ARE CHECKED!
+                        if confidence > subanswer_given.confidence:
+                            highest_confidence_correct = subanswer_given
+                    else:
+                        pass
+
+                subanswers.remove(highest_confidence_correct)
+
             print("")
-        print("")
 
-        # if a subanswer is correct, it should be removed from the list
-        # get all their given answers
-        # compare all variants to the given answers
         print("")
 
 
