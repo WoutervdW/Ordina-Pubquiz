@@ -7,6 +7,7 @@ from view.models import Question, Team, SubAnswer
 from sqlalchemy import func
 from datetime import datetime
 
+
 answers_per_page = 13
 column_width_number = Mm(22.8)
 column_width_answer = Mm(162.2)
@@ -14,7 +15,6 @@ row_height = Mm(19)
 margin = Mm(12.7)
 page_width = Mm(210)
 page_height = Mm(297)
-document = None
 
 
 def create_doc(post):
@@ -40,7 +40,7 @@ def create_doc(post):
     print("ALLE TEAMS", teams)
     for team in teams:
         print("VOEG TOE TEAM", team)
-        add_team(lines, team, breaks)
+        add_team(document, lines, team, breaks)
     try:
         document.save(getFileName())
         return 'Document is opgeslagen'
@@ -59,7 +59,7 @@ def calculate_lines():
     return amount
 
 
-def add_team(lines, team, breaks):
+def add_team(document, lines, team, breaks):
     teamname = team.teamname
     pages = math.ceil(lines / answers_per_page)
     fromquestion = 1
@@ -68,12 +68,12 @@ def add_team(lines, team, breaks):
     print("AANTAL PAGINAS:", pages)
     while True:
         print("NIEUWE PAGINA VOOR TEAM", teamname, "VANAF VRAAG", fromquestion)
-        fromquestion, subanswersfromquestion, roundnumber, lastQ = add_page_for_team(teamname, fromquestion, subanswersfromquestion, roundnumber, breaks)
+        fromquestion, subanswersfromquestion, roundnumber, lastQ = add_page_for_team(document, teamname, fromquestion, subanswersfromquestion, roundnumber, breaks)
         if lastQ:
             break
 
 
-def add_page_for_team(teamname, fromquestion, subanswersfromquestion, roundnumber, breaks):
+def add_page_for_team(document, teamname, fromquestion, subanswersfromquestion, roundnumber, breaks):
     table = document.add_table(rows=answers_per_page+1, cols=2)
     table.style = 'TableGrid'
     table.rows[0].height = row_height
