@@ -25,7 +25,7 @@ def get_teams():
 def addteam():
     post = request.get_json()
     teamname = post.get('teamname')
-    team = Team(teamname=teamname)
+    team = Team(teamname=teamname, score=0)
     db.session.add(team)
     db.session.commit()
     return 'OK'

@@ -46,9 +46,9 @@ def infer(_model, word_image):
     image = preprocess(fn_img, Model.img_size)
     batch = Batch([image])
     (recognized, probability) = _model.infer_batch(batch, True)
-    print('Recognized:', '"' + recognized[0] + '"')
-    if probability is not None:
-        print('Probability:', probability[0])
+    #print('Recognized:', '"' + recognized[0] + '"')
+    #if probability is not None:
+    #    print('Probability:', probability[0])
     return recognized, probability
 
 

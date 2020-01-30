@@ -144,7 +144,7 @@ class Model:
         eval_res = self.sess.run(eval_list, feed_dict)
         decoded = eval_res[0]
         texts = self.decoder_output_to_text(decoded, num_batch_elements)
-        print("GELEZEN TEKST", texts)
+
         # feed RNN output and recognized text into CTC loss to compute labeling probability
         probability = None
         if calc_probability:
@@ -154,7 +154,6 @@ class Model:
                 eval_list = self.loss_per_element
                 feed_dict = {self.saved_ctc_input: ctc_input, self.get_texts: sparse,
                              self.seq_len: [Model.max_text_length] * num_batch_elements}
-                print("EVAL", eval_list, "FEED", feed_dict)
                 loss_values = self.sess.run(eval_list, feed_dict)
                 probability = np.exp(-loss_values)
             except:
