@@ -3,6 +3,7 @@ import cv2
 import operator
 import os
 from view.models import Line
+from view import db
 
 
 def show_image(img):
@@ -104,7 +105,7 @@ def find_corners_center(corners_left, corners_right):
     return corners_full
 
 
-def line_segmentation(answer_image_original, save_image=False, image_path="lines/", image_name="scan", db=None, answersheet_id=None):
+def line_segmentation(answer_image_original, save_image=False, image_name="scan", answersheet_id=None):
     # New strategy. First find the points on the left side and then on the right side.
     # Than take the points together and find the lines.
     # processed = pre_process_image(answer_image_original, False)
@@ -165,9 +166,8 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
     if len(left_block_contours) != len(right_block_contours):
         print("There was a problem with the line detection. "
               "The left and right side blocks that were found are not equal")
-        return None
+        yield None
 
-    lines = []
     # We traverse the lines backwards because the contours are stored from the bottom up
     print("start saving the lines to the database")
     for x in range(len(left_block_contours)-1, -1, -1):
@@ -215,19 +215,5 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
             print("line number: " + str(finished_line[1]))
             print("line id: " + str(finished_line[2]))
 
-        # We also pass the line index along wiht this collection of lines. This is so that for the word recognition
-        # part we can easily identify which line it is.
-
-        lines.append(finished_line)
-
-        if save_image:
-            path = image_path + image_name
-            if not os.path.exists(path):
-                os.makedirs(path)
-            # save (or show) the image if the folder is empty (for tests)
-            # show_image(finished_line[0])
-            cv2.imwrite(path + "/line_" + str(x) + ".png", finished_line[0])
-
-    print('done all ' + str(len(left_block_contours)) + ' lines')
-    return lines
+        yield finished_line
 

@@ -26,6 +26,7 @@ import pytesseract
 import re
 import app.save_to_database
 from fuzzywuzzy import fuzz, process
+from view import db
 
 
 def check_team_name(name_of_team):
@@ -47,7 +48,40 @@ def check_team_name(name_of_team):
     return team_result
 
 
-def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan", db=None, answersheet_id=None):
+def read_team(line):
+    cv2.imwrite("right.png", line[0])
+    team_name_image = line[0]
+    team_name_image = team_name_image[:, 130:(len(team_name_image[0]))]
+    team_name = pytesseract.image_to_string(team_name_image).replace("\n", " ")
+
+    if "Naam:" in team_name:
+        print("new team!")
+        # We take the name of the team and remove leading whitespaces
+        name_of_team = team_name.split("Naam:")[1]
+        name_of_team = name_of_team.lstrip()
+
+        name_of_team = check_team_name(name_of_team)
+
+        team_id = save_to_database.save_team_database(db, name_of_team)
+        print("the team name is: " + name_of_team)
+        return team_id
+    else:
+        print("failed!")
+        return None
+
+
+def process_sheet(answer_sheet_image, model, sheet_name="scan", answersheet_id=None):
+    sub_answer_number = 0
+    previous_question = -1
+    team_id = -1
+    index = 0
+    for line in line_segmentation(answer_sheet_image, image_name=sheet_name, answersheet_id=answersheet_id):
+        # The first line of each answersheet will include the team name.
+        if index == 0:
+            team_id = read_team(line)
+
+
+def process_sheet_old(answer_sheet_image, model, save_image=False, sheet_name="scan", db=None, answersheet_id=None):
 
     # We keep track of which question is being handled, because 1 question can have multiple lines
     sub_answer_number = 0
@@ -166,30 +200,28 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
         save_word_details(line_image, multiply_factor, res, number_box_size, db, model, team_id, question_id, sub_answer_number)
 
 
-def run_program(pubquiz_answer_sheets, save_image=False, db=None):
+def run_pubquiz_program(answer_sheets):
     print("De officiele Ordina pub-quiz antwoord vinder")
     model = Model(open('model/charList.txt').read())
 
     index = 0
-    for answer_sheets in pubquiz_answer_sheets:
-        # Here it will yield answersheet images to be processed
-        for p in convert_pdf_to_image(answer_sheets):
-            if p is not None:
-                file_extension = os.path.splitext(answer_sheets)
-                sheet_name = answer_sheets
-                if file_extension[1] == ".pdf":
-                    sheet_name = sheet_name[0:-4]
-                sheet_name = sheet_name + "_" + str(index)
-                index += 1
+    for p in convert_pdf_to_image(answer_sheets):
+        if p is not None:
+            file_extension = os.path.splitext(answer_sheets)
+            sheet_name = answer_sheets
+            if file_extension[1] == ".pdf":
+                sheet_name = sheet_name[0:-4]
+            sheet_name = sheet_name + "_" + str(index)
+            index += 1
 
-                answersheet_id = save_to_database.save_answersheet_database(db, p)
+            answersheet_id = save_to_database.save_answersheet_database(db, p)
 
-                if answersheet_id == -1:
-                    return "Er is iets fout gegaan. Probeer opnieuw."
-                else:
-                    process_sheet(p, model, save_image, sheet_name, db, answersheet_id)
+            if answersheet_id == -1:
+                return "Er is iets fout gegaan. Probeer opnieuw."
             else:
-                return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
+                process_sheet(p, model, sheet_name=sheet_name, answersheet_id=answersheet_id)
+        else:
+            return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
 
 
 def save_answersheet():
