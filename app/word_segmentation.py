@@ -61,6 +61,8 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
     words = []
     index = 0
     predicted_line = ""
+    sub_answer_probability = 0
+    word_count = 0
     for (j, w) in enumerate(res):
         (word_box, word_img) = w
         (x, y, w, h) = word_box
@@ -84,6 +86,8 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
 
             read_results = read_word_from_image(cropped, model)
             predicted_line = predicted_line + read_results[0][0] + " "
+            sub_answer_probability += float(read_results[1][0])
+            word_count += 1
             new_word = Word(
                 line_id=line_image[2],
                 word_recognised=read_results[0],
@@ -122,7 +126,7 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
             team = Team.query.filter_by(id=team_id).first()
             checkedby = Person.query.filter_by(personname="nog niet nagekeken").first()
             answergiven = AnswerGiven.query.filter_by(question_id=question.id).filter_by(team_id=team.id).first()
-
+            average_sub_answer_probability = sub_answer_probability / word_count
             if answergiven is None:
                 answergiven = AnswerGiven(
                     question_id=question.id,
@@ -137,7 +141,8 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
                 person_id=checkedby.id,
                 correct=False,
                 line_id=line_image[2],
-                read_answer=predicted_line
+                read_answer=predicted_line,
+                probability_read_answer=average_sub_answer_probability
             )
             db.session.add(sub_answer_given)
             db.session.commit()

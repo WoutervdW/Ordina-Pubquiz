@@ -147,8 +147,10 @@ class SubAnswerGiven(db.Model):
     corr_answer_id = db.Column(db.Integer, db.ForeignKey('subanswer.id'), nullable=False)
     corr_answer = db.relationship('SubAnswer')
     read_answer = db.Column(db.String(255))
+    probability_read_answer = db.Column(db.Float)
     correct = db.Column(db.Boolean)
     confidence = db.Column(db.Float)
+    probability_read_answer
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
     checkedby = db.relationship('Person')
     line_id = db.Column(db.Integer, db.ForeignKey('line.id'), nullable=False)
