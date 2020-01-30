@@ -121,6 +121,7 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
             team = Team.query.filter_by(id=team_id).first()
             checkedby = Person.query.filter_by(personname="nog niet nagekeken").first()
             answergiven = AnswerGiven.query.filter_by(question_id=question.id).filter_by(team_id=team.id).first()
+
             if answergiven is None:
                 answergiven = AnswerGiven(
                     question_id=question.id,
@@ -128,8 +129,7 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
                 )
                 db.session.add(answergiven)
                 db.session.commit()
-            print("ANSWERGIVEN:")
-            print(answergiven.question_id)
+
             sub_answer_given = SubAnswerGiven(
                 answergiven_id=answergiven.id,
                 corr_answer_id=sub_answer.id,

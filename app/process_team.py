@@ -10,7 +10,6 @@ def read_team(line):
     team_name = pytesseract.image_to_string(team_name_image).replace("\n", " ")
 
     if "Naam:" in team_name:
-        print("new team!")
         # We take the name of the team and remove leading whitespaces
         name_of_team = team_name.split("Naam:")[1]
         name_of_team = name_of_team.lstrip()

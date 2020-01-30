@@ -30,7 +30,7 @@ from app.process_team import read_team
 from app.process_question_number import read_question_number
 
 
-def process_sheet(answer_sheet_image, model, answersheet_id, sheet_name="scan"):
+def process_sheet(answer_sheet_image, model, answersheet_id):
     sub_answer_number = 0
     previous_question = -1
     team_id = -1
@@ -67,8 +67,8 @@ def process_sheet(answer_sheet_image, model, answersheet_id, sheet_name="scan"):
             else:
                 # We turn the question_id to 0. This means it will be ignored.
                 question_id = 0
-
             print("the question number that is read: " + str(question_id))
+
             res = word_segmentation(line, kernel_size=25, sigma=11, theta=7, min_area=100)
             save_word_details(line_result, multiply_factor, res, number_box_size, db, model, team_id, question_id, sub_answer_number)
 
@@ -77,22 +77,13 @@ def run_pubquiz_program(answer_sheets):
     print("De officiele Ordina pub-quiz antwoord vinder")
     model = Model(open('model/charList.txt').read())
 
-    index = 0
     for p in convert_pdf_to_image(answer_sheets):
         if p is not None:
-            file_extension = os.path.splitext(answer_sheets)
-            sheet_name = answer_sheets
-            if file_extension[1] == ".pdf":
-                sheet_name = sheet_name[0:-4]
-            sheet_name = sheet_name + "_" + str(index)
-            index += 1
-
             answersheet_id = save_to_database.save_answersheet_database(p)
-
             if answersheet_id == -1:
                 return "Er is iets fout gegaan. Probeer opnieuw."
             else:
-                process_sheet(p, model, answersheet_id, sheet_name=sheet_name)
+                process_sheet(p, model, answersheet_id)
         else:
             return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
 
