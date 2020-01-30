@@ -14,11 +14,9 @@ def run_program(db, pubquiz_file_name):
     # os.listdir(input_folder) something like this.
     pubquiz_answer_sheets = [pubquiz_file_name]
     message = app.run_program(pubquiz_answer_sheets, True, db)
-    print("PROGRAMMA KLAAR", pubquiz_file_name)
 
     # After the files are processed we remove the file
     if os.path.exists(pubquiz_file_name):
-        print("VERWIJDER", pubquiz_file_name)
         os.remove(pubquiz_file_name)
     return message
 

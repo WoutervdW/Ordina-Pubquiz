@@ -229,11 +229,22 @@ angular.module('module', ['ngRoute'])
         }
         $scope.createDoc = function(){
             $scope.creatingFile = true;
-            $http.post("/api/v1.0/createdoc")
+            data = []
+            if($scope.breaks){
+                for (i = 0; i < $scope.breaks.length; i++)
+                    data.push($scope.breaks[i].breaknumber)
+            }
+            $http.post("/api/v1.0/createdoc", data)
             .then (function (response) {
                 alert(response.data)
                 $scope.creatingFile=false;
             })
+        }
+        $scope.updateBreaks = function(){
+            $scope.breaks = []
+            for (i = 0; i < $scope.amountOfBreaks; i++){
+                $scope.breaks.push({})
+            }
         }
     })
     .controller('revealcontroller', function ($scope, $http, $interval, $filter) {
@@ -293,6 +304,18 @@ angular.module('module', ['ngRoute'])
                 return answers.filter(function(answer){
                     if(team){
                         return answer.answered_by.teamname == team;
+                    }
+                    return answer
+                })
+            }
+        }
+    })
+    .filter('byCategory', function() {
+        return function(answers, category){
+            if(answers){
+                return answers.filter(function(answer){
+                    if(category){
+                        return answer.question.questioncategory.name == category;
                     }
                     return answer
                 })

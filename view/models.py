@@ -182,7 +182,6 @@ class AnswerGiven(db.Model):
 class AnswerGivenSchema(ma.Schema):
     class Meta:
         fields = ('id', 'question_id', 'question', 'team_id', 'answered_by', 'subanswersgiven')
-
     question = ma.Nested(QuestionSchema)
     answered_by = ma.Nested(TeamSchema)
     subanswersgiven = ma.Nested(SubAnswerGivenSchema, many=True)
