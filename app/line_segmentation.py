@@ -3,6 +3,7 @@ import cv2
 import operator
 import os
 from view.models import Line
+from view import db
 
 
 def show_image(img):
@@ -104,7 +105,7 @@ def find_corners_center(corners_left, corners_right):
     return corners_full
 
 
-def line_segmentation(answer_image_original, save_image=False, image_path="lines/", image_name="scan", db=None, answersheet_id=None):
+def line_segmentation(answer_image_original, answersheet_id):
     # New strategy. First find the points on the left side and then on the right side.
     # Than take the points together and find the lines.
     # processed = pre_process_image(answer_image_original, False)
@@ -165,9 +166,8 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
     if len(left_block_contours) != len(right_block_contours):
         print("There was a problem with the line detection. "
               "The left and right side blocks that were found are not equal")
-        return None
+        yield None
 
-    lines = []
     # We traverse the lines backwards because the contours are stored from the bottom up
     print("start saving the lines to the database")
     for x in range(len(left_block_contours)-1, -1, -1):
@@ -185,16 +185,16 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
 
         # TODO Fix magic number. We chose 2 becuase it will trim any line that is below or above the words
         trim = 2
-        without_bars = cropped_full[trim:line_width-trim, trim:line_height-trim]
+        full_line = cropped_full[trim:line_width-trim, trim:line_height-trim]
 
-        line_width = len(without_bars)
-        line_height = len(without_bars[0])
+        line_width = len(full_line)
+        line_height = len(full_line[0])
 
-        finished_line = [without_bars, x]
+        finished_line = [full_line, x]
 
         # Save the line image to the database!
         # convert the image to byte array so it can be saved in the database
-        answer = without_bars.tostring()
+        answer = full_line.tostring()
 
         if db is not None:
             # TODO fill in the other details as well! (not just the image)
@@ -211,23 +211,6 @@ def line_segmentation(answer_image_original, save_image=False, image_path="lines
 
             # We pass the line id along to link the words with the correct line.
             finished_line.append(new_line.id)
-            print("some stuff about the line")
-            print("line number: " + str(finished_line[1]))
-            print("line id: " + str(finished_line[2]))
 
-        # We also pass the line index along wiht this collection of lines. This is so that for the word recognition
-        # part we can easily identify which line it is.
-
-        lines.append(finished_line)
-
-        if save_image:
-            path = image_path + image_name
-            if not os.path.exists(path):
-                os.makedirs(path)
-            # save (or show) the image if the folder is empty (for tests)
-            # show_image(finished_line[0])
-            cv2.imwrite(path + "/line_" + str(x) + ".png", finished_line[0])
-
-    print('done all ' + str(len(left_block_contours)) + ' lines')
-    return lines
+        yield finished_line
 

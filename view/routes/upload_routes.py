@@ -1,4 +1,4 @@
-from view import view, db
+from view import view
 from flask import request, render_template
 from werkzeug.utils import secure_filename
 import main
@@ -14,6 +14,7 @@ def upload():
         # Set the next thread to happen
         f.save(secure_filename(f.filename))
         pool = ThreadPool(processes=1)
-        async_result = pool.apply_async(main.run_program, (db, f.filename))
+        async_result = pool.apply_async(main.run_program, (f.filename,))
         message = async_result.get()
         return render_template('answerchecking.html', message=message)
+
