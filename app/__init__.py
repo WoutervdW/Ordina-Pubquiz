@@ -174,21 +174,22 @@ def run_program(pubquiz_answer_sheets, save_image=False, db=None):
     for answer_sheets in pubquiz_answer_sheets:
         # Here it will yield answersheet images to be processed
         for p in convert_pdf_to_image(answer_sheets):
-            file_extension = os.path.splitext(answer_sheets)
-            sheet_name = answer_sheets
-            if file_extension[1] == ".pdf":
-                sheet_name = sheet_name[0:-4]
-            sheet_name = sheet_name + "_" + str(index)
-            index += 1
+            if p is not None:
+                file_extension = os.path.splitext(answer_sheets)
+                sheet_name = answer_sheets
+                if file_extension[1] == ".pdf":
+                    sheet_name = sheet_name[0:-4]
+                sheet_name = sheet_name + "_" + str(index)
+                index += 1
 
-            answersheet_id = save_to_database.save_answersheet_database(db, p)
+                answersheet_id = save_to_database.save_answersheet_database(db, p)
 
-            if answersheet_id == -1:
-                return "Er is iets fout gegaan. Probeer opnieuw."
+                if answersheet_id == -1:
+                    return "Er is iets fout gegaan. Probeer opnieuw."
+                else:
+                    process_sheet(p, model, save_image, sheet_name, db, answersheet_id)
             else:
-                process_sheet(p, model, save_image, sheet_name, db, answersheet_id)
-        else:
-            return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
+                return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
 
 
 def save_answersheet():
