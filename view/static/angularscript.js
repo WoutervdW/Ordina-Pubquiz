@@ -310,6 +310,18 @@ angular.module('module', ['ngRoute'])
             }
         }
     })
+    .filter('byCategory', function() {
+        return function(answers, category){
+            if(answers){
+                return answers.filter(function(answer){
+                    if(category){
+                        return answer.question.questioncategory.name == category;
+                    }
+                    return answer
+                })
+            }
+        }
+    })
     .filter('byQuestion', function() {
         return function(answers, question){
             if(answers){

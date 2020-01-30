@@ -24,6 +24,13 @@
                 </select>
             </div>
             <div>
+                <label class="filter-label">Team:</label>
+                <select class="filter-dropdown" ng-model="filteredCategory">
+                    <option ng-value="">Alle Categorieen</option>
+                    <option ng-repeat="category in categories">//category.name//</option>
+                </select>
+            </div>
+            <div>
                 <label class="filter-label">Vraag:</label>
                 <select class="filter-dropdown" ng-model="filteredQuestion">
                     <option ng-value="">Alle vragen</option>
@@ -68,7 +75,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="answergiven in filteredanswers = (answers | orderBy:propertyName:reverse | byTeam:filteredTeam | byQuestion:filteredQuestion | bySubanswers:confidencefrom:confidenceto:correctfilter:checkedbyfilter)">
+                <tr ng-repeat="answergiven in filteredanswers = (answers | orderBy:propertyName:reverse | byCategory:filteredCategory | byTeam:filteredTeam | byQuestion:filteredQuestion | bySubanswers:confidencefrom:confidenceto:correctfilter:checkedbyfilter)">
 
                     <td>//answergiven.answered_by.teamname//</td>
                     <td><b>//answergiven.question.questionnumber//</b> //answergiven.question.question//</td>
