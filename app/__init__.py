@@ -79,13 +79,14 @@ def run_pubquiz_program(answer_sheets):
 
     for p in convert_pdf_to_image(answer_sheets):
         if p is not None:
-            answersheet_id = save_to_database.save_answersheet_database(p)
-            if answersheet_id == -1:
-                return "Er is iets fout gegaan. Probeer opnieuw."
-            else:
-                process_sheet(p, model, answersheet_id)
-        else:
-            return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
+                answersheet_id = save_to_database.save_answersheet_database(p)
+                if answersheet_id == -1:
+                    return "Er is iets fout gegaan. Probeer opnieuw."
+                else:
+                    try:
+                        process_sheet(p, model, answersheet_id)
+                    except:
+                        return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
 
 
 def save_answersheet():

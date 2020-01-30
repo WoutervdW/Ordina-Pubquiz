@@ -14,7 +14,9 @@ def run_program(pubquiz_file_name):
     message = app.run_pubquiz_program(pubquiz_file_name)
     # After the files are processed we remove the file
     if os.path.exists(pubquiz_file_name):
-        os.remove(pubquiz_file_name)
-    return message
+        try:
+            os.remove(pubquiz_file_name)
+        finally:
+            return message
 
 
