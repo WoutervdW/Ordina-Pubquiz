@@ -158,12 +158,16 @@ def process_sheet(answer_sheet_image, model, save_image=False, sheet_name="scan"
             else:
                 sub_answer_number = 0
             previous_question = question_id
+
+
         else:
             # We turn the question_id to 0. This means it will be ignored.
             question_id = 0
 
         print("the question number that is read: " + str(question_id))
-        save_word_details(line_image, multiply_factor, res, number_box_size, db, model, team_id, question_id, sub_answer_number)
+        save_word_details(line_image, multiply_factor, res, number_box_size, db, model, team_id, question_id,
+                          sub_answer_number)
+
 
 
 def run_program(pubquiz_answer_sheets, save_image=False, db=None):
@@ -181,14 +185,14 @@ def run_program(pubquiz_answer_sheets, save_image=False, db=None):
                 sheet_name = sheet_name[0:-4]
             sheet_name = sheet_name + "_" + str(index)
             index += 1
-            try:
-                answersheet_id = save_to_database.save_answersheet_database(db, p)
-                if answersheet_id == -1:
-                    return "Er is iets fout gegaan. Probeer opnieuw."
-                else:
-                    process_sheet(p, model, save_image, sheet_name, db, answersheet_id)
-            except:
-                return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
+            #try:
+            answersheet_id = save_to_database.save_answersheet_database(db, p)
+            if answersheet_id == -1:
+                return "Er is iets fout gegaan. Probeer opnieuw."
+            else:
+                process_sheet(p, model, save_image, sheet_name, db, answersheet_id)
+            #except:
+    return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
 
 
 def save_answersheet():

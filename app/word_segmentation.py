@@ -87,6 +87,7 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
             new_word = Word(
                 line_id=line_image[2],
                 word_recognised=read_results[0],
+                probability=float(read_results[1][0]),
                 word_image=word_image,
                 image_width=word_width,
                 image_height=word_height

@@ -217,7 +217,7 @@ class Word(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     line_id = db.Column(db.Integer, db.ForeignKey('line.id'))
     word_recognised = db.Column(db.String(255))
-    probability = db.Column(db.Integer)
+    probability = db.Column(db.Float)
     word_image = db.Column(db.LargeBinary)
     image_width = db.Column(db.Integer)
     image_height = db.Column(db.Integer)
