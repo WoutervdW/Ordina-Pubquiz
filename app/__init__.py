@@ -196,5 +196,3 @@ def save_answersheet():
     pages = convert_pdf_to_image(pubquiz_anser_sheets)
     return pages
 
-
-
