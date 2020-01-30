@@ -185,16 +185,16 @@ def line_segmentation(answer_image_original, save_image=False, image_name="scan"
 
         # TODO Fix magic number. We chose 2 becuase it will trim any line that is below or above the words
         trim = 2
-        without_bars = cropped_full[trim:line_width-trim, trim:line_height-trim]
+        full_line = cropped_full[trim:line_width-trim, trim:line_height-trim]
 
-        line_width = len(without_bars)
-        line_height = len(without_bars[0])
+        line_width = len(full_line)
+        line_height = len(full_line[0])
 
-        finished_line = [without_bars, x]
+        finished_line = [full_line, x]
 
         # Save the line image to the database!
         # convert the image to byte array so it can be saved in the database
-        answer = without_bars.tostring()
+        answer = full_line.tostring()
 
         if db is not None:
             # TODO fill in the other details as well! (not just the image)
@@ -211,9 +211,6 @@ def line_segmentation(answer_image_original, save_image=False, image_name="scan"
 
             # We pass the line id along to link the words with the correct line.
             finished_line.append(new_line.id)
-            print("some stuff about the line")
-            print("line number: " + str(finished_line[1]))
-            print("line id: " + str(finished_line[2]))
 
         yield finished_line
 

@@ -49,8 +49,7 @@ def check_team_name(name_of_team):
 
 
 def read_team(line):
-    cv2.imwrite("right.png", line[0])
-    team_name_image = line[0]
+    team_name_image = line
     team_name_image = team_name_image[:, 130:(len(team_name_image[0]))]
     team_name = pytesseract.image_to_string(team_name_image).replace("\n", " ")
 
@@ -62,7 +61,7 @@ def read_team(line):
 
         name_of_team = check_team_name(name_of_team)
 
-        team_id = save_to_database.save_team_database(db, name_of_team)
+        team_id = save_to_database.save_team_database(name_of_team)
         print("the team name is: " + name_of_team)
         return team_id
     else:
@@ -70,15 +69,74 @@ def read_team(line):
         return None
 
 
+def read_question_number(question_image, previous_question):
+    # We remove the right border line from the image to only leave the number
+    question_image = question_image[:, 0:(len(question_image[0]) - 10)]
+
+    # Read the number from the number box. After that we remove any non numbers (in case of lines)
+    # The configuration is to only read numbers and to look for 1 word
+    # TODO @Sander: explain why this pre-processing is done.
+    resized_question_number = cv2.resize(question_image, (0, 0), fx=5, fy=5)
+    ret, thresh1 = cv2.threshold(resized_question_number, 150, 255, cv2.THRESH_BINARY)
+    kernel = np.ones((5, 5), np.uint8)
+    erode = cv2.erode(thresh1, kernel, iterations=1)
+    blur2 = cv2.blur(erode, (9, 9))
+
+    question_number_resized = pytesseract.image_to_string(resized_question_number,
+                                                          config='--psm 10 --oem 3 -c tessedit_char_whitelist=0123456789')
+    question_number_blur = pytesseract.image_to_string(blur2,
+                                                       config='--psm 10 --oem 3 -c tessedit_char_whitelist=0123456789')
+
+    question_number_resized = re.sub("[^0-9]", "", question_number_resized)
+    question_number_blur = re.sub("[^0-9]", "", question_number_blur)
+
+    # The accuracy with the slightly blurred image is the highest
+    # The accuracy of the resized is usually enough and it will be used as a fail safe
+    question_number = question_number_blur
+
+    # If the number found is the same or 1 higher than previous found number than it is probably correct.
+    # We do this to find the improbably inaccuracies with the slightly blurred image.
+    if question_number_resized == previous_question or question_number_resized == previous_question + 1:
+        question_number = question_number_resized
+    if question_number_blur == previous_question or question_number_blur == previous_question + 1:
+        question_number = question_number_blur
+
+    # If they both determined the same number we can say with almost absolute certainty that this is the correct number
+    if question_number_resized == question_number_blur:
+        question_number = question_number_blur
+
+    # save question number to the database (mostly for debugging purposes)
+    save_to_database.save_question_number(question_image, question_number)
+
+    return question_number
+
+
 def process_sheet(answer_sheet_image, model, sheet_name="scan", answersheet_id=None):
     sub_answer_number = 0
     previous_question = -1
     team_id = -1
     index = 0
-    for line in line_segmentation(answer_sheet_image, image_name=sheet_name, answersheet_id=answersheet_id):
+    for line_result in line_segmentation(answer_sheet_image, image_name=sheet_name, answersheet_id=answersheet_id):
+        line = line_result[0]
         # The first line of each answersheet will include the team name.
         if index == 0:
             team_id = read_team(line)
+            # Each answersheet has a team name, when we read the team name we will update it on the answersheet.
+            if not save_to_database.update_team_answersheet(answersheet_id, team_id):
+                # We choose to continue and only print a logging for now
+                print("there was a problem linking the team to the answersheet")
+        index += 1
+
+        # Here we define some parameters of the line used for the processing.
+        original_height = line.shape[0]
+        resized_height = 50
+        multiply_factor = original_height / resized_height
+        # After the resizing, the size of the number box will always be around this value.
+        number_box_size = 66
+        line, question_image = prepare_image(line, resized_height, number_box_size)
+        question_number = read_question_number(question_image, previous_question)
+        print("wow, so nice! The number is %s" % question_number)
+
 
 
 def process_sheet_old(answer_sheet_image, model, save_image=False, sheet_name="scan", db=None, answersheet_id=None):
@@ -106,13 +164,13 @@ def process_sheet_old(answer_sheet_image, model, save_image=False, sheet_name="s
 
         name_of_team = check_team_name(name_of_team)
 
-        team_id = save_to_database.save_team_database(db, name_of_team)
+        team_id = save_to_database.save_team_database(name_of_team)
         print("the team name is: " + name_of_team)
     else:
         print("failed!")
 
     # If no team name is found it should use it's previously found team_id
-    if not save_to_database.update_team_answersheet(db, answersheet_id, team_id):
+    if not save_to_database.update_team_answersheet(answersheet_id, team_id):
         # We choose to continue and only print a logging for now
         print("there was a problem linking the team to the answersheet")
 
@@ -214,7 +272,7 @@ def run_pubquiz_program(answer_sheets):
             sheet_name = sheet_name + "_" + str(index)
             index += 1
 
-            answersheet_id = save_to_database.save_answersheet_database(db, p)
+            answersheet_id = save_to_database.save_answersheet_database(p)
 
             if answersheet_id == -1:
                 return "Er is iets fout gegaan. Probeer opnieuw."
