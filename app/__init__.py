@@ -111,7 +111,7 @@ def read_question_number(question_image, previous_question):
     return question_number
 
 
-def process_sheet(answer_sheet_image, model, sheet_name="scan", answersheet_id=None):
+def process_sheet(answer_sheet_image, model, answersheet_id, sheet_name="scan"):
     sub_answer_number = 0
     previous_question = -1
     team_id = -1
@@ -135,8 +135,23 @@ def process_sheet(answer_sheet_image, model, sheet_name="scan", answersheet_id=N
         number_box_size = 66
         line, question_image = prepare_image(line, resized_height, number_box_size)
         question_number = read_question_number(question_image, previous_question)
-        print("wow, so nice! The number is %s" % question_number)
 
+        if question_number != "":
+            question_id = int(question_number)
+            if question_id == previous_question:
+                # If this question has the same number as before we should find a variant, because it will have
+                # several sub_answers associated with it
+                sub_answer_number += 1
+            else:
+                sub_answer_number = 0
+            previous_question = question_id
+        else:
+            # We turn the question_id to 0. This means it will be ignored.
+            question_id = 0
+
+        print("the question number that is read: " + str(question_id))
+        res = word_segmentation(line, kernel_size=25, sigma=11, theta=7, min_area=100)
+        save_word_details(line_result, multiply_factor, res, number_box_size, db, model, team_id, question_id, sub_answer_number)
 
 
 def process_sheet_old(answer_sheet_image, model, save_image=False, sheet_name="scan", db=None, answersheet_id=None):
@@ -277,7 +292,7 @@ def run_pubquiz_program(answer_sheets):
             if answersheet_id == -1:
                 return "Er is iets fout gegaan. Probeer opnieuw."
             else:
-                process_sheet(p, model, sheet_name=sheet_name, answersheet_id=answersheet_id)
+                process_sheet(p, model, answersheet_id, sheet_name=sheet_name)
         else:
             return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
 
