@@ -105,7 +105,7 @@ def find_corners_center(corners_left, corners_right):
     return corners_full
 
 
-def line_segmentation(answer_image_original, save_image=False, image_name="scan", answersheet_id=None):
+def line_segmentation(answer_image_original, answersheet_id):
     # New strategy. First find the points on the left side and then on the right side.
     # Than take the points together and find the lines.
     # processed = pre_process_image(answer_image_original, False)

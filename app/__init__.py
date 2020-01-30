@@ -34,43 +34,43 @@ def process_sheet(answer_sheet_image, model, answersheet_id, sheet_name="scan"):
     sub_answer_number = 0
     previous_question = -1
     team_id = -1
-    index = 0
-    for line_result in line_segmentation(answer_sheet_image, image_name=sheet_name, answersheet_id=answersheet_id):
+    read_team_name = True
+    for line_result in line_segmentation(answer_sheet_image, answersheet_id):
         line = line_result[0]
         # The first line of each answersheet will include the team name.
-        if index == 0:
+        if read_team_name:
+            read_team_name = False
             team_id = read_team(line)
             # Each answersheet has a team name, when we read the team name we will update it on the answersheet.
             if not save_to_database.update_team_answersheet(answersheet_id, team_id):
                 # We choose to continue and only print a logging for now
                 print("there was a problem linking the team to the answersheet")
-        index += 1
-
-        # Here we define some parameters of the line used for the processing.
-        original_height = line.shape[0]
-        resized_height = 50
-        multiply_factor = original_height / resized_height
-        # After the resizing, the size of the number box will always be around this value.
-        number_box_size = 66
-        line, question_image = prepare_image(line, resized_height, number_box_size)
-        question_number = read_question_number(question_image, previous_question)
-
-        if question_number != "":
-            question_id = int(question_number)
-            if question_id == previous_question:
-                # If this question has the same number as before we should find a variant, because it will have
-                # several sub_answers associated with it
-                sub_answer_number += 1
-            else:
-                sub_answer_number = 0
-            previous_question = question_id
         else:
-            # We turn the question_id to 0. This means it will be ignored.
-            question_id = 0
+            # Here we define some parameters of the line used for the processing.
+            original_height = line.shape[0]
+            resized_height = 50
+            multiply_factor = original_height / resized_height
+            # After the resizing, the size of the number box will always be around this value.
+            number_box_size = 66
+            line, question_image = prepare_image(line, resized_height, number_box_size)
+            question_number = read_question_number(question_image, previous_question)
 
-        print("the question number that is read: " + str(question_id))
-        res = word_segmentation(line, kernel_size=25, sigma=11, theta=7, min_area=100)
-        save_word_details(line_result, multiply_factor, res, number_box_size, db, model, team_id, question_id, sub_answer_number)
+            if question_number != "":
+                question_id = int(question_number)
+                if question_id == previous_question:
+                    # If this question has the same number as before we should find a variant, because it will have
+                    # several sub_answers associated with it
+                    sub_answer_number += 1
+                else:
+                    sub_answer_number = 0
+                previous_question = question_id
+            else:
+                # We turn the question_id to 0. This means it will be ignored.
+                question_id = 0
+
+            print("the question number that is read: " + str(question_id))
+            res = word_segmentation(line, kernel_size=25, sigma=11, theta=7, min_area=100)
+            save_word_details(line_result, multiply_factor, res, number_box_size, db, model, team_id, question_id, sub_answer_number)
 
 
 def run_pubquiz_program(answer_sheets):
