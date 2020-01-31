@@ -129,7 +129,7 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
             if word_count > 0:
                 average_sub_answer_probability = sub_answer_probability / word_count
             else:
-                average_sub_answer_probability = 100
+                average_sub_answer_probability = 1.0
             if answergiven is None:
                 answergiven = AnswerGiven(
                     question_id=question.id,

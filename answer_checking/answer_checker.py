@@ -177,7 +177,7 @@ def check_all_questions(threshold=50, max_conf_incorrect=50, max_conf_correct=10
 
                 if len(subanswer_given.read_answer) == 0:  # no answer: incorrect
                     subanswer_given.correct = False
-                    subanswer_given.confidence = 100
+                    subanswer_given.confidence = 1.0
                     continue
 
                 highest_confidence_correct = None
@@ -257,11 +257,13 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
                             confidence_false = confidence_temp
                         # confidence should be equal to lowest confidence
             linereadconfidence = subanswer_given.probability_read_answer
+            print("confidenceline", linereadconfidence, "casted", (int(linereadconfidence)))
+            print("confidencewas", confidence_true, confidence_false)
             if correct:
-                subanswer_given.confidence = confidence_true * linereadconfidence
+                subanswer_given.confidence = int(confidence_true * linereadconfidence)
                 print("Correct!")
             else:
-                subanswer_given.confidence = confidence_false * linereadconfidence
+                subanswer_given.confidence = int(confidence_false * linereadconfidence)
                 print("No similar answer found.")
 
             subanswer_given.correct = correct

@@ -89,6 +89,7 @@ def run_pubquiz_program(answer_sheets):
                     #    return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
     return "adsf"
 
+
 def save_answersheet():
     pubquiz_answer_sheets = 'scan.pdf'
     pages = convert_pdf_to_image(pubquiz_answer_sheets)
