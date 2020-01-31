@@ -83,11 +83,11 @@ def run_pubquiz_program(answer_sheets):
                 if answersheet_id == -1:
                     return "Er is iets fout gegaan. Probeer opnieuw."
                 else:
-                    try:
-                        process_sheet(p, model, answersheet_id)
-                    except:
-                        return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
-
+                   # try:
+                    process_sheet(p, model, answersheet_id)
+                    #except:
+                    #    return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
+    return "adsf"
 
 def save_answersheet():
     pubquiz_answer_sheets = 'scan.pdf'

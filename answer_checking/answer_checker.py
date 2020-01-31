@@ -256,12 +256,12 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
                         if confidence_temp < confidence_false:
                             confidence_false = confidence_temp
                         # confidence should be equal to lowest confidence
-
+            linereadconfidence = subanswer_given.probability_read_answer
             if correct:
-                subanswer_given.confidence = confidence_true
+                subanswer_given.confidence = confidence_true * linereadconfidence
                 print("Correct!")
             else:
-                subanswer_given.confidence = confidence_false
+                subanswer_given.confidence = confidence_false * linereadconfidence
                 print("No similar answer found.")
 
             subanswer_given.correct = correct

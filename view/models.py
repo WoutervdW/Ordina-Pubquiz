@@ -150,7 +150,7 @@ class SubAnswerGiven(db.Model):
     probability_read_answer = db.Column(db.Float)
     correct = db.Column(db.Boolean)
     confidence = db.Column(db.Float)
-    probability_read_answer
+    probability_read_answer = db.Column(db.Float)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
     checkedby = db.relationship('Person')
     line_id = db.Column(db.Integer, db.ForeignKey('line.id'), nullable=False)
