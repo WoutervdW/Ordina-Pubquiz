@@ -128,11 +128,13 @@ angular.module('module', ['ngRoute'])
             })
         }
         $scope.resetQuestionNumbers = function(){
-            for (i = 0; i < $scope.questions.length; i++){
-                $scope.questions[i].questionnumber = null;
+            r = confirm("Alle vraagnummers worden gereset. Dit kan niet ongedaan gemaakt worden.")
+            if (r == true){
+                for (i = 0; i < $scope.questions.length; i++){
+                    $scope.questions[i].questionnumber = null;
+                }
+                $http.post("/api/v1.0/resetquestionnumbers")
             }
-            $http.post("/api/v1.0/resetquestionnumbers")
-
         }
         $scope.deleteAllQuestions = function(){
             r = confirm("Alle vragen zullen worden verwijderd. Dit kan niet ongedaan gemaakt worden.")
