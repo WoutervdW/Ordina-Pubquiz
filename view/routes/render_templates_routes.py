@@ -16,6 +16,9 @@ def questions():
 
 @view.route('/answerchecking')
 def answers():
+    if 'message' in request.args:
+        message = request.args['message']
+        return render_template('answerchecking.html', message=message)
     return render_template('answerchecking.html')
 
 

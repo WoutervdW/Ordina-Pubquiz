@@ -16,6 +16,4 @@ def upload():
         pool = ThreadPool(processes=1)
         async_result = pool.apply_async(main.run_program, (f.filename,))
         message = async_result.get()
-        #return render_template('answerchecking.html', message=message)
-        flash(message)
-        return redirect(url_for('answers'))
+        return redirect(url_for('answers', message=message))
