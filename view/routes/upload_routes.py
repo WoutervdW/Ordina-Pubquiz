@@ -1,5 +1,5 @@
 from view import view
-from flask import request, render_template
+from flask import request, render_template, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 import main
 from multiprocessing.pool import ThreadPool
@@ -16,5 +16,6 @@ def upload():
         pool = ThreadPool(processes=1)
         async_result = pool.apply_async(main.run_program, (f.filename,))
         message = async_result.get()
-        return render_template('answerchecking.html', message=message)
-
+        #return render_template('answerchecking.html', message=message)
+        flash(message)
+        return redirect(url_for('answers'))

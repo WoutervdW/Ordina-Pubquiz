@@ -8,9 +8,11 @@
 <body>
 {% extends "base.html" %}
 {% block content %}
+
+
 <div class="container"  ng-app="module" ng-controller ="controller">
-     <div class="alert alert-info" role="alert" ng-show="{{message}}">
-        {{ message }}
+     <div class="alert alert-info" role="alert" ng-show="message">
+        //message//
     </div>
     <div id="myModal" class="modal">
         <!-- Modal content -->
