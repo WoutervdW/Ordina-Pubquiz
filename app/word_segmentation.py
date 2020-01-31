@@ -22,12 +22,12 @@ def increase_contrast(img):
     # increase contrast
     pxmin = np.min(img)
     pxmax = np.max(img)
+    if pxmin == pxmax:
+        return img
     imgContrast = (img - pxmin) / (pxmax - pxmin) * 255
-
     # increase line width
     kernel_contrast = np.ones((4, 4), np.uint8)
     imgMorph = cv2.erode(imgContrast, kernel_contrast, iterations=1)
-
     return imgMorph
 
 
@@ -37,12 +37,12 @@ def infer(_model, word_image):
     """
     # image = fn_img
     fn_img = cv2.cvtColor(word_image, cv2.COLOR_BGR2GRAY)
-
+    #hier geen NaN
     # We will set a threshold for the gray lines to become clear black for the recognition
     # ret, fn_img = cv2.threshold(fn_img, 220, 255, cv2.THRESH_BINARY)
     # We increase the thickness of the lines to make the program better at reading the letters
     fn_img = increase_contrast(fn_img)
-
+    #hier NaN
     image = preprocess(fn_img, Model.img_size)
     batch = Batch([image])
     (recognized, probability) = _model.infer_batch(batch, True)
@@ -86,7 +86,9 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
 
             read_results = read_word_from_image(cropped, model)
             predicted_line = predicted_line + read_results[0][0] + " "
+            print(read_results[1][0])
             sub_answer_probability += float(read_results[1][0])
+            print("sub_answer_probability", sub_answer_probability)
             word_count += 1
             new_word = Word(
                 line_id=line_image[2],
@@ -127,9 +129,9 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
             checkedby = Person.query.filter_by(personname="nog niet nagekeken").first()
             answergiven = AnswerGiven.query.filter_by(question_id=question.id).filter_by(team_id=team.id).first()
             if word_count > 0:
-                average_sub_answer_probability = sub_answer_probability / word_count
+                average_sub_answer_probability = float(sub_answer_probability / word_count)
             else:
-                average_sub_answer_probability = 1.0
+                average_sub_answer_probability = float(1.0)
             if answergiven is None:
                 answergiven = AnswerGiven(
                     question_id=question.id,

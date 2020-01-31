@@ -139,12 +139,13 @@ class Model:
 
         # decode, optionally save RNN output
         num_batch_elements = len(batch.image)
+
         eval_list = [self.decoder] + [self.ctc_in3d_tbc]
         feed_dict = {self.input_image: batch.image, self.seq_len: [Model.max_text_length] * num_batch_elements}
         eval_res = self.sess.run(eval_list, feed_dict)
         decoded = eval_res[0]
-        texts = self.decoder_output_to_text(decoded, num_batch_elements)
 
+        texts = self.decoder_output_to_text(decoded, num_batch_elements)
         # feed RNN output and recognized text into CTC loss to compute labeling probability
         probability = None
         if calc_probability:
