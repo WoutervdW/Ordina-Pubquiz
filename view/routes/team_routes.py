@@ -7,6 +7,7 @@ def object_as_dict(obj):
     return {c.key: getattr(obj, c.key)
             for c in inspect(obj).mapper.column_attrs}
 
+
 @view.route('/api/v1.0/teams', methods=['GET'])
 def get_teams():
     results = db.session.query(Team, func.count(SubAnswerGiven.id) .label('score')).group_by(Team.id).filter(SubAnswerGiven.correct).filter(SubAnswerGiven.answergiven_id == AnswerGiven.id).filter(Team.id == AnswerGiven.team_id).all()
@@ -24,10 +25,14 @@ def get_teams():
 def addteam():
     post = request.get_json()
     teamname = post.get('teamname')
-    team = Team(teamname=teamname)
+    team = Team(teamname=teamname, score=0)
     db.session.add(team)
     db.session.commit()
-    return 'OK'
+    team_schema = TeamSchema()
+    result = team_schema.dump(team)
+    return jsonify(result)
+
+    return team
 
 
 @view.route('/api/v1.0/removeteam', methods=['POST'])

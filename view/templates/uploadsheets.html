@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Uploaden antwoordvellen</title>
-    <script src="{{ url_for('static', filename='upload_script.js') }}"></script>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
 
 {% extends "base.html" %}
+
 {% block content %}
+{{ message }}
 
 <!-- TODO make it nicer and show which file is included and maybe forward to a better page (index again?) -->
 <div class = "container"  ng-app = "module" ng-controller = "controller">

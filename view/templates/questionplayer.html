@@ -4,15 +4,17 @@
     <meta charset="UTF-8">
     <title>Pubquiz</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='questionplayer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/questionplayer.css') }}">
 </head>
+
 <body>
+
 {% extends "base.html" %}
 {% block content %}
-<div ng-app="module" ng-controller="pubquizcontroller">
+<div ng-app="playerModule" ng-controller="pubquizcontroller as vm">
      <div class="wrapper">
-            <span class="questionnumber">//displayedquestion.questionnumber//</span>
-            <span class="question">//displayedquestion.question//</span>
+            <span class="questionnumber">//vm.displayedquestion.questionnumber//</span>
+            <span class="question">//vm.displayedquestion.question//</span>
     </div>
 </div>
 {% endblock %}

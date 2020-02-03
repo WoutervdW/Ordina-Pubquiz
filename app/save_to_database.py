@@ -1,8 +1,10 @@
 from view.models import Answersheet
 from view.models import Team
+from view.models import QuestionNumber
+from view import db
 
 
-def save_answersheet_database(db, answersheet):
+def save_answersheet_database(answersheet):
     print("saving answersheet to the database")
     # Save the image to the database!
     # convert the image to byte array so it can be saved in the database
@@ -24,7 +26,7 @@ def save_answersheet_database(db, answersheet):
     return answersheet_id
 
 
-def save_team_database(db, team_name):
+def save_team_database(team_name):
     print("saving teamname to database")
     team = Team.query.filter_by(teamname=team_name).first()
     if team is None:
@@ -42,7 +44,7 @@ def save_team_database(db, team_name):
         return team.id
 
 
-def update_team_answersheet(db, answersheet_id, team_id):
+def update_team_answersheet(answersheet_id, team_id):
     answersheet = Answersheet.query.filter_by(id=answersheet_id).first()
     if answersheet is None:
         print("failed!")
@@ -55,4 +57,22 @@ def update_team_answersheet(db, answersheet_id, team_id):
     db.session.add(answersheet)
     db.session.commit()
     return True
+
+
+def save_question_number(question_image, question_number):
+    q_image = question_image.tostring()
+
+    question_width = len(question_image)
+    question_height = len(question_image[0])
+
+    question_recognized = QuestionNumber(
+        question_number=question_number,
+        question_image=q_image,
+        image_width=question_width,
+        image_height=question_height
+    )
+    # add the object to the database session
+    db.session.add(question_recognized)
+    # commit the session so that the image is stored in the database
+    db.session.commit()
 

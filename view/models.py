@@ -147,8 +147,10 @@ class SubAnswerGiven(db.Model):
     corr_answer_id = db.Column(db.Integer, db.ForeignKey('subanswer.id'), nullable=False)
     corr_answer = db.relationship('SubAnswer')
     read_answer = db.Column(db.String(255))
+    probability_read_answer = db.Column(db.Float)
     correct = db.Column(db.Boolean)
     confidence = db.Column(db.Float)
+    probability_read_answer = db.Column(db.Float)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'), nullable=False)
     checkedby = db.relationship('Person')
     line_id = db.Column(db.Integer, db.ForeignKey('line.id'), nullable=False)
@@ -182,7 +184,6 @@ class AnswerGiven(db.Model):
 class AnswerGivenSchema(ma.Schema):
     class Meta:
         fields = ('id', 'question_id', 'question', 'team_id', 'answered_by', 'subanswersgiven')
-
     question = ma.Nested(QuestionSchema)
     answered_by = ma.Nested(TeamSchema)
     subanswersgiven = ma.Nested(SubAnswerGivenSchema, many=True)
@@ -218,6 +219,7 @@ class Word(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     line_id = db.Column(db.Integer, db.ForeignKey('line.id'))
     word_recognised = db.Column(db.String(255))
+    probability = db.Column(db.Float)
     word_image = db.Column(db.LargeBinary)
     image_width = db.Column(db.Integer)
     image_height = db.Column(db.Integer)

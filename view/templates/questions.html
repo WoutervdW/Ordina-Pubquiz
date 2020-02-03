@@ -12,7 +12,7 @@
 <section class="">
 
 <div class="container" ng-app="module" ng-controller="controller">
-   <div class="table-responsive" >
+   <div class="table-responsive" ng-hide="creatingFile">
        <table class="table table-hover table-sm table-fixed" ng-hide="showcategories">
             <thead class="header">
                <tr>
@@ -89,12 +89,12 @@
                         </table>
                     </td>
                     <td>
-                            <label>
-                                <input class="form-control" list="categories" ng-model="newquestion.category">
-                            </label>
-                            <datalist id="categories">
-                                <option ng-repeat="category in categories" ng-value="category.name" ng-right-click="resetQuestionNumbers()">//category.name//</option>
-                            </datalist>
+                        <label>
+                            <input class="form-control" list="categories" ng-model="newquestion.category">
+                        </label>
+                        <datalist id="categories">
+                            <option ng-repeat="category in categories" ng-value="category.name" ng-right-click="resetQuestionNumbers()">//category.name//</option>
+                        </datalist>
                     </td>
 
                  <!--   <td><label class="switch"><input type="checkbox" ng-model="newquestionactive"  ng-init="newquestionactive=true"><span class="slider round"></span></label></td> -->
@@ -108,12 +108,31 @@
             <li class="list-group-item" ng-repeat = "category in categories">//category.name// <button class="badge" ng-click="deleteCategory(category)">x</button></li>
         </ul>
     </div>
-    <div>
-    <button class="btn btn-primary" ng-hide="showcategories" ng-click = "resetQuestionNumbers()">Reset vraagnummers</button>
-    <button class="btn btn-primary" ng-hide="showcategories" ng-click = "deleteAllQuestions()">Verwijder alle vragen</button>
+    <div class="alert alert-info" role="alert"  ng-show="creatingFile">Moment geduld aub.. Bestand wordt gegenereerd ...</div>
+    <div ng-hide="creatingFile">
+        <button class="btn btn-primary" ng-hide="showcategories" ng-click = "resetQuestionNumbers()">Reset vraagnummers</button>
+        <button class="btn btn-primary" ng-hide="showcategories" ng-click = "deleteAllQuestions()">Verwijder alle vragen</button>
         <button class="btn btn-primary" ng-click = "showcategories=!showcategories"><span ng-hide="showcategories">Beheer categorieen</span><span ng-show="showcategories">Terug</span></button>
     </div>
+    <div class="col-md-4 mb-4">
+        <label>Aantal pauzes:</label>
+        <select class="form-control" ng-model="amountOfBreaks" ng-change="updateBreaks()">
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+        </select>
+        <div ng-repeat="break in breaks">
+            <label>Pauze na vraag:</label>
+            <select class="form-control" ng-model="break.breaknumber">
+                <option ng-repeat="question in questions" ng-if="question.questionnumber">//question.questionnumber//</option>
+            </select>
+        </div>
+         <button class="btn btn-primary" ng-click="createDoc()">Maak antwoordvel</button>
+    </div>
 </div>
+
 
 
 

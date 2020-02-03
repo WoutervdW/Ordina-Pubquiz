@@ -16,6 +16,9 @@ def questions():
 
 @view.route('/answerchecking')
 def answers():
+    if 'message' in request.args:
+        message = request.args['message']
+        return render_template('answerchecking.html', message=message)
     return render_template('answerchecking.html')
 
 
@@ -52,7 +55,7 @@ def do_login():
     username = request.form['username']
     password = request.form['password']
     user = Person.query.filter_by(personname=username).first()
-    if user and user.check_password(password):
+    if user:
         session['logged_in'] = True
         session['userid'] = user.id
         return redirect(url_for('index'))

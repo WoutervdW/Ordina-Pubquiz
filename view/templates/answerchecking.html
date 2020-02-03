@@ -2,14 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-   <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <title>Answers</title>
 </head>
 <body>
 {% extends "base.html" %}
 {% block content %}
 
+
 <div class="container"  ng-app="module" ng-controller ="controller">
+     <div class="alert alert-info" role="alert" ng-show="{{message}}">
+        {{message}}
+    </div>
     <div id="myModal" class="modal">
         <!-- Modal content -->
         <div class="modal-content" ng-mouseLeave="closeModal()">
@@ -19,6 +25,13 @@
                 <select class="filter-dropdown" ng-model="filteredTeam">
                     <option ng-value="">Alle teams</option>
                     <option ng-repeat="team in teams">//team.teamname//</option>
+                </select>
+            </div>
+            <div>
+                <label class="filter-label">Team:</label>
+                <select class="filter-dropdown" ng-model="filteredCategory">
+                    <option ng-value="">Alle Categorieen</option>
+                    <option ng-repeat="category in categories">//category.name//</option>
                 </select>
             </div>
             <div>
@@ -66,7 +79,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="answergiven in filteredanswers = (answers | orderBy:propertyName:reverse | byTeam:filteredTeam | byQuestion:filteredQuestion | bySubanswers:confidencefrom:confidenceto:correctfilter:checkedbyfilter)">
+                <tr ng-repeat="answergiven in filteredanswers = (answers | orderBy:propertyName:reverse | byCategory:filteredCategory | byTeam:filteredTeam | byQuestion:filteredQuestion | bySubanswers:confidencefrom:confidenceto:correctfilter:checkedbyfilter)">
 
                     <td>//answergiven.answered_by.teamname//</td>
                     <td><b>//answergiven.question.questionnumber//</b> //answergiven.question.question//</td>

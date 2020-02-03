@@ -1,8 +1,8 @@
-from view import view, db
-from flask import request, redirect, url_for
+from view import view
+from flask import request, render_template, redirect, url_for, flash
 from werkzeug.utils import secure_filename
-import threading
 import main
+from multiprocessing.pool import ThreadPool
 
 
 @view.route('/uploader', methods=['GET', 'POST'])
@@ -12,10 +12,8 @@ def upload():
         f = request.files['answersheets']
         # We wil use this url shortcut to start the program
         # Set the next thread to happen
-        print("starting thread for program")
         f.save(secure_filename(f.filename))
-        x = threading.Thread(target=main.run_program, args=(db, f.filename,))
-        print("thread started")
-        x.start()
-        x.join()
-        return redirect(url_for('answers'), code=302)
+        pool = ThreadPool(processes=1)
+        async_result = pool.apply_async(main.run_program, (f.filename,))
+        message = async_result.get()
+        return redirect(url_for('answers', message=message))
