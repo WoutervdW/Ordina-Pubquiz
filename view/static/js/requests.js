@@ -12,6 +12,12 @@ angular.module('requestsModule', [])
                     method: "GET",
                     url: "/api/v1.0/teams"
                 })
+            },
+            getCategories: function(){
+                return $http({
+                    method: "GET",
+                    url: "/api/v1.0/categories"
+                })
             }
         }
     })

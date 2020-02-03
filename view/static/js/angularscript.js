@@ -44,111 +44,15 @@ angular.module('module', ['ngRoute'])
             }
         }
 
-        $scope.newsubanswers = [{}];
-        $scope.addField=function(list){
-            list.push({});
-        }
-         $scope.removeField=function(list, obj){
-            index = list.indexOf(obj)
-            list.splice(index,1)
-        }
-        $scope.variantsfromsubanswer = function(subanswer){
-            if(subanswer.variants){
-                variants = subanswer.variants.map(s => s.answer)
-                variantsInString = variants.join(" / ")
-                return variantsInString;
-            }
-            return ""
-        }
+
+
+
+
         $scope.sortBy = function sortBy(propertyName){
             $scope.reverse = $scope.propertyName === propertyName ? !$scope.reverse : false
             $scope.propertyName = propertyName
         }
-        $scope.addQuestion = function(category_id){
-            var newvariants = []
-            var subanswers = []
-            for (i = 0; i < $scope.newsubanswers.length; i++){
-                subanswer = $scope.newsubanswers[i].value
-                if(subanswer)
-                    variants = subanswer.split('/')
-                    for (j = 0; j < variants.length; j++){
-                        newvariants.push({"answer": variants[j]})
-                    }
-                subanswers.push({"variants" : newvariants})
-                newvariants = []
-            }
-            var data = {"questionnumber": $scope.newquestion.questionnumber, "question": $scope.newquestion.question, "subanswers": subanswers, "category": $scope.newquestion.category}
-            $http.post("/api/v1.0/newquestion", JSON.stringify(data))
-                .then(function (response) {
-                if(typeof response.data === 'string'){
-                    alert(response.data);
-                }
-                else{
-                    newq = response.data;
-                    $scope.questions.push(newq);
-                    $scope.newquestion = [];
-                    $scope.newsubanswers = [{}]
-                }
-            })
-        }
-        $scope.removeQuestion = function (question) {
-            var data = {"id": question.id}
-            $http.post("/api/v1.0/removequestion", JSON.stringify(data))
-                .then (function (response) {
-                    if(response.data != 'OK'){
-                        alert(response.data)
-                    }
-                    else{
-                        $scope.questions.splice($scope.questions.indexOf(question), 1 );
-                    }
-                })
-        }
-        $scope.updateQuestion = function(question){
-            for (i = 0; i < question.subanswers.length; i++){
-                subanswer = question.subanswers[i].variantsintext
-                if(subanswer){
-                    question.subanswers[i].variants=[];
-                    newvariants=[]
-                    variants = subanswer.split('/')
-                    for (j = 0; j < variants.length; j++){
-                        newvariants.push({"answer": variants[j]})
-                    }
-                    question.subanswers[i].variants = newvariants
-                }
-            }
-            var data = {"id":question.id, "questionnumber": question.questionnumber, "question": question.question, "subanswers": question.subanswers, "category": question.questioncategory.name}
-            $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
-            .then(function(response) {
-                if(response.data != 'OK'){
-                    question.editquestion=true
-                    alert(response.data)
-                }
-            })
-        }
-        $scope.resetQuestionNumbers = function(){
-            r = confirm("Alle vraagnummers worden gereset. Dit kan niet ongedaan gemaakt worden.")
-            if (r == true){
-                for (i = 0; i < $scope.questions.length; i++){
-                    $scope.questions[i].questionnumber = null;
-                }
-                $http.post("/api/v1.0/resetquestionnumbers")
-            }
-        }
-        $scope.deleteAllQuestions = function(){
-            r = confirm("Alle vragen zullen worden verwijderd. Dit kan niet ongedaan gemaakt worden.")
-            if (r == true){
-                $http.post("/api/v1.0/deleteallquestions")
-                 .then(function(response) {
-                    if(response.data != 'OK'){
-                        alert(response.data)
-                    }
-                    else{
-                        $scope.questions = [];
-                    }
-                })
-            }
 
-        }
         $scope.updateAnswerCheck = function (answer) {
             var data = {"id": answer.id, "correct": answer.correct}
             $http
@@ -181,18 +85,7 @@ angular.module('module', ['ngRoute'])
             window.location.reload()
         }
 
-        $scope.deleteCategory = function(category) {
-            var data = {"id": category.id}
-            $http.post("/api/v1.0/removecategory", JSON.stringify(data))
-                .then(function(response){
-                    if(response.data !== 'OK'){
-                        alert(response.data)
-                    }
-                    else{
-                        $scope.categories.splice($scope.categories.indexOf(category), 1 );
-                    }
-                })
-        }
+
         $scope.updateAnswerLabel = function () {
             $scope.answersheetform.label = "adsf"
         }
@@ -211,25 +104,7 @@ angular.module('module', ['ngRoute'])
         $scope.fileChanged = function(files) {
              document.getElementById("custom-file-label").innerHTML = files[0].name;
         }
-        $scope.createDoc = function(){
-            $scope.creatingFile = true;
-            data = []
-            if($scope.breaks){
-                for (i = 0; i < $scope.breaks.length; i++)
-                    data.push($scope.breaks[i].breaknumber)
-            }
-            $http.post("/api/v1.0/createdoc", data)
-            .then (function (response) {
-                alert(response.data)
-                $scope.creatingFile=false;
-            })
-        }
-        $scope.updateBreaks = function(){
-            $scope.breaks = []
-            for (i = 0; i < $scope.amountOfBreaks; i++){
-                $scope.breaks.push({})
-            }
-        }
+
     })
 
     .filter('byTeam', function() {

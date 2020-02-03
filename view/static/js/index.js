@@ -1,15 +1,14 @@
-angular.module('indexModule', ['ngRoute', 'requestsModule'])
+angular.module('indexModule', ['ngRoute', 'requestsModule', 'generalModule'])
     .config(function($interpolateProvider){
         $interpolateProvider.startSymbol('//')
         $interpolateProvider.endSymbol('//')
     })
-   .controller('indexController', function ($http, $filter, $interval, httpRequestsService){
+   .controller('indexController', function ($http, $filter, $interval, httpRequestsService, generalService){
         var vm = this
         httpRequestsService.getTeams()
         .then(function (response) {
             vm.teams = response.data;
         });
-        console.log(vm.teams)
         vm.addTeam = function (team) {
             var data = {"teamname": vm.newteam}
             $http.post("/api/v1.0/newteam", JSON.stringify(data))
@@ -18,7 +17,6 @@ angular.module('indexModule', ['ngRoute', 'requestsModule'])
                 vm.teams.push(newt)
                 vm.newteam=""
             })
-
         }
         vm.removeTeam = function (team) {
             var data = {"id": team.id}
@@ -34,8 +32,9 @@ angular.module('indexModule', ['ngRoute', 'requestsModule'])
             vm.teams.indexOf(team).teamname = team.teamname
             $http.post("/api/v1.0/updateteam", JSON.stringify(data))
         }
-        vm.sortBy = function sortBy(propertyName){
-            vm.reverse = vm.propertyName === propertyName ? !vm.reverse : false
-            vm.propertyName = propertyName
+        vm.sortBy = function(propertyName){
+            result = generalService.sortBy(vm.reverse, vm.propertyName, propertyName)
+            vm.reverse = result[0]
+            vm.propertyName = result[1]
         }
    })

@@ -116,7 +116,7 @@ def add_question():
     for i in range(0, len(newsubanswers)):
         for j in range(0, len(newsubanswers[i]['variants'])):
             variant = Variant(answer=newsubanswers[i]['variants'][j]['answer'])
-            variants.append(variant);
+            variants.append(variant)
         subanswer = SubAnswer(variants=variants)
         subanswers.append(subanswer)
         variants = []

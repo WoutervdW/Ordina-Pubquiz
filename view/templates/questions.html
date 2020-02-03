@@ -11,22 +11,22 @@
 
 <section class="">
 
-<div class="container" ng-app="module" ng-controller="controller">
+<div class="container" ng-app="questionModule" ng-controller="questionController as vm">
    <div class="table-responsive" ng-hide="creatingFile">
        <table class="table table-hover table-sm table-fixed" ng-hide="showcategories">
             <thead class="header">
                <tr>
-                    <th scope="col" ng-click="sortBy('questionnumber')">Vraagnummer</th>
-                    <th scope="col" ng-click="sortBy('question')" >Vraag</th>
-                    <th scope="col" ng-click="sortBy('correct_answer')">Correct antwoord</th>
-                    <th scope="col" ng-click="sortBy('category_id')">Categorie</th>
+                    <th scope="col" ng-click="vm.sortBy('questionnumber')">Vraagnummer</th>
+                    <th scope="col" ng-click="vm.sortBy('question')" >Vraag</th>
+                    <th scope="col" ng-click="vm.sortBy('correct_answer')">Correct antwoord</th>
+                    <th scope="col" ng-click="vm.sortBy('category_id')">Categorie</th>
                 <!--    <th scope="col" ng-click="sortBy('person_id')">Aangemaakt door</th>
                     <th scope="col" ng-click="sortBy('active')">Actief</th> -->
                     <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-init="question.editquestion=false" ng-mouseEnter = "showButtons=true" ng-mouseLeave="showButtons=false" ng-repeat ="question in questions | orderBy:propertyName:reverse">
+                <tr ng-init="question.editquestion=false" ng-mouseEnter = "showButtons=true" ng-mouseLeave="showButtons=false" ng-repeat ="question in vm.questions | orderBy:vm.propertyName:vm.reverse">
                     <td ng-hide="question.editquestion">//question.questionnumber//</td>
                     <td ng-show="question.editquestion"><input type="text" class="form-control" ng-model="question.questionnumber"></td>
                     <td ng-hide="question.editquestion">//question.question//</td>
@@ -44,11 +44,11 @@
                         <table class="table table-borderless">
                             <tbody>
                                 <tr ng-repeat="subanswer in question.subanswers">
-                                    <td width="30%"><input type="text" class="form-control" ng-model = "subanswer.variantsintext" ng-value="variantsfromsubanswer(subanswer)"></td>
-                                     <td width="10%"><button type="button" class="btn btn-danger" ng-click="removeField(question.subanswers, subanswer)"><span class="glyphicon glyphicon-remove"></span></button></td>
+                                    <td width="30%"><input type="text" class="form-control" ng-model = "subanswer.variantsintext" ng-value="vm.variantsfromsubanswer(subanswer)"></td>
+                                     <td width="10%"><button type="button" class="btn btn-danger" ng-click="vm.removeField(question.subanswers, subanswer)"><span class="glyphicon glyphicon-remove"></span></button></td>
                                 </tr>
                                 <tr>
-                                    <td><button class="btn btn-primary" ng-click="addField(question.subanswers)">Extra subantwoord</button></td>
+                                    <td><button class="btn btn-primary" ng-click="vm.addField(question.subanswers)">Extra subantwoord</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -59,77 +59,77 @@
                             <input class="form-control" list="categoriesedit" ng-model="question.questioncategory.name" ng-value="question.questioncategory.name">
                         </label>
                         <datalist id = "categoriesedit">
-                            <option ng-repeat="category in categories" ng-value="category.name">//category.name//</button></option>
+                            <option ng-repeat="category in vm.categories" ng-value="category.name">//category.name//</button></option>
                         </datalist>
                     </td>
                  <!--   <td>//question.createdby.personname//</td>
                     <td><label class="switch"><input type="checkbox" ng-model="question.active" ng-change="updateQuestionActive(question)"><span class="slider round"></span></label></td> -->
                     <td>
                         <button type="button" class="btn btn-primary" ng-show="!question.editquestion && showButtons" ng-click="question.editquestion=true">Wijzig</button>
-                        <button type="button" class="btn btn-primary" ng-show="question.editquestion && showButtons" ng-click="question.editquestion=false; updateQuestion(question)">Opslaan</button>
-                        <button type="button" class="btn btn-danger" ng-show="showButtons" ng-click="removeQuestion(question)">Verwijder</button>
+                        <button type="button" class="btn btn-primary" ng-show="question.editquestion && showButtons" ng-click="question.editquestion=false; vm.updateQuestion(question)">Opslaan</button>
+                        <button type="button" class="btn btn-danger" ng-show="showButtons" ng-click="vm.removeQuestion(question)">Verwijder</button>
                     </td>
                 </tr>
                 </tbody>
                 <thead>
                 <tr>
-                    <td><input type="text" class="form-control" ng-model="newquestion.questionnumber"></td>
-                    <td><textarea cols="40" rows="5" class="form-control" ng-model="newquestion.question"></textarea></td>
+                    <td><input type="text" class="form-control" ng-model="vm.newquestion.questionnumber"></td>
+                    <td><textarea cols="40" rows="5" class="form-control" ng-model="vm.newquestion.question"></textarea></td>
                     <td style="white-space:nowrap;">
                         <table class="table table-borderless">
                             <tbody>
-                                <tr ng-repeat="newsubanswer in newsubanswers">
+                                <tr ng-repeat="newsubanswer in vm.newsubanswers">
                                     <td width="30%"><input type="text" class="form-control" ng-model="newsubanswer.value"></td>
-                                    <td width="10%"><button type="button" class="btn btn-danger" ng-click="removeField(newsubanswers, newsubanswer)"><span class="glyphicon glyphicon-remove"></span></button></td>
+                                    <td width="10%"><button type="button" class="btn btn-danger" ng-click="vm.removeField(vm.newsubanswers, newsubanswer)"><span class="glyphicon glyphicon-remove"></span></button></td>
                                 </tr>
                                 <tr>
-                                    <td><button class="btn btn-primary" ng-click="addField(newsubanswers)" >Extra subantwoord</button></td>
+                                    <td><button class="btn btn-primary" ng-click="vm.addField(vm.newsubanswers)" >Extra subantwoord</button></td>
                                 </tr>
                             </tbody>
                         </table>
                     </td>
                     <td>
                         <label>
-                            <input class="form-control" list="categories" ng-model="newquestion.category">
+                            <input class="form-control" list="categories" ng-model="vm.newquestion.category">
                         </label>
                         <datalist id="categories">
-                            <option ng-repeat="category in categories" ng-value="category.name" ng-right-click="resetQuestionNumbers()">//category.name//</option>
+                            <option ng-repeat="category in vm.categories" ng-value="category.name" ng-right-click="vm.resetQuestionNumbers()">//category.name//</option>
                         </datalist>
                     </td>
 
                  <!--   <td><label class="switch"><input type="checkbox" ng-model="newquestionactive"  ng-init="newquestionactive=true"><span class="slider round"></span></label></td> -->
-                    <td><button class="btn btn-primary" ng-click="addQuestion()">Voeg nieuwe vraag toe</button></td>
+                    <td><button class="btn btn-primary" ng-click="vm.addQuestion()">Voeg nieuwe vraag toe</button></td>
                 </tr>
            </thead>
         </table>
     </div>
      <div ng-show="showcategories">
         <ul class="list-group">
-            <li class="list-group-item" ng-repeat = "category in categories">//category.name// <button class="badge" ng-click="deleteCategory(category)">x</button></li>
+            <li class="list-group-item" ng-repeat = "category in vm.categories">//category.name// <button class="badge" ng-click="vm.deleteCategory(category)">x</button></li>
         </ul>
     </div>
     <div class="alert alert-info" role="alert"  ng-show="creatingFile">Moment geduld aub.. Bestand wordt gegenereerd ...</div>
     <div ng-hide="creatingFile">
-        <button class="btn btn-primary" ng-hide="showcategories" ng-click = "resetQuestionNumbers()">Reset vraagnummers</button>
-        <button class="btn btn-primary" ng-hide="showcategories" ng-click = "deleteAllQuestions()">Verwijder alle vragen</button>
+        <button class="btn btn-primary" ng-hide="showcategories" ng-click = "vm.resetQuestionNumbers()">Reset vraagnummers</button>
+        <button class="btn btn-primary" ng-hide="showcategories" ng-click = "vm.deleteAllQuestions()">Verwijder alle vragen</button>
         <button class="btn btn-primary" ng-click = "showcategories=!showcategories"><span ng-hide="showcategories">Beheer categorieen</span><span ng-show="showcategories">Terug</span></button>
     </div>
     <div class="col-md-4 mb-4">
         <label>Aantal pauzes:</label>
-        <select class="form-control" ng-model="amountOfBreaks" ng-change="updateBreaks()">
+        <select class="form-control" ng-model="vm.amountOfBreaks" ng-change="vm.updateBreaks()">
             <option>0</option>
             <option>1</option>
             <option>2</option>
             <option>3</option>
             <option>4</option>
         </select>
-        <div ng-repeat="break in breaks">
+        <div ng-repeat="break in vm.breaks">
             <label>Pauze na vraag:</label>
             <select class="form-control" ng-model="break.breaknumber">
-                <option ng-repeat="question in questions" ng-if="question.questionnumber">//question.questionnumber//</option>
+                <option ng-repeat="question in vm.questions" ng-if="question.questionnumber">//question.questionnumber//</option>
             </select>
         </div>
-         <button class="btn btn-primary" ng-click="createDoc()">Maak antwoordvel</button>
+         <button class="btn btn-primary" ng-click="vm.createDoc()">Maak antwoordvel</button>
     </div>
 </div>
 
