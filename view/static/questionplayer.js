@@ -1,4 +1,4 @@
-angular.module('playerModule', ['ngRoute'])
+angular.module('playerModule', ['ngRoute', 'requestsModule'])
     .config(function($interpolateProvider){
         $interpolateProvider.startSymbol('//')
         $interpolateProvider.endSymbol('//')
@@ -28,14 +28,5 @@ angular.module('playerModule', ['ngRoute'])
             $interval(showQuestion, 300);
         };
    })
-    .factory('httpRequestsService', function($q, $http){
-        return{
-            getQuestions: function (){
-                return  $http({
-                    method: "GET",
-                    url: "/api/v1.0/questions"
-                })
-            }
-        }
-    })
+
 
