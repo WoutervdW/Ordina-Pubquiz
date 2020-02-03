@@ -12,9 +12,9 @@
 
 {% extends "base.html" %}
 {% block content %}
-<div ng-app = "module" ng-controller = "revealcontroller">
+<div ng-app = "revealModule" ng-controller = "revealcontroller as vm">
     <div>
-        <ul ng-repeat = "team in revealteams">
+        <ul ng-repeat = "team in vm.revealteams">
             <li>
                 <span class = "teamname">//team.teamname//</span>
                 <span class = "score">//team.score//</span>

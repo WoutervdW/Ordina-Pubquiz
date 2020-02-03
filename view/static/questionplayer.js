@@ -3,7 +3,7 @@ angular.module('playerModule', ['ngRoute', 'requestsModule'])
         $interpolateProvider.startSymbol('//')
         $interpolateProvider.endSymbol('//')
     })
-   .controller('pubquizcontroller', function ($http, $filter, $interval, httpRequestsService){
+   .controller('pubquizcontroller', function ($filter, $interval, httpRequestsService){
         var vm = this;
         httpRequestsService.getQuestions()
         .then(function (response) {

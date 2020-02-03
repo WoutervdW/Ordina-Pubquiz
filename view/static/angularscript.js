@@ -249,29 +249,6 @@ angular.module('module', ['ngRoute'])
             }
         }
     })
-    .controller('revealcontroller', function ($scope, $http, $interval, $filter) {
-        $http({
-            method: "GET",
-            url: "/api/v1.0/teams"
-        }).then(function (response) {
-            $scope.teams = response.data;
-            $scope.teams = $filter('orderBy')($scope.teams, 'score', false)
-        });
-        $scope.i = 0
-        $scope.revealteams = []
-        $interval(function () {
-            $scope.time = $scope.time + 1000;
-            if ($scope.i < $scope.teams.length) {
-                $scope.revealteams.push({
-                    "teamname": $scope.teams[$scope.i].teamname,
-                    "score": $scope.teams[$scope.i].score
-                });
-                $scope.revealteams = $filter('orderBy')($scope.revealteams, 'score', true)
-                $scope.i = $scope.i + 1;
-            }
-        }, 4000)
-    })
-
 
     .filter('byTeam', function() {
         return function(answers, team){
