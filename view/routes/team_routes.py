@@ -28,7 +28,11 @@ def addteam():
     team = Team(teamname=teamname, score=0)
     db.session.add(team)
     db.session.commit()
-    return 'OK'
+    team_schema = TeamSchema()
+    result = team_schema.dump(team)
+    return jsonify(result)
+
+    return team
 
 
 @view.route('/api/v1.0/removeteam', methods=['POST'])

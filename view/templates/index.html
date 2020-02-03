@@ -12,37 +12,36 @@
 <body>
 {% extends "base.html" %}
 {% block content %}
-<div class = "container"  ng-app = "module" ng-controller = "controller">
+<div class = "container"  ng-app = "indexModule" ng-controller = "indexController as vm">
     <div class = "table-responsive">
         <table class="table table-hover table-sm table-fixed">
             <thead class = "header">
                 <tr>
-                    <th scope = "col" ng-click = "sortBy('teamname')" >Team
+                    <th scope = "col" ng-click = "vm.sortBy('teamname')" >Team
                     </th>
-                    <th scope = "col" ng-click = "sortBy('score')">Score
+                    <th scope = "col" ng-click = "vm.sortBy('score')">Score
                     </th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-click = "editteam=true" ng-mouseEnter="showremovebutton=true" ng-mouseLeave = "showremovebutton=false" ng-repeat="team in teams | orderBy:propertyName:reverse">
-                    <td ng-hide="editteam">//team.teamname//</td><td ng-show="editteam"><input type="text" ng-blur="updateTeam(team); editteam=false" ng-model="team.teamname" ></td>
+                <tr ng-click = "editteam=true" ng-mouseEnter="showremovebutton=true" ng-mouseLeave = "showremovebutton=false" ng-repeat="team in vm.teams ">
+                    <td ng-hide="editteam">//team.teamname//</td><td ng-show="editteam"><input type="text" ng-blur="vm.updateTeam(team); editteam=false" ng-model="team.teamname" ></td>
                     <td>//team.score//</td>
                     {% if session['logged_in'] == True %}
-                    <td><button type="button" class = "btn btn-danger" ng-click="removeTeam(team)" ng-show="showremovebutton"><span class="glyphicon glyphicon-remove"></span></button></td>
+                    <td><button type="button" class = "btn btn-danger" ng-click="vm.removeTeam(team)" ng-show="showremovebutton"><span class="glyphicon glyphicon-remove"></span></button></td>
                     {% endif %}
                 </tr>
                   {% if session['logged_in'] == True %}
                  <tr>
-                     <td><input type = "text" class = "form-control" ng-model = "newteam" ng-keyup="$event.keyCode == 13 ? addTeam() : null"></td>
+                     <td><input type = "text" class = "form-control" ng-model = "vm.newteam" ng-keyup="$event.keyCode == 13 ? addTeam() : null"></td>
                      <td></td>
-                     <td><button class="btn btn-primary" ng-click = "addTeam()">Voeg toe</button></td>
+                     <td><button class="btn btn-primary" ng-click = "vm.addTeam()">Voeg toe</button></td>
                  </tr>
             {% endif %}
             </tbody>
         </table>
           {% if session['logged_in'] == True %}
-        <button class="btn btn-primary" ng-click = "removeTeams()">Verwijder alle teams</button>
-        <button class="btn btn-primary" ng-click = "removeOtherStuff()">Verwijder alle afbeeldingen in de db</button>
+        <button class="btn btn-primary" ng-click = "vm.removeTeams()">Verwijder alle teams</button>
         {% endif %}
     </div>
 </div>

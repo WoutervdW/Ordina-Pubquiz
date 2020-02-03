@@ -1,10 +1,8 @@
-// define angular interpolationtags as //
 angular.module('module', ['ngRoute'])
     .config(function($interpolateProvider){
         $interpolateProvider.startSymbol('//')
         $interpolateProvider.endSymbol('//')
     })
-    //controller
     .controller('controller', function ($scope, $http, $location, $window, $filter) {
         $http({
             method: "GET",
@@ -87,7 +85,7 @@ angular.module('module', ['ngRoute'])
                 }
                 else{
                     newq = response.data;
-                    $scope.questions.push(newq)
+                    $scope.questions.push(newq);
                     $scope.newquestion = [];
                     $scope.newsubanswers = [{}]
                 }
@@ -177,28 +175,12 @@ angular.module('module', ['ngRoute'])
                     window.location.reload();
                 })
         }
-        $scope.addTeam = function (team) {
-            var data = {"teamname": $scope.newteam}
-            $http.post("/api/v1.0/newteam", JSON.stringify(data))
-            window.location.reload()
-        }
-        $scope.removeTeam = function (team) {
-            var data = {"id": team.id}
-            $http.post("/api/v1.0/removeteam", JSON.stringify(data))
-            window.location.reload()
-        }
-        $scope.removeTeams = function () {
-            $http.post("/api/v1.0/removeteams")
-            window.location.reload()
-        }
+
         $scope.removeOtherStuff = function () {
             $http.post("/api/v1.0/nuke/all")
             window.location.reload()
         }
-        $scope.updateTeam = function (team) {
-            var data = {"id": team.id, "teamname": team.teamname}
-            $http.post("/api/v1.0/updateteam", JSON.stringify(data))
-        }
+
         $scope.deleteCategory = function(category) {
             var data = {"id": category.id}
             $http.post("/api/v1.0/removecategory", JSON.stringify(data))
