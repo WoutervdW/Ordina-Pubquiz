@@ -3,15 +3,12 @@ angular.module('playerModule', ['ngRoute'])
         $interpolateProvider.startSymbol('//')
         $interpolateProvider.endSymbol('//')
     })
-   .controller('pubquizcontroller', function ($http, $filter, $interval) {
+   .controller('pubquizcontroller', function ($http, $filter, $interval, httpRequestsService){
         var vm = this;
-        $http({
-            method: "GET",
-            url: "/api/v1.0/questions"
-        }).then(function (response) {
+        httpRequestsService.getQuestions()
+        .then(function (response) {
             vm.questions = response.data;
-            vm.questions = vm.questions.filter(q => q.questionnumber > 0
-        );
+            vm.questions = vm.questions.filter(q => q.questionnumber > 0)
             vm.questions = $filter('orderBy')(vm.questions, 'questionnumber', false);
             showQuestions();
         });
@@ -30,4 +27,15 @@ angular.module('playerModule', ['ngRoute'])
             showQuestion();
             $interval(showQuestion, 300);
         };
+   })
+    .factory('httpRequestsService', function($q, $http){
+        return{
+            getQuestions: function (){
+                return  $http({
+                    method: "GET",
+                    url: "/api/v1.0/questions"
+                })
+            }
+        }
     })
+
