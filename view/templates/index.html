@@ -21,10 +21,11 @@
                     </th>
                     <th scope = "col" ng-click = "vm.sortBy('score')">Score
                     </th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-click = "editteam=true" ng-mouseEnter="showremovebutton=true" ng-mouseLeave = "showremovebutton=false" ng-repeat="team in vm.teams ">
+                <tr ng-click = "editteam=true" ng-mouseEnter="showremovebutton=true" ng-mouseLeave = "showremovebutton=false" ng-repeat="team in vm.teams | orderBy:vm.propertyName:vm.reverse">
                     <td ng-hide="editteam">//team.teamname//</td><td ng-show="editteam"><input type="text" ng-blur="vm.updateTeam(team); editteam=false" ng-model="team.teamname" ></td>
                     <td>//team.score//</td>
                     {% if session['logged_in'] == True %}

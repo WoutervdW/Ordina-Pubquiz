@@ -32,8 +32,6 @@ def addteam():
     result = team_schema.dump(team)
     return jsonify(result)
 
-    return team
-
 
 @view.route('/api/v1.0/removeteam', methods=['POST'])
 def remove_team():
