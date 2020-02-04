@@ -45,7 +45,7 @@ angular.module('answerCheckingModule', ['ngRoute', 'generalModule', 'requestsMod
             r = confirm("Alle antwoorden zullen worden verwijderd. Dit kan niet ongedaan gemaakt worden.")
             if (r == true){
                 httpRequestsService.deleteAllAnswers()
-                $scope.answers = [];
+                vm.answers = [];
             }
         }
 
