@@ -32,7 +32,6 @@ angular.module('requestsModule', [])
                 })
             },
 
-
             addQuestion: function(question){
                  return $http.post("/api/v1.0/newquestion", question)
             },

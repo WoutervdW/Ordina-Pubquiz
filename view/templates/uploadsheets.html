@@ -13,19 +13,19 @@
 {{ message }}
 
 <!-- TODO make it nicer and show which file is included and maybe forward to a better page (index again?) -->
-<div class = "container"  ng-app = "module" ng-controller = "controller">
-    <form action="/uploader" method="POST" enctype="multipart/form-data" ng-submit ="showloadingsheetsbar()" ng-hide = "loadingsheets">
+<div class = "container"  ng-app = "uploadModule" ng-controller = "uploadController as vm">
+    <form action="/uploader" method="POST" enctype="multipart/form-data" ng-submit ="vm.showloadingsheetsbar()" ng-hide = "vm.loadingsheets">
         <div class="form-group">
             <label>Selecteer bestand</label>
             <div class="custom-file">
-                <input type="file" class="custom-file-input" name="answersheets" id="answersheets" onchange="angular.element(this).scope().fileChanged(this.files)" required>
+                <input type="file" class="custom-file-input" name="answersheets" id="answersheets" onchange="vm.fileChanged(this.files)" required>
                 <label class="custom-file-label" id = "custom-file-label" for="answersheets">Selecteer bestand</label>
             </div>
         </div>
          <button type="submit" class="btn btn-primary">Lees bestand in</button>
     </form>
 
-<div class="alert alert-info"  ng-show="loadingsheets">Moment geduld aub.. Antwoordvellen worden verwerkt....</div>
+<div class="alert alert-info"  ng-show="vm.loadingsheets">Moment geduld aub.. Antwoordvellen worden verwerkt....</div>
 </div>
 {% endblock %}
 </body>
