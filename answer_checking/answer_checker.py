@@ -1,6 +1,6 @@
 from fuzzywuzzy import fuzz, process
 import re
-from view.models import SubAnswer
+from view.models import SubAnswer, Team
 from view.models import Variant, Person, AnswerGiven
 from view.models import Question
 from view import db
@@ -124,6 +124,7 @@ def calculate_confidence(correct_ratio, threshold, max_conf_incorrect, max_conf_
 
     # confidence at 100 or 0 correctness should be 100, confidence at threshold should be 0
     # TODO: confidence should likely be lower at 0 correctness, because of reliability of the system
+    # TODO: add word-confidence
 
     # hacky way to solve zero-division errors TODO: Create better way to solve these errors
     if threshold == 0:
@@ -215,7 +216,7 @@ def iterate_questions(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
         for team_answers in answers_given_per_team:
             if team_answers is None:
                 continue  # skip this team's answers
-            print("Team: " + str(team_answers.team_id))
+            print("Team: " + Team.query.filter_by(id=team_answers.team_id).first().teamname)
             subanswers_given = team_answers.subanswersgiven
             subanswers = SubAnswer.query.filter_by(question_id=question.id).all()  # one set of subanswers per question
 
