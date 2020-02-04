@@ -14,43 +14,47 @@ from view import db
 
 def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect, max_conf_correct):
     """
-
-    :param answer: string of given answer
-    :param correct_answer_variants: list of strings: variants of correct answer
-    :param threshold: The threshold of similarity that must be reached in order to be correct
-    :param max_conf_incorrect: max confidence for an incorrect answer
-    :param max_conf_correct: max confidence for a correct answer
-    :return: correctness (True or False), confidence in decision
+    Check if string answer is correct given correct answer variants
     """
-    # number_correct has to be True if the number exists and is correct, False if the number exists but isn't
-    # correct and None if no number exists
+    # TODO: Use question types for the special cases (multiple choice, interval, standard)
+
+    correct = False
+    confidence = 0
+
     for correct_answer_variant in correct_answer_variants:
-        # TODO: Create question types for these special cases
-        # TODO: don't immediately return: also check the other variants
         # check if given answer is too short
         if len(correct_answer_variant) / len(answer) >= 2:  # Will sometimes be divided by zero
-            return False, 100
+            correct = False
+            confidence = 100
+            continue
         # If correct answer is only 1 symbol, take only the last symbol in the given answer
         if len(correct_answer_variant) == 1:
             answer = answer[-1]
 
-        correct_ratio, confidence = check_numerical_values(answer, correct_answer_variant,
-                                                           threshold, max_conf_incorrect,
-                                                           max_conf_correct)  # Compare numbers in the answer
+        # Compare numbers in the answer
+        correct_ratio, confidence = check_numerical_values(answer,
+                                                           correct_answer_variant,
+                                                           threshold,
+                                                           max_conf_incorrect,
+                                                           max_conf_correct)
         if correct_ratio is None:
             # No number in given answer, check correctness based on string comparison
             correct_ratio, confidence = check_string(answer, correct_answer_variant, threshold, max_conf_incorrect,
                                                      max_conf_correct)
-            return correct_ratio >= threshold, confidence
+            correct = correct_ratio >= threshold
+            continue
 
         elif correct_ratio >= threshold:
             # Number correct, see if the rest of the string is also correct.
             # TODO: Combine the correctness of the string and number parts
-            return True, confidence
+            correct = True
+            continue
 
         else:
+            correct = False
+            continue
 
-            return False, confidence
+    return correct, confidence
 
 
 def check_numerical_values(answer, correct_answer_variant, threshold, max_conf_incorrect, max_conf_correct):
@@ -151,8 +155,8 @@ def get_variant_lists(question_id):
 
 def check_subanswer_given(subanswer_given, subanswers, checker, threshold, max_conf_incorrect, max_conf_correct):
     if subanswer_given.checkedby.personname != 'nog niet nagekeken':
-        # return  # correct functionality
-        pass  # testing
+        return  # correct functionality
+        # pass  # testing
     print("Read answer: '" + subanswer_given.read_answer + "'")
     if len(subanswer_given.read_answer) == 0:  # no answer: incorrect
         subanswer_given.checkedby = checker
@@ -164,13 +168,10 @@ def check_subanswer_given(subanswer_given, subanswers, checker, threshold, max_c
     confidence_correct = 0
     confidence_false = 100
     most_similar_answer = None  # most similar subanswer
-    # If a subanswer is the same as the given answer, remove it from the subanswers list AFTER ALL ANSWERS
-    # ARE CHECKED!
 
-    print(subanswers)
     for subanswer in subanswers:
         variants = [variant.answer for variant in subanswer.variants]  # create usable list for variants
-        print("Correct answer options: " + str(variants))
+        print("Correct answer variants: " + str(variants))
 
         correct_temp, confidence_temp = check_correct(subanswer_given.read_answer,
                                                       variants,
