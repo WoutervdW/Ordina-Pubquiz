@@ -53,7 +53,7 @@ def reset():
 
 @view.route('/api/v1.0/checkanswers', methods=['POST', 'GET'])
 def check_answers():
-    x = threading.Thread(target=answer_checker.check_all_answers)
+    x = threading.Thread(target=answer_checker.iterate_questions)
     print("thread started")
     x.start()
     x.join()
