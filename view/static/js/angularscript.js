@@ -44,10 +44,6 @@ angular.module('module', ['ngRoute'])
             }
         }
 
-
-
-
-
         $scope.sortBy = function sortBy(propertyName){
             $scope.reverse = $scope.propertyName === propertyName ? !$scope.reverse : false
             $scope.propertyName = propertyName

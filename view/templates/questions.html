@@ -12,7 +12,7 @@
 <section class="">
 
 <div class="container" ng-app="questionModule" ng-controller="questionController as vm">
-   <div class="table-responsive" ng-hide="creatingFile">
+    <div class="table-responsive" ng-hide="creatingFile">
        <table class="table table-hover table-sm table-fixed" ng-hide="showcategories">
             <thead class="header">
                <tr>
@@ -114,7 +114,7 @@
         <button class="btn btn-primary" ng-hide="showcategories" ng-click = "vm.deleteAllQuestions()">Verwijder alle vragen</button>
         <button class="btn btn-primary" ng-click = "showcategories=!showcategories"><span ng-hide="showcategories">Beheer categorieen</span><span ng-show="showcategories">Terug</span></button>
     </div>
-    <div class="col-md-4 mb-4">
+    <div ng-hide="showcategories" class="col-md-4 mb-4">
         <label>Aantal pauzes:</label>
         <select class="form-control" ng-model="vm.amountOfBreaks" ng-change="vm.updateBreaks()">
             <option>0</option>
@@ -132,10 +132,6 @@
          <button class="btn btn-primary" ng-click="vm.createDoc()">Maak antwoordvel</button>
     </div>
 </div>
-
-
-
-
 </section>
 
 {%endblock%}

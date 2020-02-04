@@ -41,7 +41,7 @@ angular.module('questionModule', ['ngRoute','requestsModule', 'generalModule'])
             }
 
             var data = {"questionnumber": vm.newquestion.questionnumber, "question": vm.newquestion.question, "subanswers": subanswers, "category": vm.newquestion.category}
-            $http.post("/api/v1.0/newquestion", JSON.stringify(data))
+            httpRequestsService.addQuestion(JSON.stringify(data))
             .then(function (response) {
                 if(typeof response.data === 'string'){
                     alert(response.data)
@@ -57,15 +57,15 @@ angular.module('questionModule', ['ngRoute','requestsModule', 'generalModule'])
 
         vm.removeQuestion = function (question) {
             var data = {"id": question.id}
-            $http.post("/api/v1.0/removequestion", JSON.stringify(data))
-                .then (function (response) {
-                    if(response.data != 'OK'){
-                        alert(response.data)
-                    }
-                    else{
-                        vm.questions.splice(vm.questions.indexOf(question), 1 )
-                    }
-                })
+            httpRequestsService.removeQuestion(JSON.stringify(data))
+            .then (function (response) {
+                if(response.data != 'OK'){
+                    alert(response.data)
+                }
+                else{
+                    vm.questions.splice(vm.questions.indexOf(question), 1 )
+                }
+            })
         }
 
         vm.updateQuestion = function(question){
@@ -82,7 +82,7 @@ angular.module('questionModule', ['ngRoute','requestsModule', 'generalModule'])
                 }
             }
             var data = {"id":question.id, "questionnumber": question.questionnumber, "question": question.question, "subanswers": question.subanswers, "category": question.questioncategory.name}
-            $http.post("/api/v1.0/updatequestion", JSON.stringify(data))
+            httpRequestsService.updateQuestion(JSON.stringify(data))
             .then(function(response) {
                 if(response.data != 'OK'){
                     question.editquestion=true
@@ -97,15 +97,15 @@ angular.module('questionModule', ['ngRoute','requestsModule', 'generalModule'])
                 for (i = 0; i < vm.questions.length; i++){
                     vm.questions[i].questionnumber = null
                 }
-               $http.post("/api/v1.0/resetquestionnumbers")
+                httpRequestsService.resetQuestionNumbers()
             }
         }
 
         vm.deleteAllQuestions = function(){
             r = confirm("Alle vragen zullen worden verwijderd. Dit kan niet ongedaan gemaakt worden.")
             if (r == true){
-                $http.post("/api/v1.0/deleteallquestions")
-                 .then(function(response) {
+                httpRequestsService.deleteAllQuestions()
+                .then(function(response) {
                     if(response.data != 'OK'){
                         alert(response.data)
                     }
@@ -127,7 +127,7 @@ angular.module('questionModule', ['ngRoute','requestsModule', 'generalModule'])
 
         vm.deleteCategory = function(category) {
             var data = {"id": category.id}
-            $http.post("/api/v1.0/removecategory", JSON.stringify(data))
+            httpRequestsService.deleteCategory(JSON.stringify(data))
                 .then(function(response){
                     if(response.data !== 'OK'){
                         alert(response.data)
@@ -151,7 +151,7 @@ angular.module('questionModule', ['ngRoute','requestsModule', 'generalModule'])
                 for (i = 0; i < vm.breaks.length; i++)
                     data.push(vm.breaks[i].breaknumber)
             }
-            $http.post("/api/v1.0/createdoc", data)
+            httpRequestsService.createDoc(data)
             .then (function (response) {
                 alert(response.data)
                 vm.creatingFile=false;
@@ -163,6 +163,4 @@ angular.module('questionModule', ['ngRoute','requestsModule', 'generalModule'])
                 vm.breaks.push({})
             }
         }
-
-
     })
