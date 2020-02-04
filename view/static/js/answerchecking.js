@@ -3,7 +3,7 @@ angular.module('answerCheckingModule', ['ngRoute', 'generalModule', 'requestsMod
         $interpolateProvider.startSymbol('//')
         $interpolateProvider.endSymbol('//')
     })
-   .controller('answerCheckingController', function ($window, httpRequestsService, generalService){
+   .controller('answerCheckingController', function (httpRequestsService, generalService){
         var vm = this;
         var modal = document.getElementById("myModal");
 
@@ -54,7 +54,7 @@ angular.module('answerCheckingModule', ['ngRoute', 'generalModule', 'requestsMod
             httpRequestsService.checkAnswers()
             .then(function (response) {
                 vm.checkinganswers = false;
-                window.location.reload();
+                vm.answers = response.data;
             })
         }
 
