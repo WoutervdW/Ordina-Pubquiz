@@ -56,6 +56,7 @@ def update_team_answersheet(answersheet_id, team_id):
     answersheet.set_team_id(team_id)
     db.session.add(answersheet)
     db.session.commit()
+    print("read the team name %s" % team.get_team_name())
     return True
 
 

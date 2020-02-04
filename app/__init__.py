@@ -35,10 +35,12 @@ def process_sheet(answer_sheet_image, model, answersheet_id):
     previous_question = -1
     team_id = -1
     read_team_name = True
+    print("processing lines")
     for line_result in line_segmentation(answer_sheet_image, answersheet_id):
         line = line_result[0]
         # The first line of each answersheet will include the team name.
         if read_team_name:
+            print("reading the team name")
             read_team_name = False
             team_id = read_team(line)
             # Each answersheet has a team name, when we read the team name we will update it on the answersheet.
@@ -46,6 +48,7 @@ def process_sheet(answer_sheet_image, model, answersheet_id):
                 # We choose to continue and only print a logging for now
                 print("there was a problem linking the team to the answersheet")
         else:
+            print("processing normal line")
             # Here we define some parameters of the line used for the processing.
             original_height = line.shape[0]
             resized_height = 50
@@ -79,14 +82,16 @@ def run_pubquiz_program(answer_sheets):
 
     for p in convert_pdf_to_image(answer_sheets):
         if p is not None:
-                answersheet_id = save_to_database.save_answersheet_database(p)
-                if answersheet_id == -1:
-                    return "Er is iets fout gegaan. Probeer opnieuw."
-                else:
-                    try:
-                        process_sheet(p, model, answersheet_id)
-                    except:
-                        return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
+            print("save answersheet")
+            answersheet_id = save_to_database.save_answersheet_database(p)
+            if answersheet_id == -1:
+                return "Er is iets fout gegaan. Probeer opnieuw."
+            else:
+                try:
+                    print("start processing answersheet")
+                    process_sheet(p, model, answersheet_id)
+                except:
+                    return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
 
 
 

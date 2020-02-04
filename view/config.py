@@ -14,8 +14,12 @@ class Config(object):
 
     session_type = os.environ.get('SESSION_TYPE') or None
 
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
+
     CORS_HEADERS = 'Content-Type'
     SQLALCHEMY_DATABASE_URI = f'postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}'
+    # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     ANSWERSHEETS_PER_PAGE = 2
