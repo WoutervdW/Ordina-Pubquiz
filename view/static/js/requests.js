@@ -47,6 +47,19 @@ angular.module('requestsModule', [])
 
             createDoc: function(document){
                 return $http.post("/api/v1.0/createdoc", document)
+            },
+
+            addTeam: function(team){
+                return $http.post("/api/v1.0/newteam", team)
+            },
+
+            removeTeam: function(team){
+                $http.post("/api/v1.0/removeteam", team)
+            },
+
+            updateTeam: function(team){
+                $http.post("/api/v1.0/updateteam", team)
             }
+
         }
     })

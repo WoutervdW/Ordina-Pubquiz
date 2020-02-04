@@ -100,7 +100,6 @@ angular.module('module', ['ngRoute'])
         $scope.fileChanged = function(files) {
              document.getElementById("custom-file-label").innerHTML = files[0].name;
         }
-
     })
 
     .filter('byTeam', function() {

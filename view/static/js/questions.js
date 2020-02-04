@@ -3,7 +3,7 @@ angular.module('questionModule', ['ngRoute','requestsModule', 'generalModule'])
         $interpolateProvider.startSymbol('//')
         $interpolateProvider.endSymbol('//')
     })
-    .controller('questionController', function ($http, httpRequestsService, generalService) {
+    .controller('questionController', function (httpRequestsService, generalService) {
         var vm = this
         httpRequestsService.getQuestions()
         .then(function (response) {
