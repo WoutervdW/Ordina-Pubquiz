@@ -217,7 +217,84 @@ def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
     # subanswer_variants_lists.remove(subanswer_variants)
 
 
-def iterate_givenanswers(answers_given, variants):
+def check_subanswer_given(subanswer_given, subanswers, checker, threshold, max_conf_incorrect, max_conf_correct):
+    if subanswer_given.checkedby.personname != 'nog niet nagekeken':
+        # return  # correct functionality
+        pass  # testing
+    print("Read answer: '" + subanswer_given.read_answer + "'")
+    if len(subanswer_given.read_answer) == 0:  # no answer: incorrect
+        subanswer_given.checkedby = checker
+        subanswer_given.correct = False
+        subanswer_given.confidence = 100
+        return
+
+    correct = False
+    confidence_correct = 0
+    confidence_false = 100
+    highest_confidence_answer = None  # most similar subanswer
+    # If a subanswer is the same as the given answer, remove it from the subanswers list AFTER ALL ANSWERS
+    # ARE CHECKED!
+
+    for subanswer in subanswers:
+        variants = [variant.answer for variant in subanswer.variants]  # create usable list for variants
+        print("Correct answer options: " + str(variants))
+
+        correct_temp, confidence_temp = check_correct(subanswer_given.read_answer,
+                                                      variants,
+                                                      threshold,
+                                                      max_conf_incorrect,
+                                                      max_conf_correct)
+
+        if correct_temp:
+            print("Found similar answer in: " + str(variants))
+            correct = True
+            if confidence_temp > confidence_correct:
+                confidence_correct = confidence_temp
+                highest_confidence_answer = subanswer
+        else:  # not correct
+            print("Not similar to: " + str(variants))
+            if confidence_temp < confidence_false:
+                confidence_false = confidence_temp
+
+    subanswer_given.checkedby = checker
+    subanswer_given.correct = correct
+    if subanswer_given.correct:
+        subanswer_given.confidence = confidence_correct
+    else:
+        subanswer_given.confidence = confidence_false
+    print("Commiting " + str(correct) + " with confidence " + str(subanswer_given.confidence))
+    db.session.commit()
+    print("")
+
+
+def iterate_questions(threshold=50, max_conf_incorrect=50, max_conf_correct=100):
+    # check each question for its correct answers
+    print("Checking all answers")
+    checker = Person.query.filter_by(personname="systeem").first()
+    questions = Question.query.all()
+    for question in questions:
+        print("Question " + str(question.questionnumber) + ": " + question.question)
+        answers_given_per_team = AnswerGiven.query.filter_by(question_id=question.id).all()  # one per team
+        subanswers = SubAnswer.query.filter_by(question_id=question.id).all()  # one set of subanswers per question
+
+        for team_answers in answers_given_per_team:
+            if team_answers is None:
+                continue  # skip this team's answers
+            print("Team: " + str(team_answers.team_id))
+            subanswers_given = team_answers.subanswersgiven
+
+            for subanswer_given in subanswers_given:
+                check_subanswer_given(subanswer_given,
+                                      subanswers,
+                                      checker,
+                                      threshold,
+                                      max_conf_incorrect,
+                                      max_conf_correct)
+
+    print("All questions checked")
+
+
+def iterate_givenanswers(answers_given, variants, threshold=50, max_conf_incorrect=50, max_conf_correct=100):
     for answer_given in answers_given:  # for each team
         subanswers_given = answer_given.subanswersgiven
 
@@ -233,81 +310,18 @@ def iterate_givenanswers(answers_given, variants):
             # if no answer is correct, remember the least confident incorrect answer
 
 
-def iterate_subanswers(subanswers, answers_given):
-    for subanswer in subanswers:  # for each correct answer
-        variants = [variant.answer for variant in subanswer.variants]
-
-        iterate_givenanswers(answers_given, variants)
-
-        # commit confidence.
-        # if an answer was correct in the given answers, remove it from the available subanswer.
-
-
 def iterate_questions_structure(threshold=50, max_conf_incorrect=50, max_conf_correct=100):
-    questions = Question.query.all()
-    for question in questions:  # for each question
-        subanswers = SubAnswer.query.filter_by(question_id=question.id).all()  # one set of subanswers per question
-        answers_given = AnswerGiven.query.filter_by(question_id=question.id).all()  # one per team
-
-        iterate_subanswers(subanswers, answers_given)
-
-
-def iterate_questions(threshold=50, max_conf_incorrect=50, max_conf_correct=100):
     # check each question for its correct answers
     print("Checking all answers")
     questions = Question.query.all()
-    for question in questions:
+    for question in questions:  # for each question
         print("Question " + str(question.questionnumber) + ": " + question.question)
 
-        answers_given = AnswerGiven.query.filter_by(question_id=question.id).all()  # one per team
         subanswers = SubAnswer.query.filter_by(question_id=question.id).all()  # one set of subanswers per question
-        checker = Person.query.filter_by(personname="systeem").first()
+        answers_given = AnswerGiven.query.filter_by(question_id=question.id).all()  # set of one per team per question
 
-        for subanswer in subanswers:
-            variants = [variant.answer for variant in subanswer.variants]  # create usable list fo variants
+        for subanswer in subanswers:  # for each correct answer
+            variants = [variant.answer for variant in subanswer.variants]
             print("Correct answer options: " + str(variants))
 
-            for answer_given in answers_given:
-
-                if answer_given is None:
-                    continue  # skip this answer
-                print("Team: " + str(answer_given.team_id))
-                subanswers_given = answer_given.subanswersgiven
-
-                for subanswer_given in subanswers_given:
-                    if subanswer_given.checkedby.personname != 'nog niet nagekeken':  # 'systeem'
-                        # continue
-                        pass
-                    print("Read answer: " + subanswer_given.read_answer)
-
-                    correct = False
-                    confidence = 0  # probably not necessary
-                    confidence_true = 0
-                    confidence_false = 0
-                    highest_confidence_answer = None  # answer that is most correct
-
-                    if len(subanswer_given.read_answer) == 0:  # no answer: incorrect
-                        subanswer_given.checkedby = checker
-                        subanswer_given.correct = False
-                        subanswer_given.confidence = 100
-                        continue
-
-                    correct_temp, confidence_temp = check_correct(subanswer_given.read_answer,
-                                                                  variants,
-                                                                  threshold,
-                                                                  max_conf_incorrect,
-                                                                  max_conf_correct)
-
-                    if correct_temp:
-                        # If a subanswer is the same as the given answer, remove it from the subanswers list AFTER ALL ANSWERS ARE CHECKED!
-                        if confidence > confidence_true:
-                            highest_confidence_answer = subanswer
-                    else:
-                        pass
-
-                    subanswer_given.checkedby = checker
-                    subanswer_given.correct = correct
-                    if subanswer_given.correct:
-                        subanswer_given.confidence = confidence_true
-                    else:
-                        subanswer_given.confidence = confidence_false
+            iterate_givenanswers(answers_given, variants)
