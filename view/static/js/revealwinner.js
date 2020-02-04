@@ -10,6 +10,7 @@ angular.module('revealModule', ['ngRoute', 'requestsModule'])
         .then(function (response) {
             teams = response.data;
             teams = $filter('orderBy')(teams, 'score', false)
+            teams = teams.filter(t => t.score > 0)
         });
         var i = 0
         vm.revealteams = []
