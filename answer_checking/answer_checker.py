@@ -1,12 +1,9 @@
 from fuzzywuzzy import fuzz, process
 import re
-from view.models import SubAnswerGiven
 from view.models import SubAnswer
 from view.models import Variant, Person, AnswerGiven
 from view.models import Question
 from view import db
-
-import time
 
 
 # TODO: check string similarity using fuzzywuzzy (https://www.datacamp.com/community/tutorials/fuzzy-string-python)
@@ -150,71 +147,6 @@ def get_variant_lists(question_id):
         variant_lists.append(variants)
 
     return variant_lists
-
-
-def check_all_answers(threshold=50, max_conf_incorrect=50, max_conf_correct=100):
-    print("Checking all answers")
-    all_subanswers_given = SubAnswerGiven.query.all()
-    checker = Person.query.filter_by(personname="systeem").first()
-
-    # check correctness per given answer
-    for subanswer_given in all_subanswers_given:
-        correct = False
-        confidence_true = 0
-        confidence_false = 0
-
-        if subanswer_given.checkedby.personname == 'nog niet nagekeken':  # 'systeem'
-            answer_given = AnswerGiven.query.filter_by(id=subanswer_given.answergiven_id).first()
-
-            # this list is constructed for every subanswer! relevant for double-checking the same answers
-            variant_lists = get_variant_lists(answer_given.question_id)
-            question = Question.query.filter_by(id=answer_given.question_id).first()
-
-            print("Question: '" + question.question + "'")
-            print("Correct answer options: " + str(variant_lists))
-            print("Given answer: '" + subanswer_given.read_answer + "'")
-
-            # empty answers are incorrect
-            if len(subanswer_given.read_answer) == 0:  # Any other reasons to immediately see the answer as False?
-                print("No answer; incorrect")
-                confidence_false = max_conf_incorrect
-            # not empty:
-            else:
-                for variants in variant_lists:
-                    # TODO @wouter: remember checked answers! If an answer occurs twice, the second instance should not
-                    #  be correct (If the same answer twice is correct, than the "correct answers" should contain two of
-                    #  the same answer). So, all variants of the first instance should be removed (locally).
-
-                    # check if current answer is similar
-                    correct_temp, confidence_temp = check_correct(subanswer_given.read_answer,
-                                                                  variants,
-                                                                  threshold,
-                                                                  max_conf_incorrect,
-                                                                  max_conf_correct)
-
-                    if correct_temp:
-                        print("Found similar answer in: " + str(variants))
-                        correct = True
-                        if confidence_temp > confidence_true:
-                            confidence_true = confidence_temp
-                    else:
-                        # print("Not similar to: " + str(variants))
-                        if confidence_temp < confidence_false:
-                            confidence_false = confidence_temp
-                        # confidence should be equal to lowest confidence
-            linereadconfidence = subanswer_given.probability_read_answer
-            if correct:
-                subanswer_given.confidence = int(confidence_true * linereadconfidence)
-                print("Correct!")
-            else:
-                subanswer_given.confidence = int(confidence_false * linereadconfidence)
-                print("No similar answer found.")
-
-            subanswer_given.correct = correct
-            subanswer_given.checkedby = checker
-        print("")
-    db.session.commit()
-    # subanswer_variants_lists.remove(subanswer_variants)
 
 
 def check_subanswer_given(subanswer_given, subanswers, checker, threshold, max_conf_incorrect, max_conf_correct):
