@@ -157,8 +157,8 @@ def get_variant_lists(question_id):
 
 def check_subanswer_given(subanswer_given, subanswers, checker, threshold, max_conf_incorrect, max_conf_correct):
     if subanswer_given.checkedby.personname != 'nog niet nagekeken':
-        # return  # correct functionality
-        pass  # testing
+        return  # correct functionality
+        # pass  # testing
     print("Read answer: '" + subanswer_given.read_answer + "'")
     if len(subanswer_given.read_answer) == 0:  # no answer: incorrect
         subanswer_given.checkedby = checker
