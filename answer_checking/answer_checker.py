@@ -4,14 +4,7 @@ from view.models import SubAnswer, Team
 from view.models import Variant, Person, AnswerGiven
 from view.models import Question
 from view import db
-import math
 
-
-# TODO: check string similarity using fuzzywuzzy (https://www.datacamp.com/community/tutorials/fuzzy-string-python)
-# TODO: Remove the entry from the list if it has been checked, to prevent duplicate answers from scoring points.
-# TODO: confidence depends on the last variant checked. This is okay for answers that are right in the end, but answers
-#  that are marked as wrong will have a confidence based on the last compared variant.
-# TODO: check if everywhere correct_ratio >= threshold = True (not correct_ratio > threshold)
 
 def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect, max_conf_correct):
     """
@@ -94,8 +87,6 @@ def check_numerical_values(answer, correct_answer_variant, threshold, max_conf_i
 
 def check_string(answer, correct_answer_variant, threshold, max_conf_incorrect, max_conf_correct):
     # TODO: use several different string comparison techniques to get better results and confidence
-    # TODO: for a question with multiple answers, if the answers are similar, only remove the most similar answer from
-    #  the "already compared" list
 
     # pre-process strings
     answer = preprocess_string(answer)
@@ -121,13 +112,7 @@ def preprocess_string(answer):
 
 
 def calculate_confidence(correct_ratio, threshold, max_conf_incorrect, max_conf_correct):
-    # might be improved by using answer length
-
-    # confidence at 100 or 0 correctness should be 100, confidence at threshold should be 0
-    # TODO: confidence should likely be lower at 0 correctness, because of reliability of the system
-    # TODO: add word-confidence
-
-    # hacky way to solve zero-division errors TODO: Create better way to solve these errors
+    # hacky way to solve zero-division errors
     if threshold == 0:
         threshold = 1
     if threshold == 100:
