@@ -4,6 +4,7 @@ from view.models import SubAnswer, Team
 from view.models import Variant, Person, AnswerGiven
 from view.models import Question
 from view import db
+import math
 
 
 # TODO: check string similarity using fuzzywuzzy (https://www.datacamp.com/community/tutorials/fuzzy-string-python)
@@ -156,8 +157,8 @@ def get_variant_lists(question_id):
 
 def check_subanswer_given(subanswer_given, subanswers, checker, threshold, max_conf_incorrect, max_conf_correct):
     if subanswer_given.checkedby.personname != 'nog niet nagekeken':
-        return  # correct functionality
-        # pass  # testing
+        # return  # correct functionality
+        pass  # testing
     print("Read answer: '" + subanswer_given.read_answer + "'")
     if len(subanswer_given.read_answer) == 0:  # no answer: incorrect
         subanswer_given.checkedby = checker
@@ -193,12 +194,12 @@ def check_subanswer_given(subanswer_given, subanswers, checker, threshold, max_c
 
     subanswer_given.checkedby = checker
     subanswer_given.correct = correct
-    linereadconfidence = subanswer_given.probability_read_answer
+    line_read_confidence_factor = subanswer_given.probability_read_answer ** (1 / float(3))
     if subanswer_given.correct:
-        subanswer_given.confidence = int(confidence_correct * linereadconfidence)
+        subanswer_given.confidence = int(confidence_correct * line_read_confidence_factor)
         subanswers.remove(most_similar_answer)  # this subanswer was already used as a correct option!
     else:
-        subanswer_given.confidence = int(confidence_false * linereadconfidence)
+        subanswer_given.confidence = int(confidence_false * line_read_confidence_factor)
     print("Commiting " + str(correct) + " with confidence " + str(subanswer_given.confidence))
     db.session.commit()
     print("")
