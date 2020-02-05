@@ -193,12 +193,12 @@ def check_subanswer_given(subanswer_given, subanswers, checker, threshold, max_c
 
     subanswer_given.checkedby = checker
     subanswer_given.correct = correct
+    linereadconfidence = subanswer_given.probability_read_answer
     if subanswer_given.correct:
-        subanswer_given.confidence = confidence_correct
+        subanswer_given.confidence = int(confidence_correct * linereadconfidence)
         subanswers.remove(most_similar_answer)  # this subanswer was already used as a correct option!
-
     else:
-        subanswer_given.confidence = confidence_false
+        subanswer_given.confidence = int(confidence_false * linereadconfidence)
     print("Commiting " + str(correct) + " with confidence " + str(subanswer_given.confidence))
     db.session.commit()
     print("")
