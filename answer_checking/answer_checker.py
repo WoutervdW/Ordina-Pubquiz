@@ -21,9 +21,6 @@ def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect
             correct = False
             confidence = 100
             continue
-        # If correct answer is only 1 symbol, take only the last symbol in the given answer
-        if len(correct_answer_variant) == 1:
-            answer = answer[-1]
 
         # Compare numbers in the answer
         correct_ratio, confidence = check_numerical_values(answer,
@@ -104,7 +101,7 @@ def preprocess_string(answer):
     answer = answer.lower()
     # answer = answer.strip()
 
-    # remove all but \w
+    # remove all but numbers and letters
     all_word_chars_pattern = re.compile(r'\w+')
     answer = all_word_chars_pattern.findall(answer)  # get all individual letters and numbers sequences
     answer = ''.join(map(str, answer))
@@ -142,8 +139,8 @@ def get_variant_lists(question_id):
 
 def check_subanswer_given(subanswer_given, subanswers, checker, threshold, max_conf_incorrect, max_conf_correct):
     if subanswer_given.checkedby.personname != 'nog niet nagekeken':
-        return  # correct functionality
-        # pass  # testing
+        # return  # correct functionality
+        pass  # testing
     print("Read answer: '" + subanswer_given.read_answer + "'")
     if len(subanswer_given.read_answer) == 0:  # no answer: incorrect
         subanswer_given.checkedby = checker
@@ -191,6 +188,7 @@ def check_subanswer_given(subanswer_given, subanswers, checker, threshold, max_c
 
 
 def iterate_questions(threshold=50, max_conf_incorrect=50, max_conf_correct=100):
+    # TODO: check different thresholds (and their precision & recall) to see which is most reliable
     # check each question for its correct answers
     print("Checking all answers")
     checker = Person.query.filter_by(personname="systeem").first()
