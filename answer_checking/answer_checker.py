@@ -70,16 +70,16 @@ def check_numerical_values(answer, correct_answer_variant, threshold, max_conf_i
             return None, 0
     elif len(correct_answer_values) != 0:  # number found in correct answer
         if len(answer_values) == 0:  # no number found in given_answer
-            return 0, max_conf_incorrect
+            return 0, max_conf_incorrect/2
         else:  # number found in given_answer
             answer_value = int(''.join(map(str, answer_values)))  # concatenate all numbers in the answer
             correct_answer_value = int(
-                ''.join(map(str, correct_answer_values)))  # concatenate all numbers in the answer
+                ''.join(map(str, correct_answer_values)))  # concatenate all numbers in the correct answer
             if answer_value == correct_answer_value:
                 return 100, max_conf_correct  # confident the answer is correct
             else:
-                # might be detected wrong, so check string comparison
-                return 0, max_conf_incorrect
+                # TODO: might be detected wrong, so check string comparison
+                return 0, max_conf_incorrect/2
 
 
 def check_string(answer, correct_answer_variant, threshold, max_conf_incorrect, max_conf_correct):
@@ -139,8 +139,8 @@ def get_variant_lists(question_id):
 
 def check_subanswer_given(subanswer_given, subanswers, checker, threshold, max_conf_incorrect, max_conf_correct):
     if subanswer_given.checkedby.personname != 'nog niet nagekeken':
-        # return  # correct functionality
-        pass  # testing
+        return  # correct functionality
+        #pass  # testing
     print("Read answer: '" + subanswer_given.read_answer + "'")
     if len(subanswer_given.read_answer) == 0:  # no answer: incorrect
         subanswer_given.checkedby = checker
