@@ -1,5 +1,4 @@
 import psycopg2
-import os
 import sys
 
 host = 'ordinapubquiz.postgres.database.azure.com'
@@ -32,7 +31,7 @@ try:
         backupline = backupline[:-2]
         backupline += ") values ( %s, %s, %s);"
         cur.execute("select * from " + table)
-        f = open('backup_azure.sql', 'w')
+        f = open('backup_azure.txt', 'w')
         for row in cur:
             f.write(backupline % row)
             f.write('\n')

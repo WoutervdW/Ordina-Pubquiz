@@ -1,0 +1,2 @@
+insert into team (id, teamname, score) values ( 2, Wilt iemand zijn Opel verplaatsen hij wordt versleept, 0);
+insert into team (id, teamname, score) values ( 4, test, 0);
