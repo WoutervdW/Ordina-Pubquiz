@@ -1,7 +1,7 @@
-from alchemydumps import AlchemyDumps, AlchemyDumpsCommand
+from flask_alchemydumps import AlchemyDumps, AlchemyDumpsCommand
 from flask import Flask
-from flask.ext.script import Manager
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_script import Manager
+from flask_sqlalchemy import SQLAlchemyc
 
 # init Flask
 app = Flask(__name__)
