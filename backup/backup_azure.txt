@@ -1,7 +1,3 @@
-insert into person (id, personname, password_hash) values ( 1, 'Sander', 'Sander');
-insert into person (id, personname, password_hash) values ( 3, 'admin', 'pbkdf2:sha256:150000$BW4w7lUk$4650e6f5ad6babfe27929a2a05cbebae91c9a3ecc97174785f61d917abf84c63');
-insert into person (id, personname, password_hash) values ( 36, 'systeem', '\N');
-insert into person (id, personname, password_hash) values ( 2, 'nog niet nagekeken', '\N');
 insert into category (id, name) values (4,	'Ordina');
 insert into category (id, name) values (5,	'namen');
 insert into category (id, name) values (6,	'tijd');
