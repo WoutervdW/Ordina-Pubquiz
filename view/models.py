@@ -139,7 +139,7 @@ class QuestionSchema(ma.Schema):
     questiontype = ma.Nested(TypeSchema)
     createdby = ma.Nested(PersonSchema)
 
-
+# mag weg
 class SubAnswerGiven(db.Model):
     """ A answer can consist of multiple lines, this indicates a single line of an answer. """
     __tablename__ = 'subanswergiven'
@@ -170,7 +170,7 @@ class SubAnswerGivenSchema(ma.Schema):
     corr_answer = ma.Nested(SubAnswerSchema)
     line = ma.Nested(LineSchema)
 
-
+# mag weg
 class AnswerGiven(db.Model):
     __tablename__ = 'answergiven'
     id = db.Column(db.Integer, primary_key=True)
@@ -188,7 +188,7 @@ class AnswerGivenSchema(ma.Schema):
     answered_by = ma.Nested(TeamSchema)
     subanswersgiven = ma.Nested(SubAnswerGivenSchema, many=True)
 
-
+# mag weg
 class Answersheet(db.Model):
     """ image of complete answersheet (handwritten) """
     __tablename__ = 'answersheet'
@@ -204,7 +204,7 @@ class Answersheet(db.Model):
     def get_team_id(self):
         return self.team_id
 
-
+# mag weg
 class AnswerSheetQuestion(db.Model):
     """ answersheet corresponding to a question """
     __tablename__ = 'answersheetquestion'
@@ -212,7 +212,7 @@ class AnswerSheetQuestion(db.Model):
     answersheet_id = db.Column(db.Integer, db.ForeignKey('answersheet.id'))
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'))
 
-
+# mag weg
 class Word(db.Model):
     """ A word object, corresponding to words in a line. """
     __tablename__ = 'word'
@@ -224,7 +224,7 @@ class Word(db.Model):
     image_width = db.Column(db.Integer)
     image_height = db.Column(db.Integer)
 
-
+# mag weg
 class Line(db.Model):
     """ A line object, corresponding to an answersheet line """
     __tablename__ = 'line'
@@ -234,7 +234,7 @@ class Line(db.Model):
     image_width = db.Column(db.Integer)
     image_height = db.Column(db.Integer)
 
-
+# mag weg
 class QuestionNumber(db.Model):
     """ A word object, corresponding to words in a line. """
     __tablename__ = 'questionnumber'

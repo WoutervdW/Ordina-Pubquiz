@@ -15,7 +15,7 @@ try:
     con = psycopg2.connect(conn_string)
     print("Connection established")
     cur = con.cursor()
-    with open('backup_azure.txt', 'r') as f:
+    with open('backup/backup_azure.txt', 'r') as f:
         for line in f:
             line = line.strip()
             print(line)

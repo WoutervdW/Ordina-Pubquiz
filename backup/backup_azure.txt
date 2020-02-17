@@ -1,0 +1,10 @@
+insert into person (id, personname, password_hash) values ( 1, 'Sander', 'Sander');
+insert into person (id, personname, password_hash) values ( 1, 'admin', 'pbkdf2:sha256:150000$BW4w7lUk$4650e6f5ad6babfe27929a2a05cbebae91c9a3ecc97174785f61d917abf84c63');
+insert into person (id, personname, password_hash) values ( 2, 'systeem', '\N');
+insert into person (id, personname, password_hash) values ( 3, 'nog niet nagekeken', '\N');
+insert into team (id, teamname, score) values ( 5, 'test1', 0);
+insert into team (id, teamname, score) values ( 6, 'test2', 0);
+insert into category (id, name) values ( 1, 'test');
+insert into question (id, questionnumber, person_id, category_id, type_id, question, active) values ( 1, 1, 1, 1, Null, 'vraag 1', Null);
+insert into subanswer (id, question_id) values ( 1, 1);
+insert into variant (id, subanswer_id, answer) values ( 1, 1, 'test');

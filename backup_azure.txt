@@ -1,2 +1,0 @@
-insert into team (id, teamname, score) values ( 5, 'test1', 0);
-insert into team (id, teamname, score) values ( 6, 'test2', 0);
