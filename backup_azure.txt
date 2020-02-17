@@ -1,2 +1,2 @@
-insert into team (id, teamname, score) values ( 2, Wilt iemand zijn Opel verplaatsen hij wordt versleept, 0);
-insert into team (id, teamname, score) values ( 4, test, 0);
+insert into team (id, teamname, score) values ( 5, 'test1', 0);
+insert into team (id, teamname, score) values ( 6, 'test2', 0);

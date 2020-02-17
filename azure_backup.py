@@ -65,7 +65,7 @@ finally:
 # print("Inserted row of data")
 
 # # Clean up
-# conn.commit()
-# cursor.close()
-# conn.close()
+conn.commit()
+cursor.close()
+conn.close()
 

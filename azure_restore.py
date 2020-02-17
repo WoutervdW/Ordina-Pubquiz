@@ -19,9 +19,14 @@ try:
         for line in f:
             line = line.strip()
             print(line)
+            cur.execute(line)
+            print("executed " + line)
 except:
     print('Error')
     sys.exit(1)
 finally:
+    con.commit()
+    cur.close()
+    con.close()
     if con:
         con.close()
