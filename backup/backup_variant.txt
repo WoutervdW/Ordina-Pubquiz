@@ -50,7 +50,7 @@ insert into variant (id, subanswer_id, answer) values (267,	236,	'Fierljeppen');
 insert into variant (id, subanswer_id, answer) values (268,	237,	'Rood');
 insert into variant (id, subanswer_id, answer) values (269,	238,	'Geel');
 insert into variant (id, subanswer_id, answer) values (270,	239,	'Korfbal');
-insert into variant (id, subanswer_id, answer) values (271,	240,	'Youp van 't Hek');
+insert into variant (id, subanswer_id, answer) values (271,	240,	'Youp van `t Hek');
 insert into variant (id, subanswer_id, answer) values (272,	241,	'Rene van der Gijp');
 insert into variant (id, subanswer_id, answer) values (273,	242,	'Roel van Velzen');
 insert into variant (id, subanswer_id, answer) values (274,	243,	'Peter R. de Vries');
