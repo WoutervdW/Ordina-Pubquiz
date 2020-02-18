@@ -27,7 +27,7 @@ def load_lines(line_detail):
     # I need to know the exact shape it had in order to load it from the database
     width = line.image_width
     height = line.image_height
-    np_line = np.fromstring(image_data, np.uint8).reshape(width, height, 3)
+    np_line = np.fromstring(image_data, np.uint8).reshape(width, height, 1)
 
     ret, png = cv2.imencode('.png', np_line)
     response = make_response(png.tobytes())
@@ -45,7 +45,7 @@ def load_lines_id(line_id):
     # I need to know the exact shape it had in order to load it from the database
     width = line.image_width
     height = line.image_height
-    np_line = np.fromstring(image_data, np.uint8).reshape(width, height, 3)
+    np_line = np.fromstring(image_data, np.uint8).reshape(width, height, 1)
 
     ret, png = cv2.imencode('.png', np_line)
     response = make_response(png.tobytes())

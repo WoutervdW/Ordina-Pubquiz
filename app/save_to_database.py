@@ -1,6 +1,7 @@
 from view.models import Answersheet
 from view.models import Team
 from view.models import QuestionNumber
+from view.models import Line
 from view import db
 
 
@@ -76,4 +77,31 @@ def save_question_number(question_image, question_number):
     db.session.add(question_recognized)
     # commit the session so that the image is stored in the database
     db.session.commit()
+
+
+def update_line_in_database(line_image, line_id):
+    # This should always give a line back since it's the id we saved from saving it in the database a few moments ago
+    line = Line.query.filter_by(id=line_id).first()
+
+    if line is None:
+        print("failed!")
+        return False
+
+    print("begin saving line %s to the database with new image" % line_id)
+    line_img = line_image.tostring()
+    print("line_iamge information %s" % (len(line_img)))
+    # create an Image object to store it in the database
+    width = len(line_image)
+    height = len(line_image[0])
+
+    print("new line has width %s and height %s" % (width, height))
+
+    line.line_image = line_img
+    line.image_width = width
+    line.image_height = height
+
+    # commit the session so that the image is stored in the database
+    db.session.commit()
+
+    print("update line with id %s" % line_id)
 

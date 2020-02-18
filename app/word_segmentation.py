@@ -90,22 +90,24 @@ def save_word_details(line_image, multiply_factor, res, number_box_size, db=None
             sub_answer_probability += float(read_results[1][0])
             print("sub_answer_probability", sub_answer_probability)
             word_count += 1
-            new_word = Word(
-                line_id=line_image[2],
-                word_recognised=read_results[0],
-                probability=float(read_results[1][0]),
-                word_image=word_image,
-                image_width=word_width,
-                image_height=word_height
-            )
-            # add the object to the database session
-            db.session.add(new_word)
-            # commit the session so that the image is stored in the database
-            db.session.commit()
+            # TODO @Sander: we don't need to save the word, we will turn it off in a real operational setting.
+            # new_word = Word(
+            #     line_id=line_image[2],
+            #     word_recognised=read_results[0],
+            #     probability=float(read_results[1][0]),
+            #     word_image=word_image,
+            #     image_width=word_width,
+            #     image_height=word_height
+            # )
+            # # add the object to the database session
+            # db.session.add(new_word)
+            # # commit the session so that the image is stored in the database
+            # db.session.commit()
 
         index += 1
 
     if db is not None:
+        # TODO @Sander: maybe identify the 'team lines' and the 'category lines' and remove them from the database.
         if question_number > 0:
             # We assume there is exactly 1 question for the given question number
             question = Question.query.filter_by(questionnumber=question_number).first()

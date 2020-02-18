@@ -13,7 +13,6 @@ from app.word_segmentation import word_segmentation, prepare_image, find_rect, s
 import os
 import cv2
 import argparse
-from view.models import Answersheet
 from view.models import Team
 from view.models import SubAnswerGiven
 from view.models import SubAnswer
@@ -30,35 +29,36 @@ from app.process_team import read_team
 from app.process_question_number import read_question_number
 
 
-def process_sheet(answer_sheet_image, model, answersheet_id):
+def process_sheet(answer_sheet_image, model):
     sub_answer_number = 0
     previous_question = -1
     team_id = -1
     read_team_name = True
+    resized_height = 50
+    # After the resizing, the size of the number box will always be around this value.
+    number_box_size = 66
     print("processing lines")
-    for line_result in line_segmentation(answer_sheet_image, answersheet_id):
+    for line_result in line_segmentation(answer_sheet_image):
         line = line_result[0]
         # The first line of each answersheet will include the team name.
         if read_team_name:
             print("reading the team name")
             read_team_name = False
             team_id = read_team(line)
-            # Each answersheet has a team name, when we read the team name we will update it on the answersheet.
-            if not save_to_database.update_team_answersheet(answersheet_id, team_id):
-                # We choose to continue and only print a logging for now
-                print("there was a problem linking the team to the answersheet")
         else:
             print("processing normal line")
             # Here we define some parameters of the line used for the processing.
             original_height = line.shape[0]
-            resized_height = 50
             multiply_factor = original_height / resized_height
-            # After the resizing, the size of the number box will always be around this value.
-            number_box_size = 66
+            # TODO @Sander: maybe update the line with the new image, which is smaller and easier to load
             line, question_image = prepare_image(line, resized_height, number_box_size)
             question_number = read_question_number(question_image, previous_question)
 
             if question_number != "":
+                # We will update the line image with the new one without the question number.
+                # The line id is taken from the result and the new line is the one without the question number
+                save_to_database.update_line_in_database(line, line_result[2])
+
                 question_id = int(question_number)
                 if question_id == previous_question:
                     # If this question has the same number as before we should find a variant, because it will have
@@ -82,16 +82,11 @@ def run_pubquiz_program(answer_sheets):
 
     for p in convert_pdf_to_image(answer_sheets):
         if p is not None:
-            print("save answersheet")
-            answersheet_id = save_to_database.save_answersheet_database(p)
-            if answersheet_id == -1:
-                return "Er is iets fout gegaan. Probeer opnieuw."
-            else:
-                try:
-                    print("start processing answersheet")
-                    process_sheet(p, model, answersheet_id)
-                except:
-                    return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
+            try:
+                print("start processing answersheet")
+                process_sheet(p, model)
+            except:
+                return "Bestand uploaden mislukt. Het bestand kan niet uitgelezen worden."
 
 
 

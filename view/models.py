@@ -229,7 +229,6 @@ class Line(db.Model):
     """ A line object, corresponding to an answersheet line """
     __tablename__ = 'line'
     id = db.Column(db.Integer, primary_key=True)
-    answersheet_id = db.Column(db.Integer, db.ForeignKey('answersheet.id'))
     line_image = db.Column(db.LargeBinary)
     image_width = db.Column(db.Integer)
     image_height = db.Column(db.Integer)

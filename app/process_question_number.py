@@ -41,7 +41,7 @@ def read_question_number(question_image, previous_question):
     if question_number_resized == question_number_blur:
         question_number = question_number_blur
 
-    # save question number to the database (mostly for debugging purposes)
-    save_question_number(question_image, question_number)
+    # save question number to the database (mostly for debugging purposes) turned off in real settings
+    # save_question_number(question_image, question_number)
 
     return question_number
