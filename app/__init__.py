@@ -45,6 +45,8 @@ def process_sheet(answer_sheet_image, model):
             print("reading the team name")
             read_team_name = False
             team_id = read_team(line)
+            # We remove the line after the team is determined since we don't need this for anything anymore.
+            save_to_database.remove_line_in_database(line_result[2])
         else:
             print("processing normal line")
             # Here we define some parameters of the line used for the processing.
@@ -70,6 +72,7 @@ def process_sheet(answer_sheet_image, model):
             else:
                 # We turn the question_id to 0. This means it will be ignored.
                 question_id = 0
+                save_to_database.remove_line_in_database(line_result[2])
             print("the question number that is read: " + str(question_id))
 
             res = word_segmentation(line, kernel_size=25, sigma=11, theta=7, min_area=100)

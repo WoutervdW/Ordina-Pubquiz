@@ -84,7 +84,7 @@ def update_line_in_database(line_image, line_id):
     line = Line.query.filter_by(id=line_id).first()
 
     if line is None:
-        print("failed!")
+        print("failed to update line!")
         return False
 
     print("begin saving line %s to the database with new image" % line_id)
@@ -104,4 +104,11 @@ def update_line_in_database(line_image, line_id):
     db.session.commit()
 
     print("update line with id %s" % line_id)
+
+
+def remove_line_in_database(line_id):
+    # This should always give a line back since it's the id we saved from saving it in the database a few moments ago
+    Line.query.filter_by(id=line_id).delete()
+    # This line is not needed for anything, so we will remove it.
+    db.session.commit()
 
