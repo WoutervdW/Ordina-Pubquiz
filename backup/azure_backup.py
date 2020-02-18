@@ -8,13 +8,7 @@ from backup import backup_type
 from backup import backup_subanswer
 from backup import backup_variant
 
-
-host = 'ordinapubquiz.postgres.database.azure.com'
-dbname = 'postgres'
-user = 'OrdinaAdmin@ordinapubquiz'
-password = '@ordina123'
-sslmode = "require"
-
+# Take host information from .flaskenv and paste it here.
 conn_string = "host={0} user={1} dbname={2} password={3} sslmode={4}".format(host, user, dbname, password, sslmode)
 # conn = psycopg2.connect(conn_string)
 
