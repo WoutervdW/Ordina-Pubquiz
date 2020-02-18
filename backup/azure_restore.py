@@ -1,11 +1,8 @@
 import psycopg2
 import sys
 
-host = 'ordinapubquiz.postgres.database.azure.com'
-dbname = 'postgres'
-user = 'OrdinaAdmin@ordinapubquiz'
-password = '@ordina123'
-sslmode = "require"
+# past host information from .flaskenv here.
+# TODO: @Sander change the database information, since you pasted it here for a moment
 
 conn_string = "host={0} user={1} dbname={2} password={3} sslmode={4}".format(host, user, dbname, password, sslmode)
 # conn = psycopg2.connect(conn_string)
