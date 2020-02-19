@@ -8,7 +8,7 @@ from view import db
 
 def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect, max_conf_correct):
     """
-    Check if string answer is correct given correct answer variants
+    Check if string answer is correct given correct answer variants and a threshold for correctness
     """
     # TODO: Use question types for the special cases (multiple choice, interval, standard)
 
@@ -63,14 +63,10 @@ def check_numerical_values(answer, correct_answer_variant, threshold, max_conf_i
     #  comparison
     # TODO: improve structure. Still quite expansive for clarity in case of possible functionality changes
     if len(correct_answer_values) == 0:  # no number found in correct_answer
-        if len(answer_values) == 0:  # no number found in given_answer
-            return None, 0
-        else:  # number found in given_answer
-            # might be detected wrong, so check string comparison
-            return None, 0
+        return None, 0
     elif len(correct_answer_values) != 0:  # number found in correct answer
         if len(answer_values) == 0:  # no number found in given_answer
-            return 0, max_conf_incorrect/2
+            return 0, max_conf_incorrect / 2
         else:  # number found in given_answer
             answer_value = int(''.join(map(str, answer_values)))  # concatenate all numbers in the answer
             correct_answer_value = int(
@@ -79,7 +75,7 @@ def check_numerical_values(answer, correct_answer_variant, threshold, max_conf_i
                 return 100, max_conf_correct  # confident the answer is correct
             else:
                 # TODO: might be detected wrong, so check string comparison
-                return 0, max_conf_incorrect/2
+                return 0, max_conf_incorrect / 2
 
 
 def check_string(answer, correct_answer_variant, threshold, max_conf_incorrect, max_conf_correct):
@@ -102,6 +98,7 @@ def preprocess_string(answer):
     # answer = answer.strip()
 
     # remove all but numbers and letters
+    # TODO: remove all characters not found in the correct answer!
     all_word_chars_pattern = re.compile(r'\w+')
     answer = all_word_chars_pattern.findall(answer)  # get all individual letters and numbers sequences
     answer = ''.join(map(str, answer))
@@ -122,25 +119,10 @@ def calculate_confidence(correct_ratio, threshold, max_conf_incorrect, max_conf_
     return confidence
 
 
-def get_variant_lists(question_id):
-    # Get the list of all correct subanswers that belong to the same question as the given subanswer
-    subanswers = SubAnswer.query.filter_by(question_id=question_id).all()
-
-    # Get all variants for each subanswer and append them into a usable list
-    variant_lists = []
-    for subanswer in subanswers:
-        subanswer_id = subanswer.id
-        variants = Variant.query.filter_by(subanswer_id=subanswer_id)
-        variants = [variant.answer for variant in variants]
-        variant_lists.append(variants)
-
-    return variant_lists
-
-
 def check_subanswer_given(subanswer_given, subanswers, checker, threshold, max_conf_incorrect, max_conf_correct):
     if subanswer_given.checkedby.personname != 'nog niet nagekeken':
         return  # correct functionality
-        #pass  # testing
+        # pass  # testing
     print("Read answer: '" + subanswer_given.read_answer + "'")
     if len(subanswer_given.read_answer) == 0:  # no answer: incorrect
         subanswer_given.checkedby = checker
@@ -189,6 +171,8 @@ def check_subanswer_given(subanswer_given, subanswers, checker, threshold, max_c
 
 def iterate_questions(threshold=50, max_conf_incorrect=50, max_conf_correct=100):
     # TODO: check different thresholds (and their precision & recall) to see which is most reliable
+    # TODO: research how confidence ranges based on how "wrong" or "right" answers are
+    # TODO: dynamically adjust threshold
     # check each question for its correct answers
     print("Checking all answers")
     checker = Person.query.filter_by(personname="systeem").first()
@@ -202,7 +186,8 @@ def iterate_questions(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
                 continue  # skip this team's answers
             print("Team: " + Team.query.filter_by(id=team_answers.team_id).first().teamname)
             subanswers_given = team_answers.subanswersgiven
-            subanswers = SubAnswer.query.filter_by(question_id=question.id).all()  # one set of subanswers per question
+            subanswers = question.subanswers
+            # SubAnswer.query.filter_by(question_id=question.id).all()  # one set of subanswers per question
 
             for subanswer_given in subanswers_given:
                 # change threshold based on question type
