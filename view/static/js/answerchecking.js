@@ -71,9 +71,8 @@ angular.module('answerCheckingModule', ['ngRoute', 'generalModule', 'requestsMod
             vm.reverse = result[0]
             vm.propertyName = result[1]
         }
-        vm.pageSize = 1;
-
+        vm.pageSize = 30;
         vm.numberOfPages=function(){
-        return Math.ceil(vm.filteredanswers.length/vm.pageSize);
-    }
+            return Math.ceil(vm.filteredanswers.length/vm.pageSize);
+        }
     })
