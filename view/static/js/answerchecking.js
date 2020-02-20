@@ -66,9 +66,14 @@ angular.module('answerCheckingModule', ['ngRoute', 'generalModule', 'requestsMod
             modal.style.display = "none";
         }
 
-         vm.sortBy = function(propertyName){
+        vm.sortBy = function(propertyName){
             result = generalService.sortBy(vm.reverse, vm.propertyName, propertyName)
             vm.reverse = result[0]
             vm.propertyName = result[1]
         }
+        vm.pageSize = 1;
+
+        vm.numberOfPages=function(){
+        return Math.ceil(vm.filteredanswers.length/vm.pageSize);
+    }
     })

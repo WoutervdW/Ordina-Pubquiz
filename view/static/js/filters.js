@@ -1,5 +1,13 @@
 angular.module('answerCheckingModule')
+    .filter('startFrom', function() {
+        console.log("start from is aangeroepen");
+        return function(input, start) {
+            start = +start; //parse to int
+            return input.slice(start);
+        }
+    })
     .filter('byTeam', function() {
+        vm.currentPage = 0;
         return function(answers, team){
             if(answers){
                 return answers.filter(function(answer){
@@ -12,6 +20,7 @@ angular.module('answerCheckingModule')
         }
     })
     .filter('byCategory', function() {
+        vm.currentPage = 0;
         return function(answers, category){
             if(answers){
                 return answers.filter(function(answer){
@@ -24,6 +33,7 @@ angular.module('answerCheckingModule')
         }
     })
     .filter('byQuestion', function() {
+        vm.currentPage = 0;
         return function(answers, question){
             if(answers){
                 return answers.filter(function(answer){
@@ -36,6 +46,7 @@ angular.module('answerCheckingModule')
         }
     })
     .filter('bySubanswers', function() {
+        vm.currentPage = 0;
         return function(answers, confidencefrom, confidenceto, correct, checkedby){
             if(answers){
                 return answers.filter(function(answer) {
@@ -79,6 +90,7 @@ angular.module('answerCheckingModule')
         }
     })
     .filter('byConfidence', function () {
+        vm.currentPage = 0;
         return function (subanswers, confidencefrom, confidenceto) {
             if (!confidencefrom && !confidenceto) {
                 return subanswers;
@@ -98,6 +110,7 @@ angular.module('answerCheckingModule')
         }
     })
     .filter('byCorrect', function () {
+        vm.currentPage = 0;
         return function (subanswers, correctfilter) {
             return subanswers.filter(function (subanswer){
                 if(correctfilter==true){
@@ -113,6 +126,7 @@ angular.module('answerCheckingModule')
         }
     })
     .filter('byChecked', function () {
+        vm.currentPage = 0;
         return function (subanswers, checkedfilter) {
             return subanswers.filter(function (subanswer){
                 if(checkedfilter){
@@ -125,6 +139,7 @@ angular.module('answerCheckingModule')
         }
     })
     .filter('pagination', function () {
+        vm.currentPage = 0;
         return function (input, page, perPage) {
             if(input){
                 return input.slice(page*perPage, (page+1) * perPage);
