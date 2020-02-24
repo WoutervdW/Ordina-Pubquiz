@@ -29,30 +29,40 @@ def create_doc(post):
         path = "pubquiz_quizsheets" + "/" + team.get_team_name()
         if not os.path.exists(path):
             os.makedirs(path)
-        document = Document()
         breaks = []
         for p in post:
             breaks.append(p)
+        documents = []
+        for b in range(0, len(breaks)+1):
+            # We create a document for each break (+ 1 because if there are 2 breaks we need 3 separate documents)
+            documents.append(Document())
+        print("breaks length %s" % len(breaks))
         lines = calculate_lines()
-        sections = document.sections
-        for section in sections:
-            section.top_margin = margin
-            section.bottom_margin = margin
-            section.left_margin = margin
-            section.right_margin = margin
-            section.page_width = page_width
-            section.page_height = page_height
 
-        style = document.styles['Normal']
-        font = style.font
-        font.name = 'Calibri'
-        font.size = Pt(22)
+        # We set the sections for each of the documents
+        for docu in documents:
+            sections = docu.sections
+            for section in sections:
+                section.top_margin = margin
+                section.bottom_margin = margin
+                section.left_margin = margin
+                section.right_margin = margin
+                section.page_width = page_width
+                section.page_height = page_height
+
+        # We set the style for each document.
+        for docu in documents:
+            style = docu.styles['Normal']
+            font = style.font
+            font.name = 'Calibri'
+            font.size = Pt(22)
+
         print("VOEG TOE TEAM", team)
-        add_team(document, lines, team, breaks)
-        try:
-            document.save(path + "/" + team.get_team_name() + "_" + getFileName())
-        except:
-            return 'Er is iets fout gegaan bij het opslaan van het bestand. Probeer het opnieuw.'
+        add_team(documents, lines, team, breaks, path)
+        # try:
+        #     document.save(path + "/" + team.get_team_name() + "_" + getFileName())
+        # except:
+        #     return 'Er is iets fout gegaan bij het opslaan van het bestand. Probeer het opnieuw.'
 
     return 'Documenten zijn opgeslagen'
 
@@ -68,7 +78,8 @@ def calculate_lines():
     return amount
 
 
-def add_team(document, lines, team, breaks):
+def add_team(documents, lines, team, breaks, path):
+    index = 0
     teamname = team.teamname
     pages = math.ceil(lines / answers_per_page)
     fromquestion = 1
@@ -77,9 +88,23 @@ def add_team(document, lines, team, breaks):
     print("AANTAL PAGINAS:", pages)
     while True:
         print("NIEUWE PAGINA VOOR TEAM", teamname, "VANAF VRAAG", fromquestion)
-        fromquestion, subanswersfromquestion, roundnumber, lastQ = add_page_for_team(document, teamname, fromquestion, subanswersfromquestion, roundnumber, breaks)
+        fromquestion, subanswersfromquestion, roundnumber, lastQ, lastQForBreak = add_page_for_team(documents[index], teamname, fromquestion, subanswersfromquestion, roundnumber, breaks)
         if lastQ:
+            try:
+                # The final question has been determined, we create the final round for the pubquiz
+                documents[index].save(path + "/" + team.get_team_name() + "_" + str(index) + "_" + getFileName())
+            except:
+                return 'Er is iets fout gegaan bij het opslaan van het bestand. Probeer het opnieuw.'
             break
+        if lastQForBreak:
+            try:
+                print("saving sheet for team %s" % team.get_team_name())
+                # document.save(path + "/" + team.get_team_name() + "_" + str(index) + "_" + getFileName())
+                documents[index].save(path + "/" + team.get_team_name() + "_" + str(index) + "_" + getFileName())
+                index += 1
+            except:
+                return 'Er is iets fout gegaan bij het opslaan van het bestand. Probeer het opnieuw.'
+            print("make page")
 
 
 def add_page_for_team(document, teamname, fromquestion, subanswersfromquestion, roundnumber, breaks):
@@ -104,7 +129,10 @@ def add_page_for_team(document, teamname, fromquestion, subanswersfromquestion, 
         currentrow.cells[1].vertical_alignment = WD_ALIGN_VERTICAL.CENTER
         currentrow.cells[0].width = column_width_number
         currentrow.cells[1].width = column_width_answer
-        if lastQForTeam or lastQForBreak:
+        if lastQForTeam:
+            rowsfilled = rowsfilled + 1
+            continue
+        if lastQForBreak:
             rowsfilled = rowsfilled + 1
             continue
         q = Question.query.filter_by(questionnumber=fromquestion).first()
@@ -134,7 +162,7 @@ def add_page_for_team(document, teamname, fromquestion, subanswersfromquestion, 
             lastQForTeam = True
         if isBreak(q, subanswersfromquestion, breaks):
             lastQForBreak = True
-    return q.questionnumber, subanswersfromquestion, roundnumber, lastQForTeam
+    return q.questionnumber, subanswersfromquestion, roundnumber, lastQForTeam, lastQForBreak
 
 
 def getFileName():
