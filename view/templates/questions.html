@@ -129,7 +129,10 @@
                 <option ng-repeat="question in vm.questions" ng-if="question.questionnumber">//question.questionnumber//</option>
             </select>
         </div>
-         <button class="btn btn-primary" ng-click="vm.createDoc()">Maak antwoordvel</button>
+        <button class="btn btn-primary" ng-click="vm.createDoc()">Maak antwoordvel</button>
+        <a href="/api/v1.0/download/templates" class="btn btn-primary">
+            Download Templates
+        </a>
     </div>
 </div>
 </section>

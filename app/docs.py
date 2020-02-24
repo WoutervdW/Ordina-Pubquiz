@@ -20,13 +20,13 @@ page_height = Mm(297)
 
 def create_doc(post):
     # We place all the pubquiz sheets in this folder, with a sub folder for each team
-    path = "pubquiz_quizsheets"
+    path = "pubquiz_sheets"
     if not os.path.exists(path):
         os.makedirs(path)
     teams = Team.query.all()
     print("ALLE TEAMS", teams)
     for team in teams:
-        path = "pubquiz_quizsheets" + "/" + team.get_team_name()
+        path = "pubquiz_sheets" + "/" + team.get_team_name()
         if not os.path.exists(path):
             os.makedirs(path)
         breaks = []

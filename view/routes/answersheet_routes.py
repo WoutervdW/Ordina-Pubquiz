@@ -9,9 +9,15 @@ from flask import request
 from flask import make_response
 from flask import render_template
 from flask import url_for
+from flask import send_file
 import numpy as np
 import cv2
 from app import docs
+import zipfile
+import io
+import os
+import pathlib
+import shutil
 
 
 @view.route('/answersheets/nuke', methods=['GET'])
@@ -82,8 +88,31 @@ def nuke_all():
 
 @view.route('/api/v1.0/createdoc', methods=['POST'])
 def create_doc():
+    # First we remove the folder 'pubquiz_sheets' because we want to create that folder with new content
+    if os.path.exists('pubquiz_sheets'):
+        shutil.rmtree('pubquiz_sheets')
     post = request.get_json()
     print("ER IS POST %s" % post)
     message = docs.create_doc(post)
-    # After the document is created we want to send it to the user.
     return message
+
+
+@view.route('/api/v1.0/download/templates', methods=['GET'])
+def request_answersheet_templates():
+    # After the document is created we want to send it to the user.
+    base_path = pathlib.Path('pubquiz_sheets')
+    data = io.BytesIO()
+    with zipfile.ZipFile(data, mode='w') as z:
+        for f_name in base_path.iterdir():
+            print("folder %s" % str(f_name))
+            for doc_file in f_name.iterdir():
+                print("file %s" % str(doc_file))
+                z.write(doc_file)
+    data.seek(0)
+    return send_file(
+        data,
+        mimetype='application/zip',
+        as_attachment=True,
+        attachment_filename='templates.zip'
+    )
+

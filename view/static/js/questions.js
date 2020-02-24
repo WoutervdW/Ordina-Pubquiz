@@ -157,6 +157,9 @@ angular.module('questionModule', ['ngRoute','requestsModule', 'generalModule'])
                 vm.creatingFile=false;
             })
         }
+        vm.goToUrl = function(){
+            console.log("hello")
+        }
         vm.updateBreaks = function(){
             vm.breaks = []
             for (i = 0; i < vm.amountOfBreaks; i++){
