@@ -6,6 +6,7 @@ from docx.enum.table import WD_ALIGN_VERTICAL, WD_TABLE_ALIGNMENT
 from view.models import Question, Team, SubAnswer
 from sqlalchemy import func
 from datetime import datetime
+import os
 
 
 answers_per_page = 13
@@ -18,34 +19,42 @@ page_height = Mm(297)
 
 
 def create_doc(post):
-    document = Document()
-    breaks = []
-    for p in post:
-        breaks.append(p)
-    lines = calculate_lines()
-    sections = document.sections
-    for section in sections:
-        section.top_margin = margin
-        section.bottom_margin = margin
-        section.left_margin = margin
-        section.right_margin = margin
-        section.page_width = page_width
-        section.page_height = page_height
-
-    style = document.styles['Normal']
-    font = style.font
-    font.name = 'Calibri'
-    font.size = Pt(22)
+    # We place all the pubquiz sheets in this folder, with a sub folder for each team
+    path = "pubquiz_quizsheets"
+    if not os.path.exists(path):
+        os.makedirs(path)
     teams = Team.query.all()
     print("ALLE TEAMS", teams)
     for team in teams:
+        path = "pubquiz_quizsheets" + "/" + team.get_team_name()
+        if not os.path.exists(path):
+            os.makedirs(path)
+        document = Document()
+        breaks = []
+        for p in post:
+            breaks.append(p)
+        lines = calculate_lines()
+        sections = document.sections
+        for section in sections:
+            section.top_margin = margin
+            section.bottom_margin = margin
+            section.left_margin = margin
+            section.right_margin = margin
+            section.page_width = page_width
+            section.page_height = page_height
+
+        style = document.styles['Normal']
+        font = style.font
+        font.name = 'Calibri'
+        font.size = Pt(22)
         print("VOEG TOE TEAM", team)
         add_team(document, lines, team, breaks)
-    try:
-        document.save(getFileName())
-        return 'Document is opgeslagen'
-    except:
-        return 'Er is iets fout gegaan bij het opslaan van het bestand. Probeer het opnieuw.'
+        try:
+            document.save(path + "/" + team.get_team_name() + "_" + getFileName())
+        except:
+            return 'Er is iets fout gegaan bij het opslaan van het bestand. Probeer het opnieuw.'
+
+    return 'Documenten zijn opgeslagen'
 
 
 def calculate_lines():

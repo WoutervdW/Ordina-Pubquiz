@@ -83,6 +83,6 @@ def nuke_all():
 @view.route('/api/v1.0/createdoc', methods=['POST'])
 def create_doc():
     post = request.get_json()
-    print("ER IS POST", post)
+    print("ER IS POST %s" % post)
     message = docs.create_doc(post)
     return message
