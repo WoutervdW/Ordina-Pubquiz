@@ -85,4 +85,5 @@ def create_doc():
     post = request.get_json()
     print("ER IS POST %s" % post)
     message = docs.create_doc(post)
+    # After the document is created we want to send it to the user.
     return message
