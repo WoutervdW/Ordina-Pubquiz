@@ -195,7 +195,7 @@ def line_segmentation(answer_image_original):
         # Save the line image to the database!
         # convert the image to byte array so it can be saved in the database
         answer = full_line.tostring()
-        
+
         if db is not None:
             new_line = Line(
                 line_image=answer,

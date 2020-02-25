@@ -12,15 +12,15 @@ def read_question_number(question_image, previous_question):
     # Read the number from the number box. After that we remove any non numbers (in case of lines)
     # The configuration is to only read numbers and to look for 1 word
     # TODO @Sander: explain why this pre-processing is done.
-    # resized_question_number = cv2.resize(question_image, (0, 0), fx=5, fy=5)
-    # ret, thresh1 = cv2.threshold(resized_question_number, 150, 255, cv2.THRESH_BINARY)
+    # resized_question_number = cv2.resize(question_image, (0, 0), fx=2, fy=2)
+    ret, thresh1 = cv2.threshold(question_image, 200, 255, cv2.THRESH_BINARY)
     # kernel = np.ones((5, 5), np.uint8)
-    # erode = cv2.erode(thresh1, kernel, iterations=1)
-    # blur2 = cv2.blur(question_image, (9, 9))
+    # erode = cv2.erode(question_image, kernel, iterations=1)
+    blur2 = cv2.blur(thresh1, (2, 2))
     #
     # question_number_resized = pytesseract.image_to_string(resized_question_number,
     # config='--psm 10 --oem 3 -c tessedit_char_whitelist=0123456789')
-    question_number_blur = pytesseract.image_to_string(question_image,
+    question_number_blur = pytesseract.image_to_string(blur2,
                                                        config='--psm 10 --oem 3 -c tessedit_char_whitelist=0123456789')
 
     # question_number_resized = re.sub("[^0-9]", "", question_number_resized)
@@ -42,6 +42,6 @@ def read_question_number(question_image, previous_question):
     #     question_number = question_number_blur
 
     # save question number to the database (mostly for debugging purposes) turned off in real settings for speed
-    save_question_number(question_image, question_number)
+    # save_question_number(blur2, question_number)
 
     return question_number
