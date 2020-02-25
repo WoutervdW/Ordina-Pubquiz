@@ -128,10 +128,8 @@ def line_segmentation(answer_image_original):
     # show_image(left_side_img)
     # The blocks will have a specific area which we will look for.
     left_block_contours = []
-    print("left side")
     for c in contours_left_side:
         area = cv2.contourArea(c)
-        print(area)
         # Area is about 100000 with the line we defined
         # TODO Fix magic numbers We chose these area numbers to be the area size of the contours found left and right
         if 20000 < area < 30000:
@@ -153,10 +151,8 @@ def line_segmentation(answer_image_original):
     cv2.drawContours(right_side_img, contours_right_side, -1, (0, 255, 0), thickness=5)
 
     right_block_contours = []
-    print("right side")
     for c in contours_right_side:
         area = cv2.contourArea(c)
-        print(area)
         # Area is about 60000 with the line we defined
         if 4000 < area < 12500:
             right_block_contours.append(c)
@@ -199,20 +195,20 @@ def line_segmentation(answer_image_original):
         # Save the line image to the database!
         # convert the image to byte array so it can be saved in the database
         answer = full_line.tostring()
-        #
-        # if db is not None:
-        #     new_line = Line(
-        #         line_image=answer,
-        #         image_width=line_width,
-        #         image_height=line_height
-        #     )
-        #     # add the object to the database session
-        #     db.session.add(new_line)
-        #     # commit the session so that the image is stored in the database
-        #     db.session.commit()
-        #
-        #     # We pass the line id along to link the words with the correct line.
-        #     finished_line.append(new_line.id)
+        
+        if db is not None:
+            new_line = Line(
+                line_image=answer,
+                image_width=line_width,
+                image_height=line_height
+            )
+            # add the object to the database session
+            db.session.add(new_line)
+            # commit the session so that the image is stored in the database
+            db.session.commit()
+
+            # We pass the line id along to link the words with the correct line.
+            finished_line.append(new_line.id)
 
         yield finished_line
 
