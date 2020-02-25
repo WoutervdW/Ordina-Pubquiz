@@ -186,8 +186,8 @@ def iterate_questions(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
                 continue  # skip this team's answers
             print("Team: " + Team.query.filter_by(id=team_answers.team_id).first().teamname)
             subanswers_given = team_answers.subanswersgiven
-            subanswers = question.subanswers
-            # SubAnswer.query.filter_by(question_id=question.id).all()  # one set of subanswers per question
+            #subanswers = question.subanswers
+            subanswers = SubAnswer.query.filter_by(question_id=question.id).all()  # one set of subanswers per question
 
             for subanswer_given in subanswers_given:
                 # change threshold based on question type
