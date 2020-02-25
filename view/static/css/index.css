@@ -217,3 +217,8 @@ input:checked + .slider:before {
 .filter-label {
     width: 40%;
 }
+
+.answertable {
+    width:95%;
+    margin:auto;
+}
