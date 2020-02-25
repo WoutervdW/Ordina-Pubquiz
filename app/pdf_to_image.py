@@ -24,7 +24,6 @@ def convert_pdf_to_image(path):
 
     for page in range(1, max_pages+1, 1):
         p = convert_from_path(path, dpi=200, first_page=page, last_page=page)
-        print("size of p " + str(len(p)))
         # We are processing it as such that this will always give 1 result. We return the image of the single result
         open_cv_image = np.array(p[0])
         yield open_cv_image
