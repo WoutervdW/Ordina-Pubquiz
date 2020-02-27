@@ -39,13 +39,14 @@ def get_persons():
 @view.route('/api/v1.0/answers', methods=['GET'])
 def get_answers():
     answers_schema = AnswerGivenSchema(many=True)
-    # allanswers = AnswerGiven.query.all()
     print("the page number here is! %s" % Config.vraag)
-    question = Question.query.filter_by(questionnumber=Config.vraag).first()
-    if question is None:
-        return "question number is not existing!"
-    allanswers = AnswerGiven.query.filter_by(question_id=question.get_question_id())
-    print(allanswers)
+    if Config.vraag == -1:
+        allanswers = AnswerGiven.query.all()
+    else:
+        question = Question.query.filter_by(questionnumber=Config.vraag).first()
+        if question is None:
+            return "question number is not existing!"
+        allanswers = AnswerGiven.query.filter_by(question_id=question.get_question_id())
     if allanswers is not None:
         result = answers_schema.dump(allanswers)
         return jsonify(result)
