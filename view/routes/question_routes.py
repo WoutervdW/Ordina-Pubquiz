@@ -1,6 +1,6 @@
 from view import view, db
 from flask import request, session, jsonify, url_for, flash
-from view.models import Question, QuestionSchema, SubAnswer, Variant, Category, CategorySchema, Person, PersonSchema, AnswerGiven, AnswerGivenSchema
+from view.models import Question, QuestionSchema, SubAnswer, Variant, Category, CategorySchema, Person, PersonSchema, AnswerGiven, AnswerGivenSchema, SubAnswerGiven
 from view.config import Config
 from flask import render_template
 
@@ -38,44 +38,17 @@ def get_persons():
 
 
 @view.route('/api/v1.0/answers', methods=['GET'])
-def get_answers_no_parameters():
-    vraag = request.args.get('question_id', 0, type=int)
-    print("vraag? %s" % vraag)
-    # TODO @Sander: This should be all zero's but I'm using this for testing!
-    return get_answers(vraag, 0, 0)
-
-
-@view.route('/api/v1.0/answers/<int:question_id>', methods=['GET'])
-def get_answers_only_question(question_id):
-    return get_answers(question_id, 0, 0)
-
-
-@view.route('/api/v1.0/answers/<int:team_id>', methods=['GET'])
-def get_answers_only_team(team_id):
-    print("wut")
-    allanswers = AnswerGiven.query.paginate(1, 20, False).items
-
-    # if question_id is not None:
-    #     for item in allanswers.all():
-    #         print(item.question_id)
-
-    result = answers_schema.dump(allanswers)
-    return jsonify(result)
-
-
-@view.route('/api/v1.0/answers/<int:question_id>/<int:team_id>', methods=['GET'])
-def get_answers_question_team(question_id, team_id):
-    return get_answers(question_id, team_id, 0)
-
-
-@view.route('/api/v1.0/answers/<int:question_id>/<int:team_id>/<int:person_id>', methods=['GET'])
-def get_answers(question_id, team_id, person_id):
+def get_answers():
     """
     :param question_id: The id of the question
     :param team_id: The id of the team 
     :param person_id: The id of the Person 
     """
     answers_schema = AnswerGivenSchema(many=True)
+    question_id = request.args.get('question_id', 0, type=int)
+    team_id = request.args.get('team_id', 0, type=int)
+    # checked_by is the person_id
+    person_id = request.args.get('checkedby_id', 0, type=int)
     print("question id %s" % question_id)
     print("team id %s" % team_id)
     print("person id %s" % person_id)
@@ -91,13 +64,13 @@ def get_answers(question_id, team_id, person_id):
     elif question_id == 0 \
             and team_id == 0 \
             and person_id != 0:
-        question = Question.query.filter_by(person_id=person_id).all()
-        # ids = []
-        # for q in question:
-        #     ids.append(q.id)
-        # print(ids)
-        # allanswers = AnswerGiven.query.filter_by(question_id.in_(ids))
-        allanswers = AnswerGiven.query.paginate(1, 20, False).items
+        sub_answer_given = SubAnswerGiven.query.filter_by(person_id=person_id).all()
+        ids = []
+        for q in sub_answer_given:
+            ids.append(q.answergiven_id)
+        print(ids)
+        allanswers = AnswerGiven.query.filter_by(AnswerGiven.id.in_((ids))).all()
+        print(allanswers)
     elif question_id != 0 \
             and team_id != 0 \
             and person_id == 0:
