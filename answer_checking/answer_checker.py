@@ -180,7 +180,7 @@ def iterate_questions(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
 
             for subanswer_given in subanswers_given:
                 # TODO: change threshold based on question type
-                if subanswer_given.checkedby.personname != 'nog niet nagekeken':  # == : correct, != : testing
+                if subanswer_given.checkedby.personname == 'nog niet nagekeken':  # == : correct, != : testing
                     correct, confidence = check_subanswer_given(subanswer_given,
                                                                 subanswers,
                                                                 threshold,
