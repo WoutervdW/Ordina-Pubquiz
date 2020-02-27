@@ -38,7 +38,7 @@
                 <label class="filter-label">Vraag:</label>
                 <select class="filter-dropdown" ng-model="vm.filteredQuestion">
                     <option ng-value="">Alle vragen</option>
-                    <option ng-repeat="question in vm.questions | orderBy:question.questionnumber" ng-value="question">//question.questionnumber// //question.question//</option>
+                    <option ng-repeat="question in vm.questions" ng-value="question">//question.questionnumber// //question.question//</option>
                 </select>
             </div>
             <div>
