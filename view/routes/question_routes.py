@@ -1,6 +1,7 @@
 from view import view, db
 from flask import request, session, jsonify, url_for, flash
 from view.models import Question, QuestionSchema, SubAnswer, Variant, Category, CategorySchema, Person, PersonSchema, AnswerGiven, AnswerGivenSchema
+from view.config import Config
 
 
 @view.route('/api/v1.0/questions', methods=['GET'])
@@ -38,9 +39,18 @@ def get_persons():
 @view.route('/api/v1.0/answers', methods=['GET'])
 def get_answers():
     answers_schema = AnswerGivenSchema(many=True)
-    allanswers = AnswerGiven.query.all()
-    result = answers_schema.dump(allanswers)
-    return jsonify(result)
+    # allanswers = AnswerGiven.query.all()
+    print("the page number here is! %s" % Config.vraag)
+    question = Question.query.filter_by(questionnumber=Config.vraag).first()
+    if question is None:
+        return "question number is not existing!"
+    allanswers = AnswerGiven.query.filter_by(question_id=question.get_question_id())
+    print(allanswers)
+    if allanswers is not None:
+        result = answers_schema.dump(allanswers)
+        return jsonify(result)
+    else:
+        return "question id does not exist!"
 
 
 @view.route('/api/v1.0/updatequestion', methods=['POST'])
