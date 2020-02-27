@@ -14,7 +14,7 @@ angular.module('revealModule', ['ngRoute', 'requestsModule'])
         });
         var i = 0;
         vm.revealteams = []
-        vm.revealteams = $filter('orderBy')(vm.revealteams, 'score', true)
+        vm.revealteams = $filter('orderBy')(vm.revealteams, 'score', true);
         $interval(function () {
             vm.time = vm.time + 1000;
             if (i < teams.length) {
