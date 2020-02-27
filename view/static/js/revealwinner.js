@@ -25,7 +25,7 @@ angular.module('revealModule', ['ngRoute', 'requestsModule'])
                 });
                 i += 1;
             }
-        }, 4000)
+        }, 2000)
     })
 
 
