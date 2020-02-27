@@ -44,6 +44,7 @@ angular.module('requestsModule', [])
                 }
                 console.log(url);
                 let response = $http.get(url.toString());
+                console.log(response);
                 return response;
             },
             getPersons: function(){
