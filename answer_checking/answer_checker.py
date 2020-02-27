@@ -21,13 +21,9 @@ def calculate_confidence(correct_ratio, threshold, max_conf_incorrect, max_conf_
 
 
 def preprocess_string(answer):
-    # lower & upper case is handled by fuzz.WRatio
+    # TODO: just remove all characters not found in the correct answer
     answer = answer.lower()
-    # answer = answer.strip()
-
-    # remove all but numbers and letters
-    # TODO: remove all characters not found in the correct answer!
-    all_word_chars_pattern = re.compile(r'\w+')
+    all_word_chars_pattern = re.compile(r'\w+')  # remove all but numbers and letters
     answer = all_word_chars_pattern.findall(answer)  # get all individual letters and numbers sequences
     answer = ''.join(map(str, answer))
     return answer
@@ -54,28 +50,32 @@ def check_numerical_values(answer, correct_answer_variant, threshold, max_conf_i
     :param correct_answer_variant: string
     :return: None if no number in correct answer, True if correct number in given answer, False if incorrect number
     """
-    # TODO: "1990 " marked as false when correct answer is "1990" or "negentiennegentig"
+    # TODO: if the answer (or probably better: the correct answer!) contains both letters and numbers, do letter-based
+    #  comparison
+    # TODO: improve structure. Still quite expansive for clarity in case of possible functionality changes
     all_digits_pattern = re.compile(r'\d+')  # get all individual numbers
     answer_values = all_digits_pattern.findall(answer)  # Find all numbers in the answer
     correct_answer_values = all_digits_pattern.findall(correct_answer_variant)  # Find all numbers in the correct answer
 
-    # TODO: if the answer (or probably better: the correct answer!) contains both letters and numbers, do letter-based
-    #  comparison
-    # TODO: improve structure. Still quite expansive for clarity in case of possible functionality changes
     if len(correct_answer_values) == 0:  # no number found in correct_answer
         return None, 0
-    elif len(correct_answer_values) != 0:  # number found in correct answer
+    else:  # number found in correct answer
         if len(answer_values) == 0:  # no number found in given_answer
             return 0, max_conf_incorrect / 2
         else:  # number found in given_answer
-            answer_value = int(''.join(map(str, answer_values)))  # concatenate all numbers in the answer
-            correct_answer_value = int(
-                ''.join(map(str, correct_answer_values)))  # concatenate all numbers in the correct answer
-            if answer_value == correct_answer_value:
-                return 100, max_conf_correct  # confident the answer is correct
-            else:
-                # TODO: might be detected wrong, so check string comparison
-                return 0, max_conf_incorrect / 2
+            # concatenate all numbers in the answer and in the correct answer
+            answer_value = int(''.join(map(str, answer_values)))
+            correct_answer_value = int(''.join(map(str, correct_answer_values)))
+            # if answer_value == correct_answer_value:
+            #    return 100, max_conf_correct  # confident the answer is correct
+            # else:
+            # TODO: might be detected wrong, so check string comparison
+            # return 0, max_conf_incorrect / 2
+            return check_string(str(answer_value),
+                                str(correct_answer_value),
+                                threshold,
+                                max_conf_incorrect / 2,
+                                max_conf_correct)
 
 
 def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect, max_conf_correct):
@@ -90,32 +90,31 @@ def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect
     for correct_answer_variant in correct_answer_variants:
         # check if given answer is too short
         if len(correct_answer_variant) / len(answer) >= 2:  # Will sometimes be divided by zero
-            correct = False
-            confidence = 100
-            continue
-
-        # Compare numbers in the answer
-        correct_ratio, confidence = check_numerical_values(answer,
-                                                           correct_answer_variant,
-                                                           threshold,
-                                                           max_conf_incorrect,
-                                                           max_conf_correct)
-        if correct_ratio is None:
-            # No number in correct answer, check correctness based on string comparison
-            correct_ratio, confidence = check_string(answer, correct_answer_variant, threshold, max_conf_incorrect,
-                                                     max_conf_correct)
-            correct = correct_ratio >= threshold
-            continue
-
-        elif correct_ratio >= threshold:
-            # Number correct, see if the rest of the string is also correct.
-            # TODO: Combine the correctness of the string and number parts
-            correct = True
-            continue
-
+            correct_ratio = 0
+            confidence_variant = 100
         else:
-            correct = False
-            continue
+            # Compare numbers in the answer
+            correct_ratio, confidence_variant = check_numerical_values(answer,
+                                                                       correct_answer_variant,
+                                                                       threshold,
+                                                                       max_conf_incorrect,
+                                                                       max_conf_correct)
+
+            if correct_ratio is None:  # No number in correct answer
+                # check correctness based on string comparison
+                correct_ratio, confidence_variant = check_string(answer,
+                                                                 correct_answer_variant,
+                                                                 threshold,
+                                                                 max_conf_incorrect,
+                                                                 max_conf_correct)
+
+        if correct_ratio >= threshold:
+            correct = True
+            print("Found similar answer in: " + correct_answer_variant)
+            if confidence_variant > confidence:
+                confidence = confidence_variant
+        else:
+            print("Not similar to: " + correct_answer_variant)
 
     return correct, confidence
 
@@ -141,13 +140,11 @@ def check_subanswer_given(subanswer_given, subanswers, threshold, max_conf_incor
                                                       max_conf_correct)
 
         if correct_temp:
-            print("Found similar answer in: " + str(variants))
             correct = True
             if confidence_temp >= confidence_correct:
                 confidence_correct = confidence_temp
                 most_similar_answer = subanswer
         else:  # not correct
-            print("Not similar to: " + str(variants))
             if confidence_temp <= confidence_false:
                 confidence_false = confidence_temp
 
@@ -183,7 +180,7 @@ def iterate_questions(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
 
             for subanswer_given in subanswers_given:
                 # TODO: change threshold based on question type
-                if subanswer_given.checkedby.personname == 'nog niet nagekeken':  # == : correct, != : testing
+                if subanswer_given.checkedby.personname != 'nog niet nagekeken':  # == : correct, != : testing
                     correct, confidence = check_subanswer_given(subanswer_given,
                                                                 subanswers,
                                                                 threshold,
