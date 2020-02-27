@@ -3,22 +3,20 @@ import os
 import cv2
 from app.line_segmentation import line_segmentation
 
-
 def read_number_of_lines(path, file_name):
     answer_sheet_image = cv2.imread(path + file_name + "_image.png")
     image_path = "test_files/line_files/"
     # If the folder does not exist yet we want to create it
     if not os.path.exists(image_path):
         os.makedirs(image_path)
-    save_image = False
     path = image_path + file_name
     if not os.path.exists(path):
         os.makedirs(path)
-    if len(os.listdir(path)) == 0:
-        # If the directory is empty then we want to save the lines that the test finds to the folder for the next tests
-        save_image = True
-    lines = line_segmentation(answer_sheet_image, save_image, image_path, file_name)
-    return len(lines)
+    index = 0
+    for line in line_segmentation(answer_sheet_image):
+        cv2.imwrite(path + "/line_ " + str(index) + ".png", line[0])
+        index += 1
+    return index
 
 
 def read_line_ratios(path):
@@ -53,7 +51,7 @@ class LineSegmentationTest(unittest.TestCase):
         it should return and we want to test for the specific number of lines.
         """
         path = "test_files/image_files/"
-        file_name = "grayscale_pubquiz_0"
+        file_name = "double_side_test_big_numbers_11"
         line_length = read_number_of_lines(path, file_name)
         self.assertEqual(line_length, 14)
 

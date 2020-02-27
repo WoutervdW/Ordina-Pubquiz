@@ -7,6 +7,7 @@ from view.models import Question, Team, SubAnswer
 from sqlalchemy import func
 from datetime import datetime
 import os
+from docx.enum.style import WD_STYLE_TYPE
 
 
 answers_per_page = 13
@@ -51,14 +52,28 @@ def create_doc(post):
                 section.page_height = page_height
 
         # We set the style for each document.
+        title_styles = []
+        number_cell_styles = []
         for docu in documents:
-            style = docu.styles['Normal']
-            font = style.font
-            font.name = 'Calibri'
-            font.size = Pt(22)
+            styles = docu.styles
+
+            title_style = styles.add_style('TitleCell', WD_STYLE_TYPE.PARAGRAPH)
+            title_font = title_style.font
+            title_font.name = 'Calibri'
+            title_font.bold = False
+            title_font.size = Pt(22)
+            title_style.font.underline = False
+            title_styles.append(title_style)
+
+            number_cell_style = styles.add_style('NumberCell', WD_STYLE_TYPE.PARAGRAPH)
+            number_cell_font = number_cell_style.font
+            number_cell_font.name = 'Calibri'
+            number_cell_font.bold = True
+            number_cell_font.size = Pt(28)
+            number_cell_styles.append(number_cell_style)
 
         print("VOEG TOE TEAM", team)
-        add_team(documents, lines, team, breaks, path)
+        add_team(documents, lines, team, breaks, path, title_styles, number_cell_styles)
         # try:
         #     document.save(path + "/" + team.get_team_name() + "_" + getFileName())
         # except:
@@ -78,7 +93,7 @@ def calculate_lines():
     return amount
 
 
-def add_team(documents, lines, team, breaks, path):
+def add_team(documents, lines, team, breaks, path, title_styles, number_cell_styles):
     index = 0
     teamname = team.teamname
     pages = math.ceil(lines / answers_per_page)
@@ -88,7 +103,7 @@ def add_team(documents, lines, team, breaks, path):
     print("AANTAL PAGINAS:", pages)
     while True:
         print("NIEUWE PAGINA VOOR TEAM", teamname, "VANAF VRAAG", fromquestion)
-        fromquestion, subanswersfromquestion, roundnumber, lastQ, lastQForBreak = add_page_for_team(documents[index], teamname, fromquestion, subanswersfromquestion, roundnumber, breaks)
+        fromquestion, subanswersfromquestion, roundnumber, lastQ, lastQForBreak = add_page_for_team(documents[index], teamname, fromquestion, subanswersfromquestion, roundnumber, breaks, title_styles[index], number_cell_styles[index])
         if lastQ:
             try:
                 # The final question has been determined, we create the final round for the pubquiz
@@ -107,7 +122,7 @@ def add_team(documents, lines, team, breaks, path):
             print("make page")
 
 
-def add_page_for_team(document, teamname, fromquestion, subanswersfromquestion, roundnumber, breaks):
+def add_page_for_team(document, teamname, fromquestion, subanswersfromquestion, roundnumber, breaks, title_style, number_cell_style):
     table = document.add_table(rows=answers_per_page+1, cols=2)
     table.style = 'TableGrid'
     table.rows[0].height = row_height
@@ -118,6 +133,8 @@ def add_page_for_team(document, teamname, fromquestion, subanswersfromquestion, 
     title[1].width = column_width_answer
     title[0].text = 'Quiz'
     title[1].text = 'Naam: ' + teamname
+    title[0].paragraphs[0].style = title_style
+    title[1].paragraphs[0].style = title_style
     rowsfilled = 0
     title[0].paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER
     lastQForTeam = False
@@ -144,10 +161,14 @@ def add_page_for_team(document, teamname, fromquestion, subanswersfromquestion, 
                     roundnumber += 1
                     currentrow.cells[0].text = ""
                     currentrow.cells[1].text = "Ronde " + str(roundnumber) + ": " + str(getCategoryNumber(q))
+                    currentrow.cells[0].paragraphs[0].style = title_style
+                    currentrow.cells[1].paragraphs[0].style = title_style
                     print("NIEUWE RONDE:", roundnumber)
                 else:
                     currentrow.cells[0].text = str(q.questionnumber)
                     currentrow.cells[1].text = ""
+                    currentrow.cells[0].paragraphs[0].style = number_cell_style
+                    currentrow.cells[1].paragraphs[0].style = number_cell_style
                     subanswersfromquestion = subanswersfromquestion + 1
                     print("ZELFDE VRAAG", q.questionnumber)
                 currentrow.cells[0].paragraphs[0].paragraph_format.alignment = WD_TABLE_ALIGNMENT.CENTER

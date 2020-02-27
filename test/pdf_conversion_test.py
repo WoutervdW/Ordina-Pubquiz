@@ -14,7 +14,7 @@ class PdfConversionTest(unittest.TestCase):
         If multiple scans are read they are converted individually. This is because we will have 2 separate files
         rather than 1 pdf with 2 pages so we would need to call the function twice regardless.
         """
-        file_name = "grayscale_pubquiz"
+        file_name = "double_side_test_big_numbers"
         pubquiz_answer_sheet = '../original_scan/' + file_name + '.pdf'
         answer_sheets_image = convert_pdf_to_image(pubquiz_answer_sheet)
         # For this test we only read 1 file
@@ -25,19 +25,19 @@ class PdfConversionTest(unittest.TestCase):
         self.assertEqual(len(answer_sheet_image[0][0]), 3)
 
     def test_multiple_pdf_pages(self):
-        file_name = "grayscale_pubquiz"
+        file_name = "Pubquiz_double_sided_test_Wouter"
         path = '../original_scan/'
         pubquiz_answer_sheet = path + file_name + '.pdf'
-        answer_sheets_image = convert_pdf_to_image(pubquiz_answer_sheet)
 
         # If the test is successful we save the the images if the folder is empty so we can use these in the next tests
         path = 'test_files/image_files/'
         if not os.path.exists(path):
             os.makedirs(path)
-        if len(os.listdir(path)) == 0:
-            for index in range(0, len(answer_sheets_image)):
-                # We only save if the test was ok and the file does not exist yet.
-                cv2.imwrite(path + file_name + "_" + str(index) + "_image.png", answer_sheets_image[index])
+
+        index = 0
+        for answer_sheets_image in convert_pdf_to_image(pubquiz_answer_sheet):
+            cv2.imwrite(path + file_name + "_" + str(index) + "_image.png", answer_sheets_image)
+            index += 1
 
     def test_wrong_file_path(self):
         file_name = "wrong_file_name"

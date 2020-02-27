@@ -126,6 +126,9 @@ class Question(db.Model):
     def get_question(self):
         return self.question
 
+    def get_question_id(self):
+        return self.id
+
 
 class QuestionSchema(ma.Schema):
     class Meta:

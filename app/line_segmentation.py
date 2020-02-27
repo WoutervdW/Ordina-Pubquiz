@@ -132,7 +132,7 @@ def line_segmentation(answer_image_original):
         area = cv2.contourArea(c)
         # Area is about 100000 with the line we defined
         # TODO Fix magic numbers We chose these area numbers to be the area size of the contours found left and right
-        if 15000 < area < 25000:
+        if 20000 < area < 30000:
             left_block_contours.append(c)
 
     cv2.drawContours(left_side_img, left_block_contours, -1, (255, 0, 0), thickness=10)
@@ -154,7 +154,7 @@ def line_segmentation(answer_image_original):
     for c in contours_right_side:
         area = cv2.contourArea(c)
         # Area is about 60000 with the line we defined
-        if 8000 < area < 16000:
+        if 4000 < area < 12500:
             right_block_contours.append(c)
 
     cv2.drawContours(right_side_img, right_block_contours, -1, (255, 0, 0), thickness=10)
