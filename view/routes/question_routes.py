@@ -1,6 +1,6 @@
 from view import view, db
 from flask import request, session, jsonify, url_for, flash
-from view.models import Question, QuestionSchema, SubAnswer, Variant, Category, CategorySchema, Person, PersonSchema, AnswerGiven, AnswerGivenSchema, SubAnswerGiven
+from view.models import Question, QuestionSchema, SubAnswer, Variant, Category, CategorySchema, Person, PersonSchema, AnswerGiven, AnswerGivenSchema, SubAnswerGiven, Team
 from view.config import Config
 from flask import render_template
 
@@ -39,47 +39,175 @@ def get_persons():
 
 @view.route('/api/v1.0/answers', methods=['GET'])
 def get_answers():
-    """
-    :param question_id: The id of the question
-    :param team_id: The id of the team 
-    :param person_id: The id of the Person 
-    """
     answers_schema = AnswerGivenSchema(many=True)
     question_id = request.args.get('question_id', 0, type=int)
     team_id = request.args.get('team_id', 0, type=int)
+    correct = request.args.get('correct', None, type=bool)
+    category_id = request.args.get('category_id', 0, type=int)
     # checked_by is the person_id
     person_id = request.args.get('checkedby_id', 0, type=int)
+    confidence_from = request.args.get('confidence_from', None, type=int)
+    confidence_to = request.args.get('confidence_to', None, type=int)
     print("question id %s" % question_id)
     print("team id %s" % team_id)
     print("person id %s" % person_id)
-    # allanswers = AnswerGiven.query.paginate(1, 20, False).items
-    if question_id != 0 \
-            and team_id == 0 \
-            and person_id == 0:
-        allanswers = AnswerGiven.query.filter_by(question_id=question_id)
-    elif question_id == 0 \
-            and team_id != 0 \
-            and person_id == 0:
-        allanswers = AnswerGiven.query.filter_by(team_id=team_id)
-    elif question_id == 0 \
-            and team_id == 0 \
-            and person_id != 0:
-        sub_answer_given = SubAnswerGiven.query.filter_by(person_id=person_id).all()
+    print("correct %s" % correct)
+    # Wow this is a mess! The others are filtered by things seperate! Even though it will load a lot more,
+    # it will be a lot less than everything
+    if category_id != 0:
+        if question_id == 0 \
+                and team_id == 0 \
+                and person_id == 0:
+            questions = Question.query.filter_by(category_id=category_id).all()
+            question_ids = []
+            for q in questions:
+                question_ids.append(q.id)
+            allanswers = AnswerGiven.query.filter(AnswerGiven.question_id.in_((question_ids)))
+        elif question_id != 0 \
+                and team_id == 0 \
+                and person_id == 0:
+            questions = Question.query.filter_by(category_id=category_id, id=question_id).all()
+            question_ids = []
+            for q in questions:
+                question_ids.append(q.id)
+            allanswers = AnswerGiven.query.filter(AnswerGiven.question_id.in_((question_ids)))
+        elif question_id == 0 \
+                and team_id != 0 \
+                and person_id == 0:
+            questions = Question.query.filter_by(category_id=category_id).all()
+            question_ids = []
+            for q in questions:
+                question_ids.append(q.id)
+            allanswers = AnswerGiven.query.filter(AnswerGiven.question_id.in_((question_ids))).filter_by(team_id=team_id)
+        elif question_id != 0 \
+                and team_id != 0 \
+                and person_id == 0:
+            questions = Question.query.filter_by(category_id=category_id, id=question_id).all()
+            question_ids = []
+            for q in questions:
+                question_ids.append(q.id)
+            allanswers = AnswerGiven.query.filter(AnswerGiven.question_id.in_((question_ids)))\
+                .filter_by(team_id=team_id, question_id=question_id)
+        elif question_id == 0 \
+                and team_id == 0 \
+                and person_id != 0:
+            questions = Question.query.filter_by(category_id=category_id).all()
+            question_ids = []
+            for q in questions:
+                question_ids.append(q.id)
+            sub_answer_given = SubAnswerGiven.query.filter_by(person_id=person_id).all()
+            ids = []
+            for q in sub_answer_given:
+                ids.append(q.answergiven_id)
+            print("quick test test")
+            allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((ids))).filter(AnswerGiven.question_id.in_((question_ids)))
+        elif question_id == 0 \
+                and team_id != 0 \
+                and person_id != 0:
+            questions = Question.query.filter_by(category_id=category_id).all()
+            question_ids = []
+            for q in questions:
+                question_ids.append(q.id)
+            sub_answer_given = SubAnswerGiven.query.filter_by(person_id=person_id).all()
+            ids = []
+            for q in sub_answer_given:
+                ids.append(q.answergiven_id)
+            allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((ids))).filter(AnswerGiven.question_id.in_((question_ids))).filter_by(team_id=team_id)
+        elif question_id != 0 \
+                and team_id == 0 \
+                and person_id != 0:
+            questions = Question.query.filter_by(category_id=category_id, id=question_id).all()
+            question_ids = []
+            for q in questions:
+                question_ids.append(q.id)
+            sub_answer_given = SubAnswerGiven.query.filter_by(person_id=person_id).all()
+            ids = []
+            for q in sub_answer_given:
+                ids.append(q.answergiven_id)
+            allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((ids))).filter(AnswerGiven.question_id.in_((question_ids)))
+        elif question_id != 0 \
+                and team_id != 0 \
+                and person_id != 0:
+            questions = Question.query.filter_by(category_id=category_id, id=question_id).all()
+            question_ids = []
+            for q in questions:
+                question_ids.append(q.id)
+            sub_answer_given = SubAnswerGiven.query.filter_by(person_id=person_id).all()
+            ids = []
+            for q in sub_answer_given:
+                ids.append(q.answergiven_id)
+            allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((ids))).filter(
+                AnswerGiven.question_id.in_((question_ids))).filter_by(team_id=team_id)
+    else:
+        if question_id != 0 \
+                and team_id == 0 \
+                and person_id == 0:
+            allanswers = AnswerGiven.query.filter_by(question_id=question_id)
+        elif question_id == 0 \
+                and team_id != 0 \
+                and person_id == 0:
+            allanswers = AnswerGiven.query.filter_by(team_id=team_id)
+        elif question_id != 0 \
+                and team_id != 0 \
+                and person_id == 0:
+            allanswers = AnswerGiven.query.filter_by(question_id=question_id, team_id=team_id)
+        elif question_id == 0 \
+                and team_id == 0 \
+                and person_id != 0:
+            sub_answer_given = SubAnswerGiven.query.filter_by(person_id=person_id).all()
+            ids = []
+            for q in sub_answer_given:
+                ids.append(q.answergiven_id)
+            allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((ids)))
+        elif question_id == 0 \
+                and team_id != 0 \
+                and person_id != 0:
+            sub_answer_given = SubAnswerGiven.query.filter_by(person_id=person_id).all()
+            ids = []
+            for q in sub_answer_given:
+                ids.append(q.answergiven_id)
+            allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((ids))).filter_by(team_id=team_id)
+        elif question_id != 0 \
+                and team_id == 0 \
+                and person_id != 0:
+            sub_answer_given = SubAnswerGiven.query.filter_by(person_id=person_id).all()
+            ids = []
+            for q in sub_answer_given:
+                ids.append(q.answergiven_id)
+            allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((ids))).filter_by(question_id=question_id)
+        elif question_id != 0 \
+                and team_id != 0 \
+                and person_id != 0:
+            sub_answer_given = SubAnswerGiven.query.filter_by(person_id=person_id).all()
+            ids = []
+            for q in sub_answer_given:
+                ids.append(q.answergiven_id)
+            allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((ids))).filter_by(team_id=team_id, question_id=question_id)
+        else:
+            print("something went wrong")
+            allanswers = AnswerGiven.query.all()
+
+    if confidence_from is not None:
+        answersgiven_ids = []
+        for item in allanswers:
+            answersgiven_ids.append(item.id)
+        print("after filtering, these answergiven ids " + str(answersgiven_ids))
+        sub_answer_given = SubAnswerGiven.query.filter(SubAnswerGiven.answergiven_id.in_((answersgiven_ids))).filter(SubAnswerGiven.confidence > confidence_from)
+        sub_answer_given_ids = []
+        for q in sub_answer_given:
+            sub_answer_given_ids.append(q.answergiven_id)
+        print("after filtering, these sub_answer_given ids " + str(sub_answer_given_ids))
+
+        sub_answer_given = SubAnswerGiven.query.filter(SubAnswerGiven.id.in_(sub_answer_given_ids))
         ids = []
         for q in sub_answer_given:
             ids.append(q.answergiven_id)
-        print(ids)
-        allanswers = AnswerGiven.query.filter_by(AnswerGiven.id.in_((ids))).all()
-        print(allanswers)
-    elif question_id != 0 \
-            and team_id != 0 \
-            and person_id == 0:
-        allanswers = AnswerGiven.query.filter_by(question_id=question_id, team_id=team_id)
-    else:
-        allanswers = AnswerGiven.query.paginate(1, 20, False).items
-    # if question_id is not None:
-    #     for item in allanswers.all():
-    #         print(item.question_id)
+        allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((ids)))
+
+        temp = []
+        for item in allanswers:
+            temp.append(item.id)
+        print("and back to answer given " + str(temp))
 
     result = answers_schema.dump(allanswers)
     return jsonify(result)
