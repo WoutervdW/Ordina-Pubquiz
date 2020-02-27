@@ -7,7 +7,7 @@ body{
 
 ul{
     /*position: absolute;*/
-    width: 600px !important;
+    width: 50% !important;
     margin: 5px auto 0 !important;
     padding: 10px !important;
     box-sizing: border-box !important;
@@ -23,7 +23,7 @@ ul li{
     color: #fff!important;
     margin: 5px 0 !important;
     transition: .5s !important;
-    font-size: 30pt !important;
+    font-size: 20pt !important;
 }
 
 /*
@@ -39,38 +39,19 @@ ul li:nth-child(3){
     background: rgba(240, 125, 0, .1) !important;
 }
 */
-ul li span:nth-child(1){
-    width: 500px !important;
+
+.position{
+    margin-right: 5%;
 }
 
-ul li span:nth-child(2){
-    width: 100px !important;
-    text-align:right !important;
+.teamname{
+    width:100%;
 }
 
 
-@keyframes    firework-animation {
-    0% {background-color : #ff8426;}
-    25% {background-color : #fffc84;}
-    50% {background-color : #ff83f4;}
-    75% {background-color : #83b6ff;}
-    100% {background-color : #ff8426;}
+.score{
+   width: 100%;
+   margin-left: 5%;
+   text-align:right;
 }
-@-webkit-keyframes firework-animation {
-    0% {background-color : #ff8426;}
-    25% {background-color : #fffc84;}
-    50% {background-color : #ff83f4;}
-    75% {background-color : #83b6ff;}
-    100% {background-color : #ff8426;}
-}
-.fireWorkParticle {
-    z-index : 999;
-    position: absolute;
-    height : 5px;
-    width : 5px;
-    border-radius : 5px;
-    animation-name : firework-animation;
-    animation-timing-function : linear;
-    animation-duration : 1s;
-    animation-iteration-count : infinite;
-}
+
