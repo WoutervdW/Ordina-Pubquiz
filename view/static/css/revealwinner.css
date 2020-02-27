@@ -6,39 +6,25 @@ body{
 }
 
 ul{
-    /*position: absolute;*/
-    width: 50% !important;
-    margin: 5px auto 0 !important;
-    padding: 10px !important;
+
     box-sizing: border-box !important;
-    background: rgba(255, 161, 51, 1) !important;
+    background: black;
+ /*   background: rgba(255, 161, 51, 1) !important; */
     box-shadow: inset 0 0 15px rgba(0, 0, 0. 0.5) !important;
 
 }
 
 ul li{
     display: flex !important;
-    background: rgba(240, 125, 0, 0.6) !important;
+  /*  background:black;*/
+    background: darkorange !important;
     padding: 10px 20px !important;
     color: #fff!important;
     margin: 5px 0 !important;
     transition: .5s !important;
-    font-size: 20pt !important;
+    font-size: 16pt !important;
 }
 
-/*
-ul li:nth-child(1){
-    background: rgba(240, 125, 0, .4) !important;
-}
-
-ul li:nth-child(2){
-    background: rgba(240, 125, 0, .2) !important;
-}
-
-ul li:nth-child(3){
-    background: rgba(240, 125, 0, .1) !important;
-}
-*/
 
 .position{
     margin-right: 5%;
@@ -50,8 +36,7 @@ ul li:nth-child(3){
 
 
 .score{
-   width: 100%;
-   margin-left: 5%;
+   margin-left: 1%;
    text-align:right;
 }
 
