@@ -6,11 +6,16 @@ angular.module('answerCheckingModule', ['ngRoute', 'generalModule', 'requestsMod
    .controller('answerCheckingController', function (httpRequestsService, generalService){
         var vm = this;
         var modal = document.getElementById("myModal");
+        vm.pageSize = 30;
+
+       vm.numberOfPages=function(){
+           return Math.ceil(vm.filteredanswers.length/vm.pageSize);
+       }
 
         httpRequestsService.getAnswers()
-        .then(function (response) {
+        .then(function(response){
             vm.answers = response.data
-        });
+       });
 
          httpRequestsService.getQuestions()
         .then(function (response) {
@@ -71,8 +76,9 @@ angular.module('answerCheckingModule', ['ngRoute', 'generalModule', 'requestsMod
             vm.reverse = result[0]
             vm.propertyName = result[1]
         }
-        vm.pageSize = 30;
-        vm.numberOfPages=function(){
-            return Math.ceil(vm.filteredanswers.length/vm.pageSize);
-        }
+       vm.updateAnswers  = function (){
+            console.log(vm.filteredTeam, vm.filteredCategory, vm.filteredQuestion, vm.filteredCorrect, vm.filteredCheckedby, vm.confidenceFrom, vm.confidenceTo);
+           vm.answers = httpRequestsService.getAnswers(vm.filteredTeam, vm.filteredCategory, vm.filteredQuestion, vm.filteredCorrect, vm.filteredCheckedby, vm.confidenceFrom, vm.confidenceTo);
+       }
+
     })

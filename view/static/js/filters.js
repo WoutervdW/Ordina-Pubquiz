@@ -1,11 +1,11 @@
 angular.module('answerCheckingModule')
     .filter('startFrom', function() {
-        console.log("start from is aangeroepen");
         return function(input, start) {
             start = +start; //parse to int
             return input.slice(start);
         }
     })
+
     .filter('byTeam', function() {
         vm.currentPage = 0;
         return function(answers, team){
@@ -138,6 +138,8 @@ angular.module('answerCheckingModule')
             })
         }
     })
+
+
     .filter('pagination', function () {
         vm.currentPage = 0;
         return function (input, page, perPage) {
@@ -146,3 +148,6 @@ angular.module('answerCheckingModule')
             }
         }
     });
+
+
+

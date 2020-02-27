@@ -19,11 +19,32 @@ angular.module('requestsModule', [])
                     url: "/api/v1.0/categories"
                 })
             },
-            getAnswers: function(){
-                 return $http({
-                    method: "GET",
-                    url: "/api/v1.0/answers"
-                })
+            getAnswers: function (team, category, question, correct, checkedby, confidenceFrom, confidenceTo) {
+                var url = new URL('/api/v1.0/answers', window.location.origin);
+                if(team != null){
+                    url.searchParams.append('team_id', team.id);
+                }
+                if(category != null){
+                    url.searchParams.append('category_id', category.id);
+                }
+                if(question != null){
+                    url.searchParams.append('question_id', question.id);
+                }
+                if(correct != null){
+                    url.searchParams.append('correct', correct);
+                }
+                if(checkedby != null){
+                    url.searchParams.append('checkedby_id', checkedby.id);
+                }
+                if(confidenceFrom != null){
+                    url.searchParams.append('confidence_from', confidenceFrom);
+                }
+                if(confidenceTo != null){
+                    url.searchParams.append('confidence_to', confidenceTo);
+                }
+                console.log(url);
+                let response = $http.get(url.toString());
+                return response;
             },
             getPersons: function(){
                  return $http({
