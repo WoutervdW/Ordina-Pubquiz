@@ -85,7 +85,8 @@ def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect
     # TODO: Use question types for the special cases (multiple choice, interval, standard)
 
     correct = False
-    confidence = 0
+    confidence_true = 0
+    confidence_false = 100
 
     for correct_answer_variant in correct_answer_variants:
         # check if given answer is too short
@@ -111,12 +112,17 @@ def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect
         if correct_ratio >= threshold:
             correct = True
             print("Found similar answer in: " + correct_answer_variant)
-            if confidence_variant > confidence:
-                confidence = confidence_variant
+            if confidence_variant > confidence_true:
+                confidence_true = confidence_variant
         else:
             print("Not similar to: " + correct_answer_variant)
+            if confidence_variant <= confidence_false:
+                confidence_false = confidence_false
 
-    return correct, confidence
+    if correct:
+        return correct, confidence_true
+    else:
+        return correct, confidence_false
 
 
 def check_subanswer_given(subanswer_given, subanswers, threshold, max_conf_incorrect, max_conf_correct):
@@ -180,7 +186,7 @@ def iterate_questions(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
 
             for subanswer_given in subanswers_given:
                 # TODO: change threshold based on question type
-                if subanswer_given.checkedby.personname == 'nog niet nagekeken':  # == : correct, != : testing
+                if subanswer_given.checkedby.personname != 'nog niet nagekeken':  # == : correct, != : testing
                     correct, confidence = check_subanswer_given(subanswer_given,
                                                                 subanswers,
                                                                 threshold,
