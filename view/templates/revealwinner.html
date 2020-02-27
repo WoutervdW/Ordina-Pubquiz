@@ -12,12 +12,13 @@
 
 {% extends "base.html" %}
 {% block content %}
-<div ng-app = "revealModule" ng-controller = "revealcontroller as vm">
-    <div>
-        <ul ng-repeat = "team in vm.revealteams">
+<div ng-app="revealModule" ng-controller="revealcontroller as vm">
+    <div class="row">
+        <ul class="col-3" ng-repeat="team in vm.revealteams">
             <li>
-                <span class = "teamname">//team.teamname//</span>
-                <span class = "score">//team.score//</span>
+                <span class="position">//team.position//.</span>
+                <span class="teamname">//team.teamname//</span>
+                <span class="score">//team.score//</span>
             </li>
     </ul>
     </div>
