@@ -77,8 +77,10 @@ angular.module('answerCheckingModule', ['ngRoute', 'generalModule', 'requestsMod
             vm.propertyName = result[1]
         }
        vm.updateAnswers  = function (){
-            console.log(vm.filteredTeam, vm.filteredCategory, vm.filteredQuestion, vm.filteredCorrect, vm.filteredCheckedby, vm.confidenceFrom, vm.confidenceTo);
-           vm.answers = httpRequestsService.getAnswers(vm.filteredTeam, vm.filteredCategory, vm.filteredQuestion, vm.filteredCorrect, vm.filteredCheckedby, vm.confidenceFrom, vm.confidenceTo);
+           httpRequestsService.getAnswers(vm.filteredTeam, vm.filteredCategory, vm.filteredQuestion, vm.filteredCorrect, vm.filteredCheckedby, vm.confidenceFrom, vm.confidenceTo)
+               .then(function(response){
+                   vm.answers = response.data;
+               });
        }
 
     })

@@ -43,7 +43,6 @@ angular.module('requestsModule', [])
                     url.searchParams.append('confidence_to', confidenceTo);
                 }
                 let response = $http.get(url.toString());
-                console.log(response);
                 return response;
             },
             getPersons: function(){
