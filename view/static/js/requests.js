@@ -42,7 +42,6 @@ angular.module('requestsModule', [])
                 if(confidenceTo != null){
                     url.searchParams.append('confidence_to', confidenceTo);
                 }
-                console.log(url);
                 let response = $http.get(url.toString());
                 return response;
             },
