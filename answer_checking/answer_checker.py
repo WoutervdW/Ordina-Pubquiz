@@ -7,16 +7,16 @@ from view import db
 
 
 def calculate_confidence(correct_ratio, threshold, max_conf_incorrect, max_conf_correct):
-    # hacky way to solve zero-division errors
+    # hacky way to solve zero-division errors for unusual thresholds
     if threshold == 0:
         threshold = 1
     if threshold == 100:
         threshold = 99
 
     if correct_ratio < threshold:
-        confidence = max_conf_incorrect - correct_ratio / threshold * max_conf_incorrect
+        confidence = max_conf_incorrect - (correct_ratio / threshold * max_conf_incorrect)
     else:
-        confidence = (correct_ratio - threshold) / (max_conf_correct - threshold) * max_conf_correct
+        confidence = (correct_ratio - threshold) / (100 - threshold) * max_conf_correct
     return confidence
 
 
@@ -73,9 +73,9 @@ def check_numerical_values(answer, correct_answer_variant, threshold, max_conf_i
             # return 0, max_conf_incorrect / 2
             return check_string(str(answer_value),
                                 str(correct_answer_value),
-                                threshold,
+                                min(int(threshold * 1.5), 100),
                                 max_conf_incorrect / 2,
-                                max_conf_correct)
+                                max_conf_correct / 2)
 
 
 def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect, max_conf_correct):
