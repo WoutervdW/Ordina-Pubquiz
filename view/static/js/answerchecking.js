@@ -3,7 +3,7 @@ angular.module('answerCheckingModule', ['ngRoute', 'generalModule', 'requestsMod
         $interpolateProvider.startSymbol('//')
         $interpolateProvider.endSymbol('//')
     })
-   .controller('answerCheckingController', function (httpRequestsService, generalService){
+   .controller('answerCheckingController', function (httpRequestsService, generalService, $filter){
         var vm = this;
         var modal = document.getElementById("myModal");
         vm.pageSize = 30;
@@ -20,21 +20,25 @@ angular.module('answerCheckingModule', ['ngRoute', 'generalModule', 'requestsMod
          httpRequestsService.getQuestions()
         .then(function (response) {
             vm.questions = response.data
+            vm.questions = $filter('orderBy')(vm.questions, 'questionnumber', false)
         });
 
          httpRequestsService.getTeams()
         .then(function (response) {
             vm.teams = response.data
+            vm.teams = $filter('orderBy')(vm.teams, 'teamname', false)
         });
 
          httpRequestsService.getPersons()
         .then(function (response) {
             vm.persons = response.data
+            vm.persons = $filter('orderBy')(vm.persons, 'personname', false)
         });
 
         httpRequestsService.getCategories()
         .then(function (response) {
             vm.categories = response.data
+            vm.categories = $filter('orderBy')(vm.categories, 'name', false)
         });
 
 
