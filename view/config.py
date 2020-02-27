@@ -27,6 +27,7 @@ class Config(object):
     WORDS_PER_PAGE = 20
     QUESTIONS_PER_PAGE = 1000
     ANSWERS_PER_PAGE = 3
+    vraag = 1
 
 
 class InputConfig:
