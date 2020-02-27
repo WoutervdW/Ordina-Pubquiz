@@ -18,6 +18,7 @@ angular.module('revealModule', ['ngRoute', 'requestsModule'])
             vm.time = vm.time + 1000;
             if (i < teams.length) {
                vm.revealteams.push({
+                    "position": teams.length - i,
                     "teamname": teams[i].teamname,
                     "score": teams[i].score
                 });
