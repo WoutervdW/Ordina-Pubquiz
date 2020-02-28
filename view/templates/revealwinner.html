@@ -10,17 +10,48 @@
 
 <body>
 
+<div class = "header">
+    <img src='../static/logo.png' alt="logo" width="50px" height="30px">
+</div>
+
 {% extends "base.html" %}
 {% block content %}
 <div ng-app="revealModule" ng-controller="revealcontroller as vm">
-    <div class="row">
-        <ul class="col-3" ng-repeat="team in vm.revealteams">
+    <div class="showteams">
+        <ul class="col" ng-repeat="team in vm.revealteams1">
             <li>
                 <span class="position">//team.position//.</span>
                 <span class="teamname">//team.teamname//</span>
                 <span class="score">//team.score//</span>
             </li>
-    </ul>
+        </ul>
+    </div>
+    <div class="showteams">
+        <ul class="col" ng-repeat="team in vm.revealteams2">
+            <li>
+                <span class="position">//team.position//.</span>
+                <span class="teamname">//team.teamname//</span>
+                <span class="score">//team.score//</span>
+            </li>
+        </ul>
+    </div>
+    <div class="showteams">
+        <ul class="col" ng-repeat="team in vm.revealteams3">
+            <li>
+                <span class="position">//team.position//.</span>
+                <span class="teamname">//team.teamname//</span>
+                <span class="score">//team.score//</span>
+            </li>
+        </ul>
+    </div>
+    <div class="showteams">
+        <ul class="col" ng-repeat="team in vm.revealteams4">
+            <li>
+                <span class="position">//team.position//.</span>
+                <span class="teamname">//team.teamname//</span>
+                <span class="score">//team.score//</span>
+            </li>
+        </ul>
     </div>
 </div>
 {% endblock %}

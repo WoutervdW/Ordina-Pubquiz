@@ -1,15 +1,25 @@
 body{
     margin: 0 !important;
-    background-image: url("../logo.png");
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
 }
 
-ul{
+div.header{
+    width: 170px;
+    height: 127px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
 
+div.header img{
+    width: 170px;
+    height: 127px;
+}
+
+
+ul{
     box-sizing: border-box !important;
     background:none;
+    margin: 0 !important;
  /*   background: rgba(255, 161, 51, 1) !important; */
    /* box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5) !important;*/
 
@@ -20,10 +30,11 @@ ul li{
   /*  background:black;*/
     background: darkorange !important;
     padding: 10px 20px !important;
-    color: #fff!important;
-    margin: 5px 0 !important;
+    color: white !important;
+    margin: 0 !important;
     transition: .5s !important;
     font-size: 16pt !important;
+    border: 3px white solid;
 }
 
 
@@ -39,5 +50,11 @@ ul li{
 .score{
    margin-left: 1%;
    text-align:right;
+}
+
+.showteams{
+    width: 25%;
+    float:right;
+    overflow:hidden;
 }
 
