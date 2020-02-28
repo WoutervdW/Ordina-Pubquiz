@@ -10,12 +10,15 @@
 
 <body>
 
+
+{% extends "base.html" %}
+{% block content %}
+
 <div class = "header">
     <img src='../static/logo.png' alt="logo" width="50px" height="30px">
 </div>
 
-{% extends "base.html" %}
-{% block content %}
+
 <div ng-app="revealModule" ng-controller="revealcontroller as vm">
     <div class="showteams">
         <ul class="col" ng-repeat="team in vm.revealteams1">

@@ -2,6 +2,15 @@ body{
     margin: 0 !important;
 }
 
+nav {
+    opacity:0 !important;
+}
+
+nav:hover{
+   opacity:100% !important;
+}
+
+
 div.header{
     width: 170px;
     height: 127px;
@@ -45,7 +54,6 @@ ul li{
 .teamname{
     width:100%;
 }
-
 
 .score{
    margin-left: 1%;
