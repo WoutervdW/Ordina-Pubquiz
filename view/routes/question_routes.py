@@ -241,6 +241,12 @@ def get_answers():
                             answersgiven_ids.append(item.id)
         allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((answersgiven_ids)))
 
+    if question_id == 0 and team_id == 0 and correct is None and category_id == 0 and person_id == 0 and confidence_from is None and confidence_to is None:
+        # If none of the filters are given, we set a default filtering, which I'll set to a question
+        print("nothing is passed with the filter")
+        q = Question.query.first()
+        allanswers = AnswerGiven.query.filter_by(question_id=q.id)
+
     result = answers_schema.dump(allanswers)
     return jsonify(result)
 
