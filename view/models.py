@@ -178,7 +178,7 @@ class AnswerGiven(db.Model):
     question = db.relationship('Question')
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
     answered_by = db.relationship('Team')
-    subanswersgiven = db.relationship('SubAnswerGiven')
+    subanswersgiven = db.relationship('SubAnswerGiven', lazy='dynamic')
 
 
 class AnswerGivenSchema(ma.Schema):

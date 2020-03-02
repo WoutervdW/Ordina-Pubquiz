@@ -52,8 +52,9 @@ def get_answers():
     print("team id %s" % team_id)
     print("person id %s" % person_id)
     print("correct %s" % correct)
-    # Wow this is a mess! The others are filtered by things seperate! Even though it will load a lot more,
-    # it will be a lot less than everything
+    # Wow this is a mess! The others are filtered by things separate! Even though it will load a lot more,
+    # it will be a lot less than loading everything
+    # This filters 'category', 'question', 'person' and 'team' or any combination of these.
     if category_id != 0:
         if question_id == 0 \
                 and team_id == 0 \
@@ -187,27 +188,58 @@ def get_answers():
             print("something went wrong")
             allanswers = AnswerGiven.query.all()
 
-    if confidence_from is not None:
+    # This filters 'confidence_from' and 'confidence_to'
+    # After the initial filtering we filter out the confidence and later the correct.
+    if confidence_to is not None:
+        # We set the confidence_from to 0 if nothing is filled, because it seems logical from a user perspective.
+        if confidence_from is None:
+            confidence_from = 0
         answersgiven_ids = []
         for item in allanswers:
-            answersgiven_ids.append(item.id)
-        print("after filtering, these answergiven ids " + str(answersgiven_ids))
-        sub_answer_given = SubAnswerGiven.query.filter(SubAnswerGiven.answergiven_id.in_((answersgiven_ids))).filter(SubAnswerGiven.confidence > confidence_from)
-        sub_answer_given_ids = []
-        for q in sub_answer_given:
-            sub_answer_given_ids.append(q.answergiven_id)
-        print("after filtering, these sub_answer_given ids " + str(sub_answer_given_ids))
+            answer_given = AnswerGiven.query.filter_by(id=item.id).first()
+            if answer_given is not None:
+                sub_answer_givens = answer_given.subanswersgiven
+                for sub_answer_given in sub_answer_givens:
+                    confidence = sub_answer_given.confidence
+                    # We now filter out any confidences that we don't want to show.
+                    if confidence <= confidence_to:
+                        # The confidence is below 'confidence_to'. When also above 'confidence_from' We will show it.
+                        if confidence >= confidence_from:
+                            if item.id not in answersgiven_ids:
+                                answersgiven_ids.append(item.id)
+                                print("adding a result with confidence %s" % confidence)
+        allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((answersgiven_ids)))
+        print("final id's: %s" % answersgiven_ids)
 
-        sub_answer_given = SubAnswerGiven.query.filter(SubAnswerGiven.id.in_(sub_answer_given_ids))
-        ids = []
-        for q in sub_answer_given:
-            ids.append(q.answergiven_id)
-        allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((ids)))
-
-        temp = []
+    # This filters a special case of 'confidence_from' and 'confidence_to'
+    if confidence_to is None and confidence_from is not None:
+        # If the user only gave a confidence_from we only filter out those values
+        answersgiven_ids = []
         for item in allanswers:
-            temp.append(item.id)
-        print("and back to answer given " + str(temp))
+            answer_given = AnswerGiven.query.filter_by(id=item.id).first()
+            if answer_given is not None:
+                sub_answer_givens = answer_given.subanswersgiven
+                for sub_answer_given in sub_answer_givens:
+                    confidence = sub_answer_given.confidence
+                    # We now filter out any confidences that we don't want to show.
+                    if confidence >= confidence_from:
+                        if item.id not in answersgiven_ids:
+                            answersgiven_ids.append(item.id)
+        allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((answersgiven_ids)))
+
+    # This filters the 'correct'
+    if correct is not None:
+        answersgiven_ids = []
+        for item in allanswers:
+            answer_given = AnswerGiven.query.filter_by(id=item.id).first()
+            if answer_given is not None:
+                sub_answer_givens = answer_given.subanswersgiven
+                for sub_answer_given in sub_answer_givens:
+                    answer_correct = sub_answer_given.correct
+                    if answer_correct == correct:
+                        if item.id not in answersgiven_ids:
+                            answersgiven_ids.append(item.id)
+        allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((answersgiven_ids)))
 
     result = answers_schema.dump(allanswers)
     return jsonify(result)
