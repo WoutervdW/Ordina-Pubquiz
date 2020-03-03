@@ -15,7 +15,6 @@ def update_answer():
     sa = SubAnswerGiven.query.filter_by(id=id).first()
     sa.correct = answercorrect
     sa.person_id = person.id
-    print("PERSON", person)
     db.session.commit()
     person_schema = PersonSchema()
     result = person_schema.dump(person)

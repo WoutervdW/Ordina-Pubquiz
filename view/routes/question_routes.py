@@ -48,10 +48,6 @@ def get_answers():
     person_id = request.args.get('checkedby_id', 0, type=int)
     confidence_from = request.args.get('confidence_from', None, type=int)
     confidence_to = request.args.get('confidence_to', None, type=int)
-    print("question id %s" % question_id)
-    print("team id %s" % team_id)
-    print("person id %s" % person_id)
-    print("correct %s" % correct)
     # Wow this is a mess! The others are filtered by things separate! Even though it will load a lot more,
     # it will be a lot less than loading everything
     # This filters 'category', 'question', 'person' and 'team' or any combination of these.
@@ -100,7 +96,6 @@ def get_answers():
             ids = []
             for q in sub_answer_given:
                 ids.append(q.answergiven_id)
-            print("quick test test")
             allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((ids))).filter(AnswerGiven.question_id.in_((question_ids)))
         elif question_id == 0 \
                 and team_id != 0 \
@@ -207,9 +202,7 @@ def get_answers():
                         if confidence >= confidence_from:
                             if item.id not in answersgiven_ids:
                                 answersgiven_ids.append(item.id)
-                                print("adding a result with confidence %s" % confidence)
         allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((answersgiven_ids)))
-        print("final id's: %s" % answersgiven_ids)
 
     # This filters a special case of 'confidence_from' and 'confidence_to'
     if confidence_to is None and confidence_from is not None:
@@ -243,9 +236,7 @@ def get_answers():
 
     if question_id == 0 and team_id == 0 and correct is None and category_id == 0 and person_id == 0 and confidence_from is None and confidence_to is None:
         # If none of the filters are given, we set a default filtering, which I'll set to a question
-        print("nothing is passed with the filter")
-        q = Question.query.first()
-        allanswers = AnswerGiven.query.filter_by(question_id=q.id)
+           allanswers = AnswerGiven.query.paginate(1, 100, False).items
 
     result = answers_schema.dump(allanswers)
     return jsonify(result)
