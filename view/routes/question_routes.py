@@ -42,7 +42,6 @@ def get_answers():
     answers_schema = AnswerGivenSchema(many=True)
     question_id = request.args.get('question_id', 0, type=int)
     team_id = request.args.get('team_id', 0, type=int)
-    correct = request.args.get('correct', None, type=bool)
     category_id = request.args.get('category_id', 0, type=int)
     # checked_by is the person_id
     person_id = request.args.get('checkedby_id', 0, type=int)
@@ -184,7 +183,7 @@ def get_answers():
             allanswers = AnswerGiven.query.all()
 
     # This filters 'confidence_from' and 'confidence_to'
-    # After the initial filtering we filter out the confidence and later the correct.
+    # After the initial filtering we filter out the confidence.
     if confidence_to is not None:
         # We set the confidence_from to 0 if nothing is filled, because it seems logical from a user perspective.
         if confidence_from is None:
@@ -220,21 +219,7 @@ def get_answers():
                             answersgiven_ids.append(item.id)
         allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((answersgiven_ids)))
 
-    # This filters the 'correct'
-    if correct is not None:
-        answersgiven_ids = []
-        for item in allanswers:
-            answer_given = AnswerGiven.query.filter_by(id=item.id).first()
-            if answer_given is not None:
-                sub_answer_givens = answer_given.subanswersgiven
-                for sub_answer_given in sub_answer_givens:
-                    answer_correct = sub_answer_given.correct
-                    if answer_correct == correct:
-                        if item.id not in answersgiven_ids:
-                            answersgiven_ids.append(item.id)
-        allanswers = AnswerGiven.query.filter(AnswerGiven.id.in_((answersgiven_ids)))
-
-    if question_id == 0 and team_id == 0 and correct is None and category_id == 0 and person_id == 0 and confidence_from is None and confidence_to is None:
+    if question_id == 0 and team_id == 0 and category_id == 0 and person_id == 0 and confidence_from is None and confidence_to is None:
         # If none of the filters are given, we set a default filtering, which I'll set to a question
            allanswers = AnswerGiven.query.paginate(1, 100, False).items
 
