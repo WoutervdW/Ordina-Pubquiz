@@ -9,6 +9,8 @@ def read_team(line):
     team_name_image = team_name_image[:, 130:(len(team_name_image[0]))]
     team_name = pytesseract.image_to_string(team_name_image).replace("\n", " ")
 
+    print("team_name is %s" % team_name)
+
     if "Naam:" in team_name:
         # We take the name of the team and remove leading whitespaces
         name_of_team = team_name.split("Naam:")[1]
@@ -21,7 +23,15 @@ def read_team(line):
         return team_id
     else:
         print("failed!")
-        return None
+        # It failed here but we still assume that there is a team name here. We will check to see which name
+        # closest represents the name in the database.
+        name_of_team = team_name.lstrip()
+
+        name_of_team = check_team_name(name_of_team)
+
+        team_id = save_team_database(name_of_team)
+        print("the team name is: " + name_of_team)
+        return team_id
 
 
 def check_team_name(name_of_team):

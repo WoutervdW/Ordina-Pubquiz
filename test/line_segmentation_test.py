@@ -51,7 +51,7 @@ class LineSegmentationTest(unittest.TestCase):
         it should return and we want to test for the specific number of lines.
         """
         path = "test_files/image_files/"
-        file_name = "double_side_test_big_numbers_11"
+        file_name = "new3_2_4"
         line_length = read_number_of_lines(path, file_name)
         self.assertEqual(line_length, 14)
 

@@ -25,7 +25,7 @@ class PdfConversionTest(unittest.TestCase):
         self.assertEqual(len(answer_sheet_image[0][0]), 3)
 
     def test_multiple_pdf_pages(self):
-        file_name = "Pubquiz_double_sided_test_Wouter"
+        file_name = "new3_2"
         path = '../original_scan/'
         pubquiz_answer_sheet = path + file_name + '.pdf'
 
