@@ -6,7 +6,7 @@ angular.module('answerCheckingModule', ['ngRoute', 'generalModule', 'requestsMod
    .controller('answerCheckingController', function (httpRequestsService, generalService, $filter){
         var vm = this;
         var modal = document.getElementById("myModal");
-        vm.pageSize = 30;
+        vm.pageSize = 100;
 
        vm.numberOfPages=function(){
            return Math.ceil(vm.filteredanswers.length/vm.pageSize);
