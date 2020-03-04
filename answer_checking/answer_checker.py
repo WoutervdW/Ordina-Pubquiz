@@ -111,7 +111,9 @@ def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect
         answer = remove_special_chars(answer, correct_answer_variant)
         correct_answer_variant = correct_answer_variant.strip()
         # check if answer has only random characters (krasdetectie) or is too short
-        if len(answer) == 0 or len(correct_answer_variant) / len(answer) > 2:
+        if len(answer) == 0 \
+                or len(correct_answer_variant) / len(answer) > 2 \
+                or len(answer) / len(correct_answer_variant) > 2:
             correct_ratio = 0
             confidence_variant = 100
         else:
@@ -136,7 +138,7 @@ def check_correct(answer, correct_answer_variants, threshold, max_conf_incorrect
         else:
             print("Not similar to: " + correct_answer_variant)
             if confidence_variant <= confidence_false:
-                confidence_false = confidence_false
+                confidence_false = confidence_variant
 
     if correct:
         return correct, confidence_true
@@ -155,11 +157,11 @@ def check_subanswer_given(subanswer_given, subanswers, threshold, max_conf_incor
     if len(subanswer_given.read_answer) == 0:  # no answer: incorrect
         return correct, confidence_false
     for subanswer in subanswers:
-        variants = [variant.answer for variant in subanswer.variants]  # create usable list for variants
-        print("Correct answer variants: " + str(variants))
+        correct_answer_variants = [variant.answer for variant in subanswer.variants]  # create usable list for variants
+        print("Correct answer variants: " + str(correct_answer_variants))
 
         correct_temp, confidence_temp = check_correct(subanswer_given.read_answer,
-                                                      variants,
+                                                      correct_answer_variants,
                                                       threshold,
                                                       max_conf_incorrect,
                                                       max_conf_correct)
@@ -168,20 +170,18 @@ def check_subanswer_given(subanswer_given, subanswers, threshold, max_conf_incor
             correct = True
             if confidence_temp >= confidence_correct:
                 confidence_correct = confidence_temp
-                most_similar_answer = subanswer  # remember most similar answer
+                most_similar_answer = subanswer  # remember this to prevent wrongly marking duplicate answers as correct
         else:  # not correct
             if confidence_temp <= confidence_false:  # if the answer is wrong, but not completely, save this uncertainty
                 confidence_false = confidence_temp
-    print(subanswer_given.probability_read_answer)
     line_read_confidence_factor = subanswer_given.probability_read_answer ** (1 / float(3))
-    print(line_read_confidence_factor)
+    print("line_read_confidence_factor: " + str(line_read_confidence_factor))
     if correct:
-        confidence = int(confidence_correct * line_read_confidence_factor)
+        confidence = confidence_correct * line_read_confidence_factor
         if most_similar_answer is not None:
             subanswers.remove(most_similar_answer)  # this subanswer can not be used as a correct option anymore
     else:
-        confidence = int(confidence_false * line_read_confidence_factor)
-
+        confidence = confidence_false * line_read_confidence_factor
     return correct, confidence
 
 
@@ -215,7 +215,7 @@ def iterate_questions(threshold=50, max_conf_incorrect=50, max_conf_correct=100)
 
                     subanswer_given.checkedby = checker
                     subanswer_given.correct = correct
-                    subanswer_given.confidence = confidence
+                    subanswer_given.confidence = int(confidence)
 
                     print("Commiting " + str(correct) + " with confidence " + str(confidence))
                     db.session.commit()
