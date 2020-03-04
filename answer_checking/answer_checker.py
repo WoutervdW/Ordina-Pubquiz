@@ -72,7 +72,7 @@ def get_correct_ratio_numbers(answer, correct_answer_variant):
     correct_answer_values = all_digits_pattern.findall(correct_answer_variant)  # Find all numbers in the correct answer
 
     if len(answer_values) == 0 or len(correct_answer_values) == 0:
-        return 0
+        return 0.0
 
     # join the number parts and compare them. correct_ratio * ratio of the word that is numbers
     answer_val = int(''.join(map(str, answer_values)))
