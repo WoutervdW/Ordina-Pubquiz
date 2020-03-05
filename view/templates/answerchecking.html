@@ -63,21 +63,21 @@
         <table class="table table-hover table-sm table-fixed">
             <thead class="header">
                 <tr>
-                    <th scope="col" ng-click="vm.sortBy('answered_by.teamname')">Team</th>
-                    <th scope="col" ng-click="vm.sortBy('question.questionnumber')">Vraag</th>
-                    <th scope="col">Correct Antwoord</th>
-                    <th scope="col">Gegeven Antwoord</th>
-                    <th scope="col" style="width:300px;">Afbeelding</th>
-                    <th scope="col" style="width:60px;">Correct</th>
-                    <th scope="col" style="width:100px;">Zekerheid systeem</th>
-                    <th scope="col" ng-click = "vm.sortBy('checkedby.personname')">Laatst nagekeken door</th>
+                    <th scope="col" ng-click="vm.sortBy('answered_by.teamname')" style="width:15%;">Team</th>
+                    <th scope="col" ng-click="vm.sortBy('question.questionnumber')" style="width:25%;">Vraag</th>
+                    <th scope="col" style="width:15%;">Correct Antwoord</th>
+                    <th scope="col" style="width:15%;">Gegeven Antwoord</th>
+                    <th scope="col" style="width:500px;">Afbeelding</th>
+                    <th scope="col" style="width:5%;">Correct</th>
+                    <th scope="col" style="width:7%;">Zekerheid systeem</th>
+                    <th scope="col" style="width:165px;" ng-click = "vm.sortBy('checkedby.personname')">Laatst nagekeken door</th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="answergiven in vm.filteredanswers = (vm.answers | orderBy:vm.propertyName:vm.reverse | startFrom:vm.currentPage*vm.pageSize | limitTo:vm.pageSize)">
-                    <td>//answergiven.answered_by.teamname//</td>
-                    <td><b>//answergiven.question.questionnumber//</b> //answergiven.question.question//</td>
-                    <td>
+                    <td style="width:15%;">//answergiven.answered_by.teamname//</td>
+                    <td style="width:25%;"><b>//answergiven.question.questionnumber//</b> //answergiven.question.question//</td>
+                    <td style="width:15%;">
                         <div id = 'subanswerintable'>
                             <table class="table table-borderless">
                                 <tbody>
@@ -88,7 +88,7 @@
                             </table>
                         </div>
                     </td>
-                    <td>
+                    <td style="width:15%;">
                          <table class="table table-borderless">
                             <tbody>
                                 <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
@@ -97,7 +97,7 @@
                             </tbody>
                         </table>
                     </td>
-                    <td style="width:300px;">
+                    <td style="width:500px;">
                        <table class="table table-borderless">
                             <tbody>
                                 <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
@@ -108,7 +108,7 @@
                             </tbody>
                        </table>
                     </td>
-                    <td style="width:60px;">
+                    <td style="width:5%;">
                         <table class="table table-borderless">
                                 <tbody>
                                     <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
@@ -119,7 +119,7 @@
                                 </tbody>
                         </table>
                     </td>
-                    <td style="width:100px;">
+                    <td style="width:7%;">
                         <table class="table table-borderless">
                             <tbody>
                                 <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
@@ -130,7 +130,7 @@
                             </tbody>
                         </table>
                     </td>
-                    <td>
+                    <td style="width:155px;">
                         <table class="table table-borderless">
                             <tbody>
                                 <tr ng-repeat="subanswergiven in answergiven.subanswersgiven">
