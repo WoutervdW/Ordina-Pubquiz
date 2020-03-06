@@ -154,6 +154,7 @@ def add_page_for_team(document, teamname, fromquestion, subanswersfromquestion, 
             continue
         q = Question.query.filter_by(questionnumber=fromquestion).first()
         if q is not None:
+            print("test %s and test %s" % (fromquestion, q.id))
             s = db.session.query(func.count(SubAnswer.id)).group_by(SubAnswer.question_id).filter_by(question_id=q.id).all()
             subcount = s[0][0]
             if subcount > subanswersfromquestion:

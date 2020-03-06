@@ -93,7 +93,7 @@
                             <input class="form-control" list="categories" ng-model="vm.newquestion.category">
                         </label>
                         <datalist id="categories">
-                            <option ng-repeat="category in vm.categories" ng-value="category.name" ng-right-click="vm.resetQuestionNumbers()">//category.name//</option>
+                            <option ng-repeat="category in vm.categories" ng-value="category.name">//category.name//</option>
                         </datalist>
                     </td>
 
@@ -122,11 +122,27 @@
             <option>2</option>
             <option>3</option>
             <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+            <option>11</option>
+            <option>12</option>
+            <option>13</option>
+            <option>14</option>
+            <option>15</option>
+            <option>16</option>
+            <option>17</option>
+            <option>18</option>
+            <option>19</option>
+            <option>20</option>
         </select>
         <div ng-repeat="break in vm.breaks">
             <label>Pauze na vraag:</label>
             <select class="form-control" ng-model="break.breaknumber">
-                <option ng-repeat="question in vm.questions" ng-if="question.questionnumber">//question.questionnumber//</option>
+                <option ng-repeat ="question in vm.questions | orderBy:'questionnumber'" ng-if="question.questionnumber">//question.questionnumber//</option>
             </select>
         </div>
         <button class="btn btn-primary" ng-click="vm.createDoc()">Maak antwoordvel</button>
