@@ -5,7 +5,7 @@ astor==0.8.0
 attrs==19.3.0
 cffi==1.13.2
 Click==7.0
-cryptography==2.3
+cryptography==3.2
 cycler==0.10.0
 dominate==2.4.0
 editdistance==0.5.3
